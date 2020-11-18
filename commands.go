@@ -7,9 +7,12 @@ import (
 )
 
 func getCommandList(c *MgtConfig) []*cli.Command {
+
+	phpContainer, _ := c.GetPhpContainer()
+
 	return []*cli.Command{
-		command.CallCliCommand(),
-		command.CallBashCommand(c.GetPhpContainer),
-		command.CallComposerCommand(),
+		command.CallCliCommand(phpContainer),
+		command.CallBashCommand(phpContainer),
+		command.CallComposerCommand(phpContainer),
 	}
 }

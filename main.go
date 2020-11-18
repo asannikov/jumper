@@ -22,8 +22,9 @@ type dialogInternal struct {
 
 func main() {
 
-	cfg := make(MgtConfig)
-	cfg.FileName = confgFile
+	cfg := MgtConfig{
+		FileName: confgFile,
+	}
 
 	app := &cli.App{
 		Commands: getCommandList(&cfg),

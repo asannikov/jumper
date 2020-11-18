@@ -35,7 +35,7 @@ func (c *MgtConfig) GetConfig() (Configuration, error) {
 
 	configuration := Configuration{}
 
-	if fileExists(c.FileName) {
+	if c.fileExists(c.FileName) {
 		err := gonfig.GetConf(c.FileName, &configuration)
 		return configuration, err
 	}
@@ -50,7 +50,7 @@ func (c *MgtConfig) GetConfig() (Configuration, error) {
 		return configuration, err
 	}
 
-	err = saveConfigFile(Configuration{
+	err = c.saveConfigFile(Configuration{
 		PhpContainer: containerPhp,
 	})
 
@@ -58,8 +58,8 @@ func (c *MgtConfig) GetConfig() (Configuration, error) {
 		return configuration, err
 	}
 
-	if fileExists(c.FileName) {
-		return getConfigFile()
+	if c.fileExists(c.FileName) {
+		return c.GetConfig()
 	}
 
 	return configuration, fmt.Errorf("Config file %s does not exist ", c.FileName)
