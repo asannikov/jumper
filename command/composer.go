@@ -1,7 +1,6 @@
 package command
 
 import (
-	"log"
 	"os"
 	"os/exec"
 
@@ -9,24 +8,23 @@ import (
 )
 
 // CallComposerCommand generates Composer command (docker-compose exec phpfpm composer)
-// @todo do composer install/update with no memory limit
-func CallComposerCommand(containerPhp string) *cli.Command {
+func CallComposerCommand(cp func() string) *cli.Command {
+
+	containerPhp := cp()
 
 	cmd := cli.Command{
-		Name:    "composer",
-		Aliases: []string{"cmp"},
-		Usage:   "Run composer",
+		Name:            "composer",
+		Aliases:         []string{"cmp"},
+		Usage:           "Run composer",
+		SkipFlagParsing: true,
 		Action: func(c *cli.Context) error {
 			var binary = "docker"
 			var initArgs = []string{"exec", "-it", containerPhp, "composer"}
 
-			extraInitArgs := []string{}
+			extraInitArgs := c.Args().Slice()
 
 			args := append(initArgs, extraInitArgs...)
 
-			log.Println(args)
-			// https://medium.com/@ssttehrani/containers-from-scratch-with-golang-5276576f9909
-			// https://phase2.github.io/devtools/common-tasks/ssh-into-a-container/
 			cmd := exec.Command(binary, args...)
 
 			cmd.Stdin = os.Stdin

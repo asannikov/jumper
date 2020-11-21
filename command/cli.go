@@ -9,7 +9,9 @@ import (
 )
 
 // CallCliCommand generates CLI command (docker-compose exec phpfpm "$@")
-func CallCliCommand(containerPhp string) *cli.Command {
+func CallCliCommand(cp func() string) *cli.Command {
+
+	containerPhp := cp()
 
 	cmd := cli.Command{
 		Name:    "cli",
@@ -29,8 +31,6 @@ func CallCliCommand(containerPhp string) *cli.Command {
 				args := append(initArgs, extraInitArgs...)
 
 				log.Println(args)
-				// https://medium.com/@ssttehrani/containers-from-scratch-with-golang-5276576f9909
-				// https://phase2.github.io/devtools/common-tasks/ssh-into-a-container/
 				cmd := exec.Command(binary, args...)
 
 				cmd.Stdin = os.Stdin
