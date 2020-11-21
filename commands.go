@@ -8,11 +8,17 @@ import (
 
 func getCommandList(c *MgtConfig) []*cli.Command {
 
-	phpContainer, _ := c.GetPhpContainer()
+	getPhpContainerName := func() string {
+		phpContainer, _ := c.GetPhpContainer()
+		return phpContainer
+	}
 
 	return []*cli.Command{
-		command.CallCliCommand(phpContainer),
-		command.CallBashCommand(phpContainer),
-		command.CallComposerCommand(phpContainer),
+		command.CallCliCommand(getPhpContainerName),
+		command.CallBashCommand(getPhpContainerName),
+		command.CallComposerCommand(getPhpContainerName),
+		command.CallComposerUpdateCommand(getPhpContainerName),
+		command.CallComposerUpdateMemoryCommand(getPhpContainerName),
+		//command.CallComposerCommand1(getPhpContainerName),
 	}
 }
