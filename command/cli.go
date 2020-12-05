@@ -9,15 +9,14 @@ import (
 )
 
 // CallCliCommand generates CLI command (docker-compose exec phpfpm "$@")
-func CallCliCommand(cp func() string) *cli.Command {
-
-	containerPhp := cp()
-
+func CallCliCommand(cp func() (string, error)) *cli.Command {
 	cmd := cli.Command{
 		Name:    "cli",
 		Aliases: []string{"c"},
 		Usage:   "Run cli",
 		Action: func(c *cli.Context) error {
+			containerPhp, _ := cp()
+
 			dockerComposeCliCommand := c.Args().Get(0)
 
 			if dockerComposeCliCommand == "" {

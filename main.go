@@ -2,35 +2,42 @@ package main
 
 import (
 	"log"
+	"mgt/config"
 	"mgt/container"
 	"os"
+	"os/user"
 
-	"github.com/manifoldco/promptui"
-	"github.com/urfave/cli/v2" // imports as package "cli"
+	"github.com/urfave/cli/v2"
+	// imports as package "cli"
 )
 
 const confgFile = "mgt.json"
 
-// Configuration contains file config
-type Configuration struct {
-	PhpContainer string
-}
-
-type dialogInternal struct {
-	setPhpContaner func() (int, string, error)
-}
-
 func main() {
+	// Dialogs
+	DLG := initDialogFunctions()
 
-	cfg := MgtConfig{
+	userDir, err := getUserDirectory()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cfg := config.MgtConfig{
 		FileName: confgFile,
+		FileUser: userDir + string(os.PathSeparator) + ".mgt.json",
+		FileSystem: config.FileSystem{
+			FileExists:     fileExist,
+			DirExists:      dirExists,
+			ReadConfigFile: readConfigFile,
+			SaveConfigFile: saveConfigFile,
+		},
 	}
 
 	app := &cli.App{
-		Commands: getCommandList(&cfg),
+		Commands: getCommandList(&cfg, &DLG),
 	}
 
-	err := app.Run(os.Args)
+	err = app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,13 +47,11 @@ func getContainerList() []string {
 	return container.GetContanerList()
 }
 
-func selectPhpContainer() (int, string, error) {
-	containers := getContainerList()
+func getUserDirectory() (string, error) {
+	usr, err := user.Current()
 
-	prompt := promptui.Select{
-		Label: "Select php container",
-		Items: containers,
+	if err != nil {
+		return "", err
 	}
-
-	return prompt.Run()
+	return usr.HomeDir, nil
 }
