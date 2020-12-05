@@ -8,9 +8,7 @@ import (
 
 // CallComposerUpdateCommand generates Composer command (docker-compose exec phpfpm composer)
 // @todo do composer install/update with no memory limit
-func CallComposerUpdateCommand(cp func() string) *cli.Command {
-
-	containerPhp := cp()
+func CallComposerUpdateCommand(cp func() (string, error)) *cli.Command {
 
 	cmd := cli.Command{
 		Name:            "composer:update",
@@ -18,6 +16,8 @@ func CallComposerUpdateCommand(cp func() string) *cli.Command {
 		Usage:           "Run composer update",
 		SkipFlagParsing: true,
 		Action: func(c *cli.Context) error {
+			containerPhp, _ := cp()
+
 			if c.Args().Get(0) == "m" {
 				return explictComposerUpdate(containerPhp, c.Args().Tail())
 			}
@@ -47,9 +47,7 @@ func CallComposerUpdateCommand(cp func() string) *cli.Command {
 }
 
 // CallComposerUpdateMemoryCommand generates Composer command (docker-compose exec phpfpm php -d memory_limit composer update)
-func CallComposerUpdateMemoryCommand(cp func() string) *cli.Command {
-
-	containerPhp := cp()
+func CallComposerUpdateMemoryCommand(cp func() (string, error)) *cli.Command {
 
 	cmd := cli.Command{
 		Name:            "composer:update:memory",
@@ -57,6 +55,7 @@ func CallComposerUpdateMemoryCommand(cp func() string) *cli.Command {
 		Usage:           "Run php -d memory_limit=-1 composer update",
 		SkipFlagParsing: true,
 		Action: func(c *cli.Context) error {
+			containerPhp, _ := cp()
 			return explictComposerUpdate(containerPhp, c.Args().Slice())
 		},
 	}

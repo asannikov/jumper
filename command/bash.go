@@ -9,15 +9,15 @@ import (
 )
 
 // CallBashCommand generates Bash command (docker-compose exec phpfpm bash)
-func CallBashCommand(cp func() string) *cli.Command {
-
-	containerPhp := cp()
+func CallBashCommand(cp func() (string, error)) *cli.Command {
 
 	cmd := cli.Command{
 		Name:    "bash",
 		Aliases: []string{"b"},
 		Usage:   "Run bash",
 		Action: func(c *cli.Context) error {
+
+			containerPhp, _ := cp()
 
 			var binary = "docker"
 			var initArgs = []string{"exec", "-it", containerPhp, "bash"}

@@ -8,9 +8,7 @@ import (
 )
 
 // CallComposerCommand generates Composer command (docker-compose exec phpfpm composer)
-func CallComposerCommand(cp func() string) *cli.Command {
-
-	containerPhp := cp()
+func CallComposerCommand(cp func() (string, error)) *cli.Command {
 
 	cmd := cli.Command{
 		Name:            "composer",
@@ -18,6 +16,8 @@ func CallComposerCommand(cp func() string) *cli.Command {
 		Usage:           "Run composer",
 		SkipFlagParsing: true,
 		Action: func(c *cli.Context) error {
+			containerPhp, _ := cp()
+
 			var binary = "docker"
 			var initArgs = []string{"exec", "-it", containerPhp, "composer"}
 

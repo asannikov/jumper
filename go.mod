@@ -15,7 +15,8 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/tkanos/gonfig v0.0.0-20181112185242-896f3d81fadf
+	github.com/stretchr/testify v1.6.1
+	github.com/tkanos/gonfig v0.0.0-20181112185242-896f3d81fadf // indirect
 	github.com/urfave/cli/v2 v2.3.0
 	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b // indirect
 	google.golang.org/grpc v1.33.2 // indirect
