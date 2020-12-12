@@ -1,12 +1,18 @@
 package config
 
+// GlobalProjectConfig contains project config
+type GlobalProjectConfig struct {
+	Path string `json:"path"`
+	Name string `json:"name"`
+}
+
 // GlobalConfig contains file config
 type GlobalConfig struct {
-	Projects []ProjectSettings `json:"projects"`
+	Projects []GlobalProjectConfig `json:"projects"`
 }
 
 // AddNewProject adds new project
-func (g *GlobalConfig) AddNewProject(p ProjectSettings) {
+func (g *GlobalConfig) AddNewProject(p GlobalProjectConfig) {
 	g.Projects = append(g.Projects, p)
 }
 
@@ -24,7 +30,7 @@ func (g *GlobalConfig) GetProjectNameList() []string {
 }
 
 // FindProjectPathInJSON find project path in json
-func (g *GlobalConfig) FindProjectPathInJSON(f func(ProjectSettings) (bool, error)) error {
+func (g *GlobalConfig) FindProjectPathInJSON(f func(GlobalProjectConfig) (bool, error)) error {
 	for _, p := range g.Projects {
 		if r, err := f(p); err == nil && r == true {
 			return nil

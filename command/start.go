@@ -7,16 +7,17 @@ import (
 )
 
 // CallStartProject runs docker project
-func CallStartProject(cp func() (string, error)) *cli.Command {
+func CallStartProject(projectPath string, pcn func() (string, error)) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start",
 		Aliases: []string{"st"},
 		Usage:   "Start project",
 		Action: func(c *cli.Context) error {
 
-			log.Println(cp())
-			//projectPath := cp()
+			log.Println(projectPath)
 
+			phpContainerName, err := pcn()
+			log.Println(phpContainerName, err)
 			return nil
 			/*var binary = "docker"
 			var initArgs = []string{"exec", "-it", "m24_phpfpm_1", "/usr/local/bin/php", "-d", "memory_limit=-1", "/usr/local/bin/composer", "update"}

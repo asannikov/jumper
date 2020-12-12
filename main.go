@@ -1,11 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"mgt/config"
 	"mgt/container"
+	"mgt/dialog"
 	"os"
-	"os/user"
 
 	"github.com/urfave/cli/v2"
 	// imports as package "cli"
@@ -14,30 +15,31 @@ import (
 const confgFile = "mgt.json"
 
 func main() {
-	// Dialogs
-	DLG := initDialogFunctions()
 
-	userDir, err := getUserDirectory()
-	if err != nil {
+	// Dialogs
+	DLG := dialog.InitDialogFunctions()
+
+	cfg := &config.Config{
+		ProjectFile: confgFile,
+	}
+
+	fs := &FileSystem{}
+	cfg.SetFileSystem(fs)
+
+	if err := seekPath(cfg, &DLG, fs); err != nil {
 		log.Fatal(err)
 	}
 
-	cfg := config.MgtConfig{
-		FileName: confgFile,
-		FileUser: userDir + string(os.PathSeparator) + ".mgt.json",
-		FileSystem: config.FileSystem{
-			FileExists:     fileExist,
-			DirExists:      dirExists,
-			ReadConfigFile: readConfigFile,
-			SaveConfigFile: saveConfigFile,
-		},
-	}
+	currentDir, _ := fs.GetWd()
+
+	fmt.Printf("changed user location to directory: %s\n\n", currentDir)
 
 	app := &cli.App{
-		Commands: getCommandList(&cfg, &DLG),
+		Commands: getCommandList(cfg, &DLG),
 	}
 
-	err = app.Run(os.Args)
+	err := app.Run(os.Args)
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,13 +47,4 @@ func main() {
 
 func getContainerList() []string {
 	return container.GetContanerList()
-}
-
-func getUserDirectory() (string, error) {
-	usr, err := user.Current()
-
-	if err != nil {
-		return "", err
-	}
-	return usr.HomeDir, nil
 }

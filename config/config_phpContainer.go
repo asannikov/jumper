@@ -1,15 +1,12 @@
 package config
 
+/*
 // EvaluatePhpContainer helps to find/define php container
 func (c *MgtConfig) EvaluatePhpContainer(spc func() (int, string, error)) error {
 	configuration := ProjectConfig{}
 
-	if t, err := c.FileSystem.FileExists(c.FileName); err == nil && t == true {
-		err := c.FileSystem.ReadConfigFile(c.FileName, &configuration)
-		if err != nil {
-			return err
-		}
-	} else if err != nil {
+	err := c.fileSystem.ReadConfigFile(c.FileName, &configuration)
+	if err != nil {
 		return err
 	}
 
@@ -21,7 +18,7 @@ func (c *MgtConfig) EvaluatePhpContainer(spc func() (int, string, error)) error 
 		}
 
 		configuration.PhpContainer = containerPhp
-		err = c.FileSystem.SaveConfigFile(configuration, c.FileName)
+		err = c.fileSystem.SaveConfigFile(configuration, c.FileName)
 
 		if err != nil {
 			return err
@@ -38,11 +35,16 @@ func (c *MgtConfig) GetPhpContainer(gf func() error) (string, error) {
 		return "", err
 	}
 
-	err = c.handleConfig()
+	err = c.loadProjectConfigFromJSON()
 
 	if err != nil {
 		return "", err
 	}
 
+	if c.projectSettings.PhpContainer == "" {
+		return "", fmt.Errorf("Php container missing in config file")
+	}
+
 	return c.projectSettings.PhpContainer, nil
 }
+*/

@@ -1,14 +1,6 @@
 package config
 
-import (
-	"encoding/json"
-	"fmt"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-)
-
-func TestGetPhpContainer(t *testing.T) {
+/*func TestGetPhpContainer(t *testing.T) {
 	cfg := MgtConfig{
 		FileSystem: FileSystem{
 			FileExists: func(string) (bool, error) {
@@ -180,4 +172,4 @@ func TestEvaluatePhpContainer(t *testing.T) {
 
 	assert.EqualError(t, err, "cannot save file")
 
-}
+}*/
