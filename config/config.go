@@ -23,6 +23,9 @@ type Config struct {
 	hasProjectFile bool
 }
 
+// projectSettings is not the same as ProjectConfig, but the similar one.
+// it helps to call FindProjectPathInJSON from the outside (ie main function), where
+// projectSettings is used as projectConfig, see main_start.go
 type projectSettings interface {
 	GetProjectName() string
 	GetProjectPath() string
@@ -30,12 +33,20 @@ type projectSettings interface {
 	SetProjectPath(string)
 }
 
+// SetProjectPath set project path for config, it's not the same as projectSettings
+func (c *Config) SetProjectPath(path string) {
+	c.projectConfig.Path = path
+}
+
+// SetProjectName set project path for config, it's not the same as projectSettings
+func (c *Config) SetProjectName(name string) {
+	c.projectConfig.Name = name
+}
+
 // LookupProjectConfig seeks for a appropriate config
 func (c *Config) lookupProjectConfig() (err error) {
-	ps := ProjectConfig{}
 	c.hasProjectFile = false
-	if err = c.fileSystem.ReadConfigFile(c.ProjectFile, &ps); err == nil {
-		c.projectConfig = &ps
+	if err = c.fileSystem.ReadConfigFile(c.ProjectFile, c.projectConfig); err == nil {
 		c.hasProjectFile = true
 		return nil
 	}
@@ -44,34 +55,21 @@ func (c *Config) lookupProjectConfig() (err error) {
 
 // LookupUserConfig seeks for a user config
 func (c *Config) lookupUserConfig() (err error) {
-	gc := GlobalConfig{}
-	c.globalConfig = &gc
-	if err = c.fileSystem.ReadConfigFile(c.UserFile, &gc); err == nil {
+	if err = c.fileSystem.ReadConfigFile(c.UserFile, c.globalConfig); err == nil {
 		return nil
 	}
 
 	if err != nil && strings.Contains(err.Error(), "no such file or directory") == true {
-		err = c.fileSystem.SaveConfigFile(gc, c.UserFile)
+		err = c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
 	}
 
 	return err
 }
 
-// AddProjectConfigFile generates project config file
-func (c *Config) AddProjectConfigFile(pc *ProjectConfig) (err error) {
-	projectFile := strings.TrimRight(pc.GetPath(), string(os.PathSeparator)) + string(os.PathSeparator) + c.ProjectFile
-	if err = c.fileSystem.SaveConfigFile(pc, projectFile); err != nil {
-		return err
-	}
-
-	fpc := GlobalProjectConfig{
-		Name: pc.GetName(),
-		Path: pc.GetPath(),
-	}
-
-	c.globalConfig.Projects = append(c.globalConfig.Projects, fpc)
-
-	return c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
+// Init Initiate conifg
+func (c *Config) Init() {
+	c.projectConfig = &ProjectConfig{}
+	c.globalConfig = &GlobalConfig{}
 }
 
 // LoadConfig loads configuration
@@ -116,11 +114,6 @@ func (c *Config) GetProjectName() string {
 	return c.projectConfig.GetName()
 }
 
-// GetProjectMainContainer gets project main container
-func (c *Config) GetProjectMainContainer() string {
-	return c.projectConfig.GetMainContainer()
-}
-
 // ProjectConfgFileFound checks if current path has config file
 func (c *Config) ProjectConfgFileFound() bool {
 	return c.hasProjectFile
@@ -134,4 +127,60 @@ func (c *Config) GetProjectNameList() []string {
 // SetFileSystem set file system object
 func (c *Config) SetFileSystem(fs fileSystem) {
 	c.fileSystem = fs
+}
+
+// AddProjectConfigFile generates project config file
+func (c *Config) AddProjectConfigFile() (err error) {
+	projectFile := strings.TrimRight(c.GetProjectPath(), string(os.PathSeparator)) + string(os.PathSeparator) + c.ProjectFile
+	if err = c.fileSystem.SaveConfigFile(c.projectConfig, projectFile); err != nil {
+		return err
+	}
+
+	fpc := GlobalProjectConfig{
+		Name: c.GetProjectName(),
+		Path: c.GetProjectPath(),
+	}
+
+	c.globalConfig.Projects = append(c.globalConfig.Projects, fpc)
+
+	return c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
+}
+
+// main container
+
+// SaveContainerNameToProjectConfig saves container name into project file
+func (c *Config) SaveContainerNameToProjectConfig(cn string) (err error) {
+	c.projectConfig.MainContainer = cn
+	return c.saveProjectFile()
+}
+
+// GetProjectMainContainer gets project main container
+func (c *Config) GetProjectMainContainer() string {
+	return c.projectConfig.GetMainContainer()
+}
+
+// main start command
+
+// GetStartCommand gets start command
+func (c *Config) GetStartCommand() string {
+	return c.projectConfig.GetStartCommand()
+}
+
+// SaveStartCommandToProjectConfig saves container name into project file
+func (c *Config) SaveStartCommandToProjectConfig(cmd string) (err error) {
+	c.projectConfig.StartCommand = cmd
+	return c.saveProjectFile()
+}
+
+// GetFile fsfdsafsd
+func (c *Config) GetFile() string {
+	return c.ProjectFile
+}
+
+func (c *Config) saveProjectFile() error {
+	return c.fileSystem.SaveConfigFile(c.projectConfig, c.getProjectFile())
+}
+
+func (c *Config) getProjectFile() string {
+	return strings.TrimRight(c.projectConfig.GetPath(), string(os.PathSeparator)) + string(os.PathSeparator) + c.ProjectFile
 }

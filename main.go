@@ -22,20 +22,23 @@ func main() {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
+	cfg.Init()
 
 	fs := &FileSystem{}
 	cfg.SetFileSystem(fs)
 
-	if err := seekPath(cfg, &DLG, fs); err != nil {
-		log.Fatal(err)
+	initf := func() {
+		if err := seekPath(cfg, &DLG, fs); err != nil {
+			log.Fatal(err)
+		}
+
+		currentDir, _ := fs.GetWd()
+
+		fmt.Printf("\nchanged user location to directory: %s\n\n", currentDir)
 	}
 
-	currentDir, _ := fs.GetWd()
-
-	fmt.Printf("changed user location to directory: %s\n\n", currentDir)
-
 	app := &cli.App{
-		Commands: getCommandList(cfg, &DLG),
+		Commands: getCommandList(cfg, &DLG, initf),
 	}
 
 	err := app.Run(os.Args)

@@ -184,6 +184,8 @@ func TestSeekPath_GetProjectNameList(t *testing.T) {
 		ProjectFile: confgFile,
 	}
 
+	cfg.Init()
+
 	tfs := &testFileSystem{
 		getUserDirectory: func() (string, error) {
 			return "/user/path/", nil
@@ -218,6 +220,8 @@ func TestSeekPath_runDialogCase1(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
+
+	cfg.Init()
 
 	tfs := &testFileSystem{
 		getUserDirectory: func() (string, error) {
@@ -254,6 +258,8 @@ func TestSeekPath_runDialogCase2(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
+
+	cfg.Init()
 
 	tfs := &testFileSystem{
 		getUserDirectory: func() (string, error) {
@@ -302,6 +308,8 @@ func TestSeekPath_runDialogCase3(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
+
+	cfg.Init()
 
 	tfs := &testFileSystem{
 		getUserDirectory: func() (string, error) {
@@ -354,6 +362,8 @@ func TestSeekPath_runDialogCase4(t *testing.T) {
 		ProjectFile: confgFile,
 	}
 
+	cfg.Init()
+
 	tfs := &testFileSystem{
 		getUserDirectory: func() (string, error) {
 			return "/user/path/", nil
@@ -404,6 +414,8 @@ func TestSeekPath_runDialogCase5(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
+
+	cfg.Init()
 
 	expectedName := "added project name"
 	expectedPath := "/added/path/to/project"
@@ -480,6 +492,8 @@ func TestSeekPath_runDialogCase6(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
+
+	cfg.Init()
 
 	expectedName := "added project name"
 	expectedPath := "/added/path/to/project"
