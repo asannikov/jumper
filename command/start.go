@@ -1,96 +1,192 @@
 package command
 
 import (
+	"errors"
 	"log"
+	"os"
+	"os/exec"
+	"strings"
 
 	"github.com/urfave/cli/v2"
 )
 
-// CallStartProject runs docker project
-func CallStartProject(projectPath string, pcn func() (string, error)) *cli.Command {
+type startProjectConfig interface {
+	GetProjectMainContainer() string
+	GetStartCommand() string
+	SaveContainerNameToProjectConfig(string) error
+	SaveStartCommandToProjectConfig(string) error
+}
+
+type startDialog interface {
+	SetMainContaner([]string) (int, string, error)
+	SetStartCommand() (string, error)
+}
+
+func defineProjectMainContainer(cfg startProjectConfig, d startDialog, containerlist []string) (err error) {
+	if cfg.GetProjectMainContainer() == "" {
+		_, container, err := d.SetMainContaner(containerlist)
+
+		if err != nil {
+			return err
+		}
+
+		if container == "" {
+			return errors.New("Container name is empty. Set the container name")
+		}
+
+		return cfg.SaveContainerNameToProjectConfig(container)
+	}
+
+	return err
+}
+
+func defineStartCommand(cfg startProjectConfig, d startDialog, containerlist []string) (err error) {
+	if cfg.GetStartCommand() == "" {
+		startCommand, err := d.SetStartCommand()
+
+		if err != nil {
+			return err
+		}
+
+		if startCommand == "" {
+			return errors.New("Start command cannot be empty")
+		}
+
+		return cfg.SaveStartCommandToProjectConfig(startCommand)
+	}
+
+	return err
+}
+
+func runStartProject(c *cli.Context, cfg startProjectConfig, args []string) error {
+	commandSlice := strings.Split(cfg.GetStartCommand(), " ")
+
+	var binary = commandSlice[0]
+	var initArgs = commandSlice[1:]
+
+	extraInitArgs := c.Args().Slice()
+
+	args = append(initArgs, args...)
+	args = append(args, extraInitArgs...)
+
+	log.Printf("Called: %s %s", binary, strings.Join(args, " "))
+
+	cmd := exec.Command(binary, args...)
+
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+
+// CallStartProjectBasic runs docker project
+func CallStartProjectBasic(initf func(), cfg startProjectConfig, d startDialog, containerlist []string) *cli.Command {
 	cmd := cli.Command{
-		Name:    "start",
-		Aliases: []string{"st"},
-		Usage:   "Start project",
-		Action: func(c *cli.Context) error {
+		Name:            "start",
+		Aliases:         []string{"st"},
+		Usage:           `runs defined command: {docker-compose -f docker-compose.yml up} [custom parameters]`,
+		Description:     `It's possible to use any custom parameters coming after "up"`,
+		SkipFlagParsing: true,
+		Action: func(c *cli.Context) (err error) {
+			initf()
 
-			log.Println(projectPath)
+			if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+				return err
+			}
 
-			phpContainerName, err := pcn()
-			log.Println(phpContainerName, err)
-			return nil
-			/*var binary = "docker"
-			var initArgs = []string{"exec", "-it", "m24_phpfpm_1", "/usr/local/bin/php", "-d", "memory_limit=-1", "/usr/local/bin/composer", "update"}
+			if err = defineStartCommand(cfg, d, containerlist); err != nil {
+				return err
+			}
 
-			extraInitArgs := []string{}
-
-			args := append(initArgs, extraInitArgs...)
-
-			cmd := exec.Command(binary, args...)
-
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-
-			cmd.Run()
-
-			return nil*/
+			return runStartProject(c, cfg, []string{})
 		},
 	}
 
 	return &cmd
 }
 
-/*
-#!/bin/bash
-function parseYaml {
-  local s='[[:space:]]*' w='[a-zA-Z0-9_]*' fs=$(echo @|tr @ '\034') # https://linuxhint.com/bash_tr_command/
-  sed -ne "s|,$s\]$s\$|]|" \
-      -e ":1;s|^\($s\)\($w\)$s:$s\[$s\(.*\)$s,$s\(.*\)$s\]|\1\2: [\3]\n\1  - \4|;t1" \
-      -e "s|^\($s\)\($w\)$s:$s\[$s\(.*\)$s\]|\1\2:\n\1  - \3|;p" $1 | \
-  sed -ne "s|,$s}$s\$|}|" \
-      -e ":1;s|^\($s\)-$s{$s\(.*\)$s,$s\($w\)$s:$s\(.*\)$s}|\1- {\2}\n\1  \3: \4|;t1" \
-      -e    "s|^\($s\)-$s{$s\(.*\)$s}|\1-\n\1  \2|;p" | \
-  sed -ne "s|^\($s\):|\1|" \
-      -e "s|^\($s\)-$s[\"']\(.*\)[\"']$s\$|\1$fs$fs\2|p" \
-      -e "s|^\($s\)-$s\(.*\)$s\$|\1$fs$fs\2|p" \
-      -e "s|^\($s\)\($w\)$s:$s[\"']\(.*\)[\"']$s\$|\1$fs\2$fs\3|p" \
-      -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p" | \
-  awk -F$fs '{
-    indent = length($1)/2;
-    vname[indent] = $2;
-    for (i in vname) {if (i > indent) {delete vname[i]; idx[i]=0}}
-    if (length($2) == 0) {vname[indent] = ++idx[indent] };
-    if (length($3) > 0) {
-      vn=""; for (i=0; i<indent; i++) {vn = (vn)(vname[i])("_")}
-      if ("'$2'_" == vn) {
-         print substr($3 ,1 , match($3,":")-1)
-      }
-    }
-  }'
+// CallStartProjectForceRecreate runs docker project
+func CallStartProjectForceRecreate(initf func(), cfg startProjectConfig, d startDialog, containerlist []string) *cli.Command {
+	cmd := cli.Command{
+		Name:    "start:force",
+		Aliases: []string{"s:f"},
+		Usage:   `runs defined command: {docker-compose -f docker-compose.yml up --force-recreat} [custom parameters]`,
+		Description: `
+		--force-recreate - Recreate containers even if their configuration and image haven't changed
+		It's possible to use any custom parameters coming after "up"`,
+		SkipFlagParsing: true,
+		Action: func(c *cli.Context) (err error) {
+			initf()
+
+			if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+				return err
+			}
+
+			if err = defineStartCommand(cfg, d, containerlist); err != nil {
+				return err
+			}
+
+			return runStartProject(c, cfg, []string{"--force-recreate"})
+		},
+	}
+
+	return &cmd
 }
 
-# Check if volume files exist to avoid creating an empty folder
-VOLUME_LIST=`parseYaml docker-compose.dev.yml services_app_volumes`
-IGNORE_LIST="./src/app/code ./src/m2-hotfixes ./src/patches ./src/var/log ./src/var/report ./src"
-IS_VALID=true
-# Loop through all files missing from the docker-compose.dev.yml file
-for file in $VOLUME_LIST; do
-  if [ ! -e $file ] && [[ ! " $IGNORE_LIST " =~ " $file " ]]; then
-    echo "$file: No such file or directory"
-    IS_VALID=false
-  fi
-done
-# Wait to exit until all missing files have been outputted to the user
-[ $IS_VALID = false ] && echo "Failed to start docker for missing volume files" && exit
+// CallStartProjectOrphans runs docker project
+func CallStartProjectOrphans(initf func(), cfg startProjectConfig, d startDialog, containerlist []string) *cli.Command {
+	cmd := cli.Command{
+		Name:    "start:orphans",
+		Aliases: []string{"s:o"},
+		Usage:   `runs defined command: {docker-compose -f docker-compose.yml up --remove-orphans} [custom parameters]`,
+		Description: `
+		--remove-orphans - Remove containers for services not defined in the Compose file
+		It's possible to use any custom parameters coming after "up"`,
+		SkipFlagParsing: true,
+		Action: func(c *cli.Context) (err error) {
+			initf()
 
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --force-recreate -d --remove-orphans "$@"
+			if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+				return err
+			}
 
-## Blackfire support
-# ------------------
-## First register the blackfire agent with:
-#bin/root blackfire-agent --register --server-id={YOUR_SERVER_ID} --server-token={YOUR_SERVER_TOKEN}
-## Then uncomment the below line (and leave uncommented) to start the agent automatically with bin/start:
-#bin/root /etc/init.d/blackfire-agent start
+			if err = defineStartCommand(cfg, d, containerlist); err != nil {
+				return err
+			}
 
-*/
+			return runStartProject(c, cfg, []string{"--remove-orphans"})
+		},
+	}
+
+	return &cmd
+}
+
+// CallStartProjectForceOrphans runs docker project
+func CallStartProjectForceOrphans(initf func(), cfg startProjectConfig, d startDialog, containerlist []string) *cli.Command {
+	cmd := cli.Command{
+		Name:    "start:force-orphans",
+		Aliases: []string{"s:fo"},
+		Usage:   `runs defined command: {docker-compose -f docker-compose.yml up --force-recreate --remove-orphans} [custom parameters]`,
+		Description: `
+		--force-recreate - Recreate containers even if their configuration and image haven't changed
+		--remove-orphans - Remove containers for services not defined in the Compose file
+		It's possible to use any custom parameters coming after "up"`,
+		SkipFlagParsing: true,
+		Action: func(c *cli.Context) (err error) {
+			initf()
+
+			if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+				return err
+			}
+
+			if err = defineStartCommand(cfg, d, containerlist); err != nil {
+				return err
+			}
+
+			return runStartProject(c, cfg, []string{"--force-recreate", "--remove-orphans"})
+		},
+	}
+
+	return &cmd
+}

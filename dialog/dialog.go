@@ -8,12 +8,40 @@ import (
 
 // Dialog contains methods for the iteraction with promptui
 type Dialog struct {
-	//SetPhpContaner func([]string) (int, string, error)
+	setMainContaner func([]string) (int, string, error)
+	setStartCommand func() (string, error)
+
 	//SetProjectPath func() (string, error)
 	//SetProjectName func() (string, error)
+
+	// Project management
 	SelectProject  func([]string) (int, string, error)
 	AddProjectPath func(string) (string, error)
 	AddProjectName func() (string, error)
+}
+
+// SetStartCommand sets main container name
+func (d *Dialog) SetStartCommand() (string, error) {
+	return d.setStartCommand()
+}
+
+// SetMainContaner sets main container name
+func (d *Dialog) SetMainContaner(cl []string) (int, string, error) {
+	return d.setMainContaner(cl)
+}
+
+// InitDialogFunctions initiate all methods
+func InitDialogFunctions() Dialog {
+	return Dialog{
+		//SetPhpContaner: selectPhpContainer,
+		//SetProjectPath: selectProjectPath,
+		SelectProject:  selectProject,
+		AddProjectPath: addProjectPath,
+		AddProjectName: addProjectName,
+
+		setMainContaner: setMainContaner,
+		setStartCommand: setStartCommand,
+	}
 }
 
 type projectConfig interface {
@@ -41,17 +69,6 @@ func (d *Dialog) CallAddProjectDialog(pc projectConfig) error {
 	pc.SetProjectPath(pp)
 
 	return nil
-}
-
-// InitDialogFunctions initiate all methods
-func InitDialogFunctions() Dialog {
-	return Dialog{
-		//SetPhpContaner: selectPhpContainer,
-		//SetProjectPath: selectProjectPath,
-		SelectProject:  selectProject,
-		AddProjectPath: addProjectPath,
-		AddProjectName: addProjectName,
-	}
 }
 
 // select project path from the list
@@ -98,52 +115,28 @@ func addProjectName() (string, error) {
 	return prompt.Run()
 }
 
-/*func selectPhpContainer(containers []string) (int, string, error) {
+func setMainContaner(containers []string) (int, string, error) {
 	prompt := promptui.Select{
-		Label: "Select php container",
+		Label: "Select main container",
 		Items: containers,
-	}
-
-	return prompt.Run()
-}*/
-
-// get project path or create
-/*func selectProjectPath() (string, error) {
-	//return "Volumes/LS/AV/golang/backendarmy-blog/mgt", nil
-	path, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-
-	validate := func(p string) error {
-		if _, err := os.Stat(p); os.IsNotExist(err) {
-			return err
-		}
-		return nil
-	}
-
-	prompt := promptui.Prompt{
-		Label:    "Path to project",
-		Validate: validate,
-		Default:  path,
 	}
 
 	return prompt.Run()
 }
 
-// set project name
-func setProjectName() (string, error) {
-	validate := func(p string) error {
-		if p == "" {
-			return fmt.Errorf("Project name cannot be empty")
+func setStartCommand() (string, error) {
+	validate := func(c string) error {
+		if c == "" {
+			return fmt.Errorf("Command name cannot be empty")
 		}
 		return nil
 	}
 
 	prompt := promptui.Prompt{
-		Label:    "Project name",
+		Label:    "Set start start",
 		Validate: validate,
+		Default:  "docker-compose -f docker-compose.yml up --force-recreate -d --remove-orphans $1",
 	}
 
 	return prompt.Run()
-}*/
+}

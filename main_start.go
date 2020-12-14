@@ -103,18 +103,20 @@ func seekPath(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem) err
 
 	pl := cfg.GetProjectNameList()
 
-	pc := &projectConfig{}
+	pc := &projectConfig{
+		projectpath: cfg.GetProjectPath(),
+		projectname: cfg.GetProjectName(),
+	}
 
 	if err = runDialog(pc, cfg, DLG, fs, pl, currentDir); err != nil {
 		return err
 	}
 
+	cfg.SetProjectName(pc.GetProjectName())
+	cfg.SetProjectPath(pc.GetProjectPath())
+
 	if pc.selectProjectIsNew == true {
-		project := &config.ProjectConfig{
-			Path: pc.GetProjectPath(),
-			Name: pc.GetProjectName(),
-		}
-		err = cfg.AddProjectConfigFile(project)
+		err = cfg.AddProjectConfigFile()
 	}
 
 	if err != nil {
@@ -129,5 +131,5 @@ func seekPath(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem) err
 		return err
 	}
 
-	return nil
+	return cfg.LoadConfig()
 }

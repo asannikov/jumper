@@ -1,13 +1,14 @@
 package main
 
 import (
+	"mgt/command"
 	"mgt/config"
 	"mgt/dialog"
 
 	"github.com/urfave/cli/v2"
 )
 
-func getCommandList(c *config.Config, d *dialog.Dialog) []*cli.Command {
+func getCommandList(c *config.Config, d *dialog.Dialog, initf func()) []*cli.Command {
 
 	/*getPhpContainerName := func() (string, error) {
 		phpContainer, err := c.GetPhpContainer(func() error {
@@ -27,6 +28,11 @@ func getCommandList(c *config.Config, d *dialog.Dialog) []*cli.Command {
 		command.CallCopyFromContainer(getPhpContainerName),*/
 		//command.CallComposerCommand1(getPhpContainerName),
 		///Volumes/LS/LS/projects/docker/magento/m24/docker-compose.yml
-		//command.CallStartProject(c.GetProjectPath()),
+
+		// Docker start
+		command.CallStartProjectBasic(initf, c, d, getContainerList()),
+		command.CallStartProjectForceRecreate(initf, c, d, getContainerList()),
+		command.CallStartProjectOrphans(initf, c, d, getContainerList()),
+		command.CallStartProjectForceOrphans(initf, c, d, getContainerList()),
 	}
 }
