@@ -22,24 +22,6 @@ type startDialog interface {
 	SetStartCommand() (string, error)
 }
 
-func defineProjectMainContainer(cfg startProjectConfig, d startDialog, containerlist []string) (err error) {
-	if cfg.GetProjectMainContainer() == "" {
-		_, container, err := d.SetMainContaner(containerlist)
-
-		if err != nil {
-			return err
-		}
-
-		if container == "" {
-			return errors.New("Container name is empty. Set the container name")
-		}
-
-		return cfg.SaveContainerNameToProjectConfig(container)
-	}
-
-	return err
-}
-
 func defineStartCommand(cfg startProjectConfig, d startDialog, containerlist []string) (err error) {
 	if cfg.GetStartCommand() == "" {
 		startCommand, err := d.SetStartCommand()
