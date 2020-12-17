@@ -24,12 +24,12 @@ func getCommandList(c *config.Config, d *dialog.Dialog, initf func()) []*cli.Com
 
 	return []*cli.Command{
 		// composer commands
-		command.CallComposerCommand(initf, c, d, getContainerList()),
-		command.CallComposerUpdateCommand(initf, c, d, getContainerList(), getCommandLocationF),
-		command.CallComposerUpdateMemoryCommand(initf, c, d, getContainerList(), getCommandLocationF),
-
-		//command.CallComposerInstallCommand(initf, c, d, getContainerList(), getCommandLocationF),
-		//command.CallComposerInstallMemoryCommand(initf, c, d, getContainerList(), getCommandLocationF),
+		command.CallComposerCommand("composer", initf, c, d, getContainerList(), getCommandLocationF),
+		command.CallComposerCommand("composer:memory", initf, c, d, getContainerList(), getCommandLocationF),
+		command.CallComposerCommand("composer:install", initf, c, d, getContainerList(), getCommandLocationF),
+		command.CallComposerCommand("composer:install:memory", initf, c, d, getContainerList(), getCommandLocationF),
+		command.CallComposerCommand("composer:update", initf, c, d, getContainerList(), getCommandLocationF),
+		command.CallComposerCommand("composer:update:memory", initf, c, d, getContainerList(), getCommandLocationF),
 
 		/*command.CallCliCommand(getPhpContainerName),
 		command.CallBashCommand(getPhpContainerName),
