@@ -60,35 +60,6 @@ func (tc *testComposer) GetContainerList() []string {
 	return tc.containerList
 }
 
-type args struct {
-	get   string
-	slice []string
-}
-
-func (a *args) Get(n int) string {
-	return a.get
-}
-
-func (a *args) Slice() []string {
-	return a.slice
-}
-
-func (a *args) First() string {
-	return ""
-}
-
-func (a *args) Tail() []string {
-	return []string{}
-}
-
-func (a *args) Len() int {
-	return 0
-}
-
-func (a *args) Present() bool {
-	return true
-}
-
 func TestParseCommand(t *testing.T) {
 
 	shortcommand, calltype, dockercmd := parseCommand("composer:update:memory")
@@ -220,6 +191,10 @@ func TestComposerHandleCase5(t *testing.T) {
 	a := &args{
 		get: "m",
 		slice: []string{
+			"m",
+			"update",
+		},
+		tail: []string{
 			"update",
 		},
 	}

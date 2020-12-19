@@ -10,24 +10,71 @@ import (
 	"github.com/urfave/cli/v2" // imports as package "cli"
 )
 
-// CallCliCommand generates CLI command (docker-compose exec phpfpm "$@")
-func CallCliCommand(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
-	cmd := cli.Command{
-		Name:    "cli",
-		Aliases: []string{"c"},
-		Usage:   "Runs cli in container: {docker exec -it main_container} [bash command] [custom parameters]",
+type cliCommand struct {
+	usage         map[string]string
+	aliases       map[string]string
+	args          map[string][]string
+	containerList []string
+	command       map[string]string
+}
+
+func (cli *cliCommand) GetContainerList() []string {
+	return cli.containerList
+}
+
+func (cli *cliCommand) GetCommand(cmd string) string {
+	return cli.command[cmd]
+}
+
+func (cli *cliCommand) GetArgs() map[string][]string {
+	return cli.args
+}
+
+// CallCliCommand calls a range of differnt cli commands
+func CallCliCommand(commandName string, initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+	clic := &cliCommand{
+		usage: map[string]string{
+			"cli":          "Runs cli command in conatiner: {docker exec main_conatain} [command] [custom parameters]",
+			"bash":         "Runs cli bash command in conatiner: {docker exec main_conatain bash} [custom parameters]",
+			"clinotty":     "Runs command {docker exec -t main_container} [command] [custom parameters]",
+			"cliroot":      "Runs command {docker exec -u root main_container} [command] [custom parameters]",
+			"clirootnotty": "Runs command {docker exec -u root -t main_container} [command] [custom parameters]",
+		},
+		aliases: map[string]string{
+			"cli":          "c",
+			"bash":         "b",
+			"clinotty":     "cnt",
+			"cliroot":      "cr",
+			"clirootnotty": "crnt",
+		},
+		args: map[string][]string{
+			"cli":          []string{"-it"},
+			"bash":         []string{"-it"},
+			"cliroot":      []string{"-u", "root", "-it"},
+			"clinotty":     []string{"-i"},
+			"clirootnotty": []string{"-u", "root", "-i"},
+		},
+		containerList: containerlist,
+		command: map[string]string{
+			"cli":          "",
+			"bash":         "bash",
+			"clinotty":     "",
+			"cliroot":      "",
+			"clirootnotty": "",
+		},
+	}
+
+	return &cli.Command{
+		Name:            commandName,
+		Aliases:         []string{clic.aliases[commandName]},
+		Usage:           clic.usage[commandName],
+		SkipFlagParsing: true,
 		Action: func(c *cli.Context) (err error) {
 			initf()
 
 			var args []string
 
-			dockerComposeCliCommand := c.Args().Get(0)
-
-			if dockerComposeCliCommand == "" {
-				return errors.New("Please specify a CLI command (ie. ls)")
-			}
-
-			if args, err = cliCommandHandle(cfg, d, containerlist, dockerComposeCliCommand, c.Args()); err != nil {
+			if args, err = cliCommandHandle(commandName, cfg, d, clic, c.Args()); err != nil {
 				return err
 			}
 
@@ -41,82 +88,38 @@ func CallCliCommand(initf func(), cfg projectConfig, d dialog, containerlist []s
 			return cmd.Run()
 		},
 	}
-
-	return &cmd
 }
 
-// CallCliNoTTYCommand generates CLI command (docker-compose exec -T phpfpm "$@")
-func CallCliNoTTYCommand(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
-	cmd := cli.Command{
-		Name:    "clinotty",
-		Aliases: []string{"cnt"},
-		Usage:   "Runs cli with no TTY in container: {docker exec -T main_container} [bash command] [custom parameters]",
-		Action: func(c *cli.Context) (err error) {
-			initf()
-
-			var args []string
-
-			dockerComposeCliCommand := c.Args().Get(0)
-
-			if dockerComposeCliCommand == "" {
-				return errors.New("Please specify a CLI command (ie. ls)")
-			}
-
-			if args, err = cliCommandHandle(cfg, d, containerlist, dockerComposeCliCommand, c.Args()); err != nil {
-				return err
-			}
-
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
-
-			cmd := exec.Command("docker", args...)
-
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			return cmd.Run()
-		},
-	}
-
-	return &cmd
+type cliCommandInterface interface {
+	GetContainerList() []string
+	GetCommand(string) string
+	GetArgs() map[string][]string
 }
 
-// CallBashCommand generates Bash command (docker-compose exec phpfpm bash)
-func CallBashCommand(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
-	cmd := cli.Command{
-		Name:    "bash",
-		Aliases: []string{"b"},
-		Usage:   "Runs cli in container: {docker exec -it main_container bash} [custom parameters]",
-		Action: func(c *cli.Context) (err error) {
-			initf()
-
-			var args []string
-
-			if args, err = cliCommandHandle(cfg, d, containerlist, "bash", c.Args()); err != nil {
-				return err
-			}
-
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
-
-			cmd := exec.Command("docker", args...)
-
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			return cmd.Run()
-		},
-	}
-
-	return &cmd
-}
-
-func cliCommandHandle(cfg projectConfig, d dialog, containerlist []string, command string, a cli.Args) ([]string, error) {
+func cliCommandHandle(index string, cfg projectConfig, d dialog, c cliCommandInterface, a cli.Args) ([]string, error) {
 	var err error
 
-	if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+	if err = defineProjectMainContainer(cfg, d, c.GetContainerList()); err != nil {
 		return []string{}, err
 	}
 
-	var initArgs = []string{"exec", "-it", cfg.GetProjectMainContainer(), command}
-	extraInitArgs := a.Tail()
-	return append(initArgs, extraInitArgs...), nil
+	var initArgs = []string{"exec"}
+
+	extraInitArgs := c.GetArgs()[index]
+
+	if len(extraInitArgs) > 0 {
+		initArgs = append(initArgs, extraInitArgs...)
+	}
+
+	initArgs = append(initArgs, cfg.GetProjectMainContainer())
+
+	if c.GetCommand(index) != "" {
+		initArgs = append(initArgs, c.GetCommand(index))
+	}
+
+	if c.GetCommand(index) == "" && a.Get(0) == "" {
+		return []string{}, errors.New("Please specify a CLI command (ex. ls)")
+	}
+
+	return append(initArgs, a.Slice()...), nil
 }
