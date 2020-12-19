@@ -38,7 +38,12 @@ func getCommandList(c *config.Config, d *dialog.Dialog, initf func()) []*cli.Com
 		command.CallStartProjectOrphans(initf, c, d, getContainerList()),
 		command.CallStartProjectForceOrphans(initf, c, d, getContainerList()),
 		command.CallStartMainContainer(initf, c, d, getContainerList()),
+		command.CallStartContainers(initf),
 
+		// Docker restart
+		command.CallRestartMainContainer(initf, c, d, getContainerList()),
+		command.CallRestartContainers(initf),
+		
 		// Stop all docker containers
 		command.CallStopAllContainersCommand(container.StopContainers()),
 		command.CallStopSelectedContainersCommand(container.StopContainers(), getContainerList()),
