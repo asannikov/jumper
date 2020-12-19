@@ -15,7 +15,7 @@ func CallCliCommand(initf func(), cfg projectConfig, d dialog, containerlist []s
 	cmd := cli.Command{
 		Name:    "cli",
 		Aliases: []string{"c"},
-		Usage:   "Run cli",
+		Usage:   "Runs cli in container: {docker exec -it main_container} [bash command] [custom parameters]",
 		Action: func(c *cli.Context) (err error) {
 			initf()
 
@@ -50,7 +50,7 @@ func CallBashCommand(initf func(), cfg projectConfig, d dialog, containerlist []
 	cmd := cli.Command{
 		Name:    "bash",
 		Aliases: []string{"b"},
-		Usage:   "Run bash",
+		Usage:   "Runs cli in container: {docker exec -it main_container bash} [custom parameters]",
 		Action: func(c *cli.Context) (err error) {
 			initf()
 
