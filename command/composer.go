@@ -167,6 +167,11 @@ func composerHandle(cfg projectConfig, d dialog, c composerInterface, a cli.Args
 	initArgs = append(initArgs, composerArgs...)
 
 	extraInitArgs := a.Slice()
+
+	if a.Get(0) == "m" {
+		extraInitArgs = a.Tail()
+	}
+
 	args := append(initArgs, extraInitArgs...)
 
 	return args, nil

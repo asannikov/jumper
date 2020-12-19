@@ -23,6 +23,9 @@ func getCommandList(c *config.Config, d *dialog.Dialog, initf func()) []*cli.Com
 	getCommandLocationF := bash.GetCommandLocation()
 
 	return []*cli.Command{
+		command.CallCliCommand(initf, c, d, getContainerList()),
+		command.CallBashCommand(initf, c, d, getContainerList()),
+
 		// composer commands
 		command.CallComposerCommand("composer", initf, c, d, getContainerList(), getCommandLocationF),
 		command.CallComposerCommand("composer:memory", initf, c, d, getContainerList(), getCommandLocationF),
@@ -31,12 +34,7 @@ func getCommandList(c *config.Config, d *dialog.Dialog, initf func()) []*cli.Com
 		command.CallComposerCommand("composer:update", initf, c, d, getContainerList(), getCommandLocationF),
 		command.CallComposerCommand("composer:update:memory", initf, c, d, getContainerList(), getCommandLocationF),
 
-		/*command.CallCliCommand(getPhpContainerName),
-		command.CallBashCommand(getPhpContainerName),
-
-		command.CallComposerUpdateMemoryCommand(getPhpContainerName),
-		command.CallCopyFromContainer(getPhpContainerName),*/
-		//command.CallComposerCommand1(getPhpContainerName),
+		/*command.CallCopyFromContainer(getPhpContainerName),*/
 
 		// Docker start
 		command.CallStartProjectBasic(initf, c, d, getContainerList()),
