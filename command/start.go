@@ -160,3 +160,29 @@ func CallStartProjectForceOrphans(initf func(), cfg projectConfig, d dialog, con
 
 	return &cmd
 }
+
+// CallStartMainContainer runs docker main container
+func CallStartMainContainer(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+	cmd := cli.Command{
+		Name:    "start:maincontainer",
+		Aliases: []string{"startmc"},
+		Usage:   `runs defined command: {docker start main_container}`,
+		Action: func(c *cli.Context) (err error) {
+			initf()
+
+			if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+				return err
+			}
+
+			args := []string{"start", cfg.GetProjectMainContainer()}
+			cmd := exec.Command("docker", args...)
+
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			return cmd.Run()
+		},
+	}
+
+	return &cmd
+}

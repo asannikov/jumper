@@ -11,6 +11,7 @@ import (
 	"github.com/docker/docker/client"
 )
 
+// StartBackground docker image in background
 func StartBackground() {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())

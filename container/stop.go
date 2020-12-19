@@ -3,33 +3,59 @@ package container
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 )
 
-func StopAllContainers() {
-	ctx := context.Background()
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil {
-		panic(err)
-	}
+// StopContainers stops docker containers
+func StopContainers() func([]string) error {
+	return func(filter []string) (err error) {
+		ctx := context.Background()
 
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
-	if err != nil {
-		panic(err)
-	}
+		var cli *client.Client
+		var containers []types.Container
 
-	for _, container := range containers {
-		fmt.Print("Stopping container ", container.ID[:10], "... ")
-
-		for _, name := range container.Names {
-			fmt.Print(name, "... ")
+		if cli, err = client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation()); err != nil {
+			return err
 		}
 
-		if err := cli.ContainerStop(ctx, container.ID, nil); err != nil {
-			panic(err)
+		if containers, err = cli.ContainerList(ctx, types.ContainerListOptions{}); err != nil {
+			return err
 		}
-		fmt.Println("Success")
+
+		for _, container := range containers {
+
+			if len(filter) > 0 {
+				found := false
+				for _, name := range container.Names {
+					for _, c := range filter {
+						if c == strings.TrimLeft(string(name), "/") {
+							found = true
+							break
+						}
+					}
+				}
+
+				if !found {
+					continue
+				}
+			}
+
+			fmt.Print("\nStopping container ", container.ID[:10], "... ")
+
+			for _, name := range container.Names {
+				fmt.Print(name, " ... ")
+			}
+
+			if err := cli.ContainerStop(ctx, container.ID, nil); err != nil {
+				return err
+			}
+
+			fmt.Println("Success")
+		}
+
+		return nil
 	}
 }

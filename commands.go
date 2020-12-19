@@ -4,6 +4,7 @@ import (
 	"mgt/bash"
 	"mgt/command"
 	"mgt/config"
+	"mgt/container"
 	"mgt/dialog"
 
 	"github.com/urfave/cli/v2"
@@ -11,18 +12,10 @@ import (
 
 func getCommandList(c *config.Config, d *dialog.Dialog, initf func()) []*cli.Command {
 
-	/*getPhpContainerName := func() (string, error) {
-		phpContainer, err := c.GetPhpContainer(func() error {
-			return c.EvaluatePhpContainer(func() (int, string, error) {
-				return d.SetPhpContaner(getContainerList())
-			})
-		})
-		return phpContainer, err
-	}*/
-
 	getCommandLocationF := bash.GetCommandLocation()
 
 	return []*cli.Command{
+		// cli commands
 		command.CallCliCommand("cli", initf, c, d, getContainerList()),
 		command.CallCliCommand("bash", initf, c, d, getContainerList()),
 		command.CallCliCommand("clinotty", initf, c, d, getContainerList()),
@@ -44,5 +37,12 @@ func getCommandList(c *config.Config, d *dialog.Dialog, initf func()) []*cli.Com
 		command.CallStartProjectForceRecreate(initf, c, d, getContainerList()),
 		command.CallStartProjectOrphans(initf, c, d, getContainerList()),
 		command.CallStartProjectForceOrphans(initf, c, d, getContainerList()),
+		command.CallStartMainContainer(initf, c, d, getContainerList()),
+
+		// Stop all docker containers
+		command.CallStopAllContainersCommand(container.StopContainers()),
+		command.CallStopSelectedContainersCommand(container.StopContainers(), getContainerList()),
+		command.CallStopMainContainerCommand(container.StopContainers(), initf, c, d, getContainerList()),
+		command.CallStopOneContainerCommand(container.StopContainers(), getContainerList()),
 	}
 }

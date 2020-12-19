@@ -10,9 +10,7 @@ import (
 	"github.com/docker/docker/client"
 )
 
-/**
- * GetContanerList
- */
+// GetContanerList gets active docker container list
 func GetContanerList() []string {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
