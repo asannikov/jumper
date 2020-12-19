@@ -1,6 +1,7 @@
 package main
 
 import (
+	"mgt/bash"
 	"mgt/command"
 	"mgt/config"
 	"mgt/dialog"
@@ -19,15 +20,23 @@ func getCommandList(c *config.Config, d *dialog.Dialog, initf func()) []*cli.Com
 		return phpContainer, err
 	}*/
 
+	getCommandLocationF := bash.GetCommandLocation()
+
 	return []*cli.Command{
+		// composer commands
+		command.CallComposerCommand("composer", initf, c, d, getContainerList(), getCommandLocationF),
+		command.CallComposerCommand("composer:memory", initf, c, d, getContainerList(), getCommandLocationF),
+		command.CallComposerCommand("composer:install", initf, c, d, getContainerList(), getCommandLocationF),
+		command.CallComposerCommand("composer:install:memory", initf, c, d, getContainerList(), getCommandLocationF),
+		command.CallComposerCommand("composer:update", initf, c, d, getContainerList(), getCommandLocationF),
+		command.CallComposerCommand("composer:update:memory", initf, c, d, getContainerList(), getCommandLocationF),
+
 		/*command.CallCliCommand(getPhpContainerName),
 		command.CallBashCommand(getPhpContainerName),
-		command.CallComposerCommand(getPhpContainerName),
-		command.CallComposerUpdateCommand(getPhpContainerName),
+
 		command.CallComposerUpdateMemoryCommand(getPhpContainerName),
 		command.CallCopyFromContainer(getPhpContainerName),*/
 		//command.CallComposerCommand1(getPhpContainerName),
-		///Volumes/LS/LS/projects/docker/magento/m24/docker-compose.yml
 
 		// Docker start
 		command.CallStartProjectBasic(initf, c, d, getContainerList()),

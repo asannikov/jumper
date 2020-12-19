@@ -10,37 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-type startProjectConfig interface {
-	GetProjectMainContainer() string
-	GetStartCommand() string
-	SaveContainerNameToProjectConfig(string) error
-	SaveStartCommandToProjectConfig(string) error
-}
-
-type startDialog interface {
-	SetMainContaner([]string) (int, string, error)
-	SetStartCommand() (string, error)
-}
-
-func defineProjectMainContainer(cfg startProjectConfig, d startDialog, containerlist []string) (err error) {
-	if cfg.GetProjectMainContainer() == "" {
-		_, container, err := d.SetMainContaner(containerlist)
-
-		if err != nil {
-			return err
-		}
-
-		if container == "" {
-			return errors.New("Container name is empty. Set the container name")
-		}
-
-		return cfg.SaveContainerNameToProjectConfig(container)
-	}
-
-	return err
-}
-
-func defineStartCommand(cfg startProjectConfig, d startDialog, containerlist []string) (err error) {
+func defineStartCommand(cfg projectConfig, d dialog, containerlist []string) (err error) {
 	if cfg.GetStartCommand() == "" {
 		startCommand, err := d.SetStartCommand()
 
@@ -58,7 +28,7 @@ func defineStartCommand(cfg startProjectConfig, d startDialog, containerlist []s
 	return err
 }
 
-func runStartProject(c *cli.Context, cfg startProjectConfig, args []string) error {
+func runStartProject(c *cli.Context, cfg projectConfig, args []string) error {
 	commandSlice := strings.Split(cfg.GetStartCommand(), " ")
 
 	var binary = commandSlice[0]
@@ -81,7 +51,7 @@ func runStartProject(c *cli.Context, cfg startProjectConfig, args []string) erro
 }
 
 // CallStartProjectBasic runs docker project
-func CallStartProjectBasic(initf func(), cfg startProjectConfig, d startDialog, containerlist []string) *cli.Command {
+func CallStartProjectBasic(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
 	cmd := cli.Command{
 		Name:            "start",
 		Aliases:         []string{"st"},
@@ -107,7 +77,7 @@ func CallStartProjectBasic(initf func(), cfg startProjectConfig, d startDialog, 
 }
 
 // CallStartProjectForceRecreate runs docker project
-func CallStartProjectForceRecreate(initf func(), cfg startProjectConfig, d startDialog, containerlist []string) *cli.Command {
+func CallStartProjectForceRecreate(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:force",
 		Aliases: []string{"s:f"},
@@ -135,7 +105,7 @@ func CallStartProjectForceRecreate(initf func(), cfg startProjectConfig, d start
 }
 
 // CallStartProjectOrphans runs docker project
-func CallStartProjectOrphans(initf func(), cfg startProjectConfig, d startDialog, containerlist []string) *cli.Command {
+func CallStartProjectOrphans(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:orphans",
 		Aliases: []string{"s:o"},
@@ -163,7 +133,7 @@ func CallStartProjectOrphans(initf func(), cfg startProjectConfig, d startDialog
 }
 
 // CallStartProjectForceOrphans runs docker project
-func CallStartProjectForceOrphans(initf func(), cfg startProjectConfig, d startDialog, containerlist []string) *cli.Command {
+func CallStartProjectForceOrphans(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:force-orphans",
 		Aliases: []string{"s:fo"},
