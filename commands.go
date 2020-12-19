@@ -23,8 +23,11 @@ func getCommandList(c *config.Config, d *dialog.Dialog, initf func()) []*cli.Com
 	getCommandLocationF := bash.GetCommandLocation()
 
 	return []*cli.Command{
-		command.CallCliCommand(initf, c, d, getContainerList()),
-		command.CallBashCommand(initf, c, d, getContainerList()),
+		command.CallCliCommand("cli", initf, c, d, getContainerList()),
+		command.CallCliCommand("bash", initf, c, d, getContainerList()),
+		command.CallCliCommand("clinotty", initf, c, d, getContainerList()),
+		command.CallCliCommand("cliroot", initf, c, d, getContainerList()),
+		command.CallCliCommand("clirootnotty", initf, c, d, getContainerList()),
 
 		// composer commands
 		command.CallComposerCommand("composer", initf, c, d, getContainerList(), getCommandLocationF),
