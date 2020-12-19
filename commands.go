@@ -24,6 +24,7 @@ func getCommandList(c *config.Config, d *dialog.Dialog, initf func()) []*cli.Com
 
 	return []*cli.Command{
 		command.CallCliCommand(initf, c, d, getContainerList()),
+		command.CallCliNoTTYCommand(initf, c, d, getContainerList()),
 		command.CallBashCommand(initf, c, d, getContainerList()),
 
 		// composer commands

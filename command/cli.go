@@ -45,6 +45,41 @@ func CallCliCommand(initf func(), cfg projectConfig, d dialog, containerlist []s
 	return &cmd
 }
 
+// CallCliNoTTYCommand generates CLI command (docker-compose exec -T phpfpm "$@")
+func CallCliNoTTYCommand(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+	cmd := cli.Command{
+		Name:    "clinotty",
+		Aliases: []string{"cnt"},
+		Usage:   "Runs cli with no TTY in container: {docker exec -T main_container} [bash command] [custom parameters]",
+		Action: func(c *cli.Context) (err error) {
+			initf()
+
+			var args []string
+
+			dockerComposeCliCommand := c.Args().Get(0)
+
+			if dockerComposeCliCommand == "" {
+				return errors.New("Please specify a CLI command (ie. ls)")
+			}
+
+			if args, err = cliCommandHandle(cfg, d, containerlist, dockerComposeCliCommand, c.Args()); err != nil {
+				return err
+			}
+
+			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+
+			cmd := exec.Command("docker", args...)
+
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			return cmd.Run()
+		},
+	}
+
+	return &cmd
+}
+
 // CallBashCommand generates Bash command (docker-compose exec phpfpm bash)
 func CallBashCommand(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
 	cmd := cli.Command{
