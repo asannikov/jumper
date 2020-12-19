@@ -1,48 +1,87 @@
 package command
 
 import (
-	"log"
+	"errors"
+	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/urfave/cli/v2" // imports as package "cli"
 )
 
 // CallCliCommand generates CLI command (docker-compose exec phpfpm "$@")
-func CallCliCommand(cp func() (string, error)) *cli.Command {
+func CallCliCommand(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
 	cmd := cli.Command{
 		Name:    "cli",
 		Aliases: []string{"c"},
 		Usage:   "Run cli",
-		Action: func(c *cli.Context) error {
-			containerPhp, _ := cp()
+		Action: func(c *cli.Context) (err error) {
+			initf()
+
+			var args []string
 
 			dockerComposeCliCommand := c.Args().Get(0)
 
 			if dockerComposeCliCommand == "" {
-				log.Println("Please specify a CLI command (ex. ls)")
-			} else {
-				var binary = "docker"
-				var initArgs = []string{"exec", "-it", containerPhp, dockerComposeCliCommand}
-
-				extraInitArgs := []string{}
-
-				args := append(initArgs, extraInitArgs...)
-
-				log.Println(args)
-				cmd := exec.Command(binary, args...)
-
-				cmd.Stdin = os.Stdin
-				cmd.Stdout = os.Stdout
-				cmd.Stderr = os.Stderr
-
-				cmd.Run()
-
+				return errors.New("Please specify a CLI command (ie. ls)")
 			}
 
-			return nil
+			if args, err = cliCommandHandle(cfg, d, containerlist, dockerComposeCliCommand, c.Args()); err != nil {
+				return err
+			}
+
+			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+
+			cmd := exec.Command("docker", args...)
+
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			return cmd.Run()
 		},
 	}
 
 	return &cmd
+}
+
+// CallBashCommand generates Bash command (docker-compose exec phpfpm bash)
+func CallBashCommand(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+	cmd := cli.Command{
+		Name:    "bash",
+		Aliases: []string{"b"},
+		Usage:   "Run bash",
+		Action: func(c *cli.Context) (err error) {
+			initf()
+
+			var args []string
+
+			if args, err = cliCommandHandle(cfg, d, containerlist, "bash", c.Args()); err != nil {
+				return err
+			}
+
+			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+
+			cmd := exec.Command("docker", args...)
+
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			return cmd.Run()
+		},
+	}
+
+	return &cmd
+}
+
+func cliCommandHandle(cfg projectConfig, d dialog, containerlist []string, command string, a cli.Args) ([]string, error) {
+	var err error
+
+	if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+		return []string{}, err
+	}
+
+	var initArgs = []string{"exec", "-it", cfg.GetProjectMainContainer(), command}
+	extraInitArgs := a.Tail()
+	return append(initArgs, extraInitArgs...), nil
 }
