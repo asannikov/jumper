@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os/exec"
+	"strings"
 )
 
 // GetCommandLocation get command locaton in docker container
@@ -53,6 +54,6 @@ func GetCommandLocation() func(string, string) (string, error) {
 			return "", fmt.Errorf("error while reading scanMergedOut: %s", scanMergedOut.Err())
 		}
 
-		return string(scanMergedOut.Bytes()), nil
+		return strings.Trim(string(scanMergedOut.Bytes()), " "), nil
 	}
 }
