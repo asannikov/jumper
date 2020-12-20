@@ -90,7 +90,7 @@ func (fs *FileSystem) GoToProjectPath(projectPath string) error {
 	}
 
 	if currentDir != projectPath {
-		return fmt.Errorf("Expected path %s, the current one %s", projectPath, currentDir)
+		return fmt.Errorf("Expected path '%s', the current one '%s'", projectPath, currentDir)
 	}
 
 	return nil

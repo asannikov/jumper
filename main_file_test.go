@@ -51,8 +51,8 @@ func TestReadConfigFile2(t *testing.T) {
 func TestGoToProjectPath1(t *testing.T) {
 	fs := FileSystem{}
 	currentDir, _ := fs.GetWd()
-	path := currentDir + string(os.PathSeparator) + "config"
-	err := fs.GoToProjectPath(path)
+	// currentDir := currentDir + string(os.PathSeparator) + "config" // for local testing
+	err := fs.GoToProjectPath(currentDir)
 	assert.Equal(t, nil, err)
 }
 
