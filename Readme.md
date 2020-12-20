@@ -16,7 +16,7 @@ common things:
 * stop all containers
 
 PHP
-* run composer install/update with/without memory constrains
+* run composer install/update with/without memory constraint
 * run composer commands
 
 @todo
