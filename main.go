@@ -3,16 +3,16 @@ package main
 import (
 	"fmt"
 	"log"
-	"mgt/config"
-	"mgt/container"
-	"mgt/dialog"
+	"jumper/config"
+	"jumper/container"
+	"jumper/dialog"
 	"os"
 
 	"github.com/urfave/cli/v2"
 	// imports as package "cli"
 )
 
-const confgFile = "mgt.json"
+const confgFile = "jumper.json"
 
 func main() {
 

@@ -2,8 +2,8 @@ package main
 
 import (
 	"errors"
-	"mgt/config"
-	"mgt/dialog"
+	"jumper/config"
+	"jumper/dialog"
 	"os"
 )
 
@@ -35,7 +35,7 @@ type definePathsFileSystem interface {
 
 func definePaths(cfg *config.Config, fs definePathsFileSystem) (err error) {
 	userDir, err := fs.GetUserDirectory()
-	cfg.UserFile = userDir + string(os.PathSeparator) + ".mgt.json"
+	cfg.UserFile = userDir + string(os.PathSeparator) + ".jumper.json"
 	return err
 }
 

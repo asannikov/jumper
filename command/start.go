@@ -2,6 +2,7 @@ package command
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -155,6 +156,132 @@ func CallStartProjectForceOrphans(initf func(), cfg projectConfig, d dialog, con
 			}
 
 			return runStartProject(c, cfg, []string{"--force-recreate", "--remove-orphans"})
+		},
+	}
+
+	return &cmd
+}
+
+// CallStartMainContainer runs docker main container
+func CallStartMainContainer(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+	cmd := cli.Command{
+		Name:    "start:maincontainer",
+		Aliases: []string{"startmc"},
+		Usage:   `runs defined command: {docker start main_container}`,
+		Action: func(c *cli.Context) (err error) {
+			initf()
+
+			if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+				return err
+			}
+
+			args := []string{"start", cfg.GetProjectMainContainer()}
+			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			cmd := exec.Command("docker", args...)
+
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			return cmd.Run()
+		},
+	}
+
+	return &cmd
+}
+
+// CallRestartMainContainer restarts docker main container
+func CallRestartMainContainer(initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+	cmd := cli.Command{
+		Name:    "restart:maincontainer",
+		Aliases: []string{"rmc"},
+		Usage:   `restarts main container`,
+		Action: func(c *cli.Context) (err error) {
+			initf()
+
+			if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+				return err
+			}
+
+			args := []string{"stop", cfg.GetProjectMainContainer()}
+			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			cmd := exec.Command("docker", args...)
+
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			if err := cmd.Run(); err != nil {
+				return err
+			}
+
+			args = []string{"start", cfg.GetProjectMainContainer()}
+			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			cmd = exec.Command("docker", args...)
+
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			return cmd.Run()
+		},
+	}
+
+	return &cmd
+}
+
+// CallStartContainers runs docker custom container
+func CallStartContainers(initf func()) *cli.Command {
+	cmd := cli.Command{
+		Name:    "start:containers",
+		Aliases: []string{"startc"},
+		Usage:   `runs defined command: {docker start} [container]`,
+		Action: func(c *cli.Context) (err error) {
+			initf()
+
+			args := []string{"start"}
+			args = append(args, c.Args().Slice()...)
+			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			cmd := exec.Command("docker", args...)
+
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			return cmd.Run()
+		},
+	}
+
+	return &cmd
+}
+
+// CallRestartContainers restart docker custom containers
+func CallRestartContainers(initf func()) *cli.Command {
+	cmd := cli.Command{
+		Name:    "restart:containers",
+		Aliases: []string{"rc"},
+		Usage:   `runs defined command: {docker start} [container]`,
+		Action: func(c *cli.Context) (err error) {
+			initf()
+
+			args := []string{"stop"}
+			args = append(args, c.Args().Slice()...)
+			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			cmd := exec.Command("docker", args...)
+
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+
+			if err := cmd.Run(); err != nil {
+				return err
+			}
+
+			args = []string{"start"}
+			args = append(args, c.Args().Slice()...)
+			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			cmd = exec.Command("docker", args...)
+
+			cmd.Stdin = os.Stdin
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			return cmd.Run()
 		},
 	}
 

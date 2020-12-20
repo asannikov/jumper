@@ -1,7 +1,7 @@
 package main
 
-/*func getMgtConfig() config.MgtConfig {
-	return config.MgtConfig{
+/*func getJumperConfig() config.JumperConfig {
+	return config.JumperConfig{
 		FileName: "test.json",
 		FileUser: "/path/to/.test.json",
 		FileSystem: config.FileSystem{
@@ -33,7 +33,7 @@ package main
  */
 /* func TestLoadProjectConfigCase1(t *testing.T) {
 
-	cfg := getMgtConfig()
+	cfg := getJumperConfig()
 
 	c := 0
 	cfg.FileSystem.FileExists = func(filename string) (bool, error) {
@@ -65,7 +65,7 @@ package main
  */
 /*func TestLoadProjectConfigCase2(t *testing.T) {
 
-	cfg := getMgtConfig()
+	cfg := getJumperConfig()
 
 	cfg.FileSystem.FileExists = func(filename string) (bool, error) {
 		if filename == "test.json" {
