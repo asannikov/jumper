@@ -1,19 +1,15 @@
 language: go
 
 go:
-  - 1.10.x
-  - 1.11.x
-  - 1.12.x
   - 1.13.x
   - 1.14.x
   - 1.15.x
 
 env:
-  - GO111MODULE=on go get github.com/docker/docker@v19.03.13
+  - GO111MODULE=on
 
 before_install:
-  - go get -v github.com/urfave/cli/v2
+  - go get -v github.com/docker/docker@v19.03.13
 
 script:
-  - ./pre-commit
   - go test -cpu=1,2 -v -tags integration ./...
