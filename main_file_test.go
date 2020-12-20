@@ -1,7 +1,7 @@
 package main
 
 import (
-	"mgt/config"
+	"jumper/config"
 	"os"
 	"strings"
 	"testing"
@@ -43,7 +43,7 @@ func TestReadConfigFile2(t *testing.T) {
 	fs := FileSystem{}
 	currentDir, _ := fs.GetWd()
 	configuration := config.ProjectConfig{}
-	err := fs.ReadConfigFile(currentDir+string(os.PathSeparator)+"mgt_test.json", &configuration)
+	err := fs.ReadConfigFile(currentDir+string(os.PathSeparator)+"jumper_test.json", &configuration)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, "main_container_name", configuration.GetMainContainer())
 }

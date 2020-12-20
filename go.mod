@@ -1,4 +1,4 @@
-module mgt
+module jumper
 
 go 1.15
 

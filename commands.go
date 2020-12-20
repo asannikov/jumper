@@ -1,11 +1,11 @@
 package main
 
 import (
-	"mgt/bash"
-	"mgt/command"
-	"mgt/config"
-	"mgt/container"
-	"mgt/dialog"
+	"jumper/bash"
+	"jumper/command"
+	"jumper/config"
+	"jumper/container"
+	"jumper/dialog"
 
 	"github.com/urfave/cli/v2"
 )

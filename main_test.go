@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"mgt/config"
-	"mgt/dialog"
+	"jumper/config"
+	"jumper/dialog"
 	"os"
 	"reflect"
 	"testing"
@@ -103,7 +103,7 @@ func TestDefinePaths(t *testing.T) {
 	err := definePaths(cfg, tfs)
 
 	assert.Equal(t, nil, err)
-	assert.Equal(t, "/user/path/"+string(os.PathSeparator)+".mgt.json", cfg.UserFile)
+	assert.Equal(t, "/user/path/"+string(os.PathSeparator)+".jumper.json", cfg.UserFile)
 
 	tfs = &testFileSystem{
 		getUserDirectory: func() (string, error) {

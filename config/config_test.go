@@ -125,6 +125,7 @@ func TestLookupUserConfigCase1(t *testing.T) {
 	}
 
 	cfg := Config{}
+	cfg.Init()
 	cfg.SetFileSystem(&fs)
 	assert.Equal(t, nil, cfg.lookupUserConfig())
 
