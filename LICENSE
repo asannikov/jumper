@@ -1,24 +1,6 @@
-# JUMPER
+MIT License
 
-### How to add extra config to project json file
-Add new project fields here `config/ProjectConfig.go` 
-and add the related method to `config/config.go`, ie:
-```
-// SaveContainerNameToProjectConfig saves container name into project file
-func (c *Config) SaveContainerNameToProjectConfig(cn string) (err error) {
-	c.projectConfig.MainContainer = cn
-	return c.fileSystem.SaveConfigFile(c.projectConfig, c.getProjectFile())
-}
-
-// GetProjectMainContainer gets project main container
-func (c *Config) GetProjectMainContainer() string {
-	return c.projectConfig.GetMainContainer()
-}
-```
-
-### MIT License
-
-# Copyright (c) Anton Sannikov
+Copyright (c) 2020 Anton Sannikov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
