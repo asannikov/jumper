@@ -43,11 +43,16 @@ func getCommandList(c *config.Config, d *dialog.Dialog, initf func()) []*cli.Com
 		// Docker restart
 		command.CallRestartMainContainer(initf, c, d, getContainerList()),
 		command.CallRestartContainers(initf),
-		
+
 		// Stop all docker containers
 		command.CallStopAllContainersCommand(container.StopContainers()),
 		command.CallStopSelectedContainersCommand(container.StopContainers(), getContainerList()),
 		command.CallStopMainContainerCommand(container.StopContainers(), initf, c, d, getContainerList()),
 		command.CallStopOneContainerCommand(container.StopContainers(), getContainerList()),
+
+		// Get Project Path
+		command.GetProjectPath(initf, c, d),
+
+		// docker pull https://docs.docker.com/engine/api/sdk/examples/
 	}
 }
