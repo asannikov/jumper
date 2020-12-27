@@ -31,7 +31,7 @@ func (cli *cliCommand) GetArgs() map[string][]string {
 }
 
 // CallCliCommand calls a range of differnt cli commands
-func CallCliCommand(commandName string, initf func(), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+func CallCliCommand(commandName string, initf func(bool), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
 	clic := &cliCommand{
 		usage: map[string]string{
 			"cli":          "Runs cli command in conatiner: {docker exec main_conatain} [command] [custom parameters]",
@@ -70,7 +70,7 @@ func CallCliCommand(commandName string, initf func(), cfg projectConfig, d dialo
 		Usage:           clic.usage[commandName],
 		SkipFlagParsing: true,
 		Action: func(c *cli.Context) (err error) {
-			initf()
+			initf(true)
 
 			var args []string
 

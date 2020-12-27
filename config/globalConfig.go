@@ -8,7 +8,23 @@ type GlobalProjectConfig struct {
 
 // GlobalConfig contains file config
 type GlobalConfig struct {
-	Projects []GlobalProjectConfig `json:"projects"`
+	Projects  []GlobalProjectConfig `json:"projects"`
+	Copyright bool                  `json:"copyright_text"`
+}
+
+// EnableCopyright Enable copyright output
+func (g *GlobalConfig) EnableCopyright() {
+	g.Copyright = true
+}
+
+// DisableCopyright Disable copyright output
+func (g *GlobalConfig) DisableCopyright() {
+	g.Copyright = false
+}
+
+// ShowCopyrightText check the status of copyright output
+func (g *GlobalConfig) ShowCopyrightText() bool {
+	return g.Copyright
 }
 
 // AddNewProject adds new project

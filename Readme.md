@@ -108,7 +108,12 @@ cli, c                          Runs cli command in conatiner: {docker exec main
    ```
 
 # FAQ
-## How to add custom command
+## How to hide long copyright text:
+```$ jumper copyright disable```
+
+You accept terms of the agreement the by doing this.
+
+## How to add custom command:
 Find method getCommandList in `commands.go` and write any custom method, ie:
 `command.CustomMethod()`
 
@@ -117,7 +122,7 @@ getCommandList function has 2 parameters:
 - d - dialog, is used for communication with user, select container, remove file, etc.
 - initf - function, that has to be called inside your command if you are going to interact with the config file or docker project.
 
-## How to add extra config to project json file
+## How to add extra config to project json file:
 Add new project fields here `config/ProjectConfig.go` 
 and add the related method to `config/config.go`, ie:
 ```
@@ -132,6 +137,14 @@ func (c *Config) GetProjectMainContainer() string {
 	return c.projectConfig.GetMainContainer()
 }
 ```
+
+## How to add custom option to GlobalConfig:
+global config is visible only in `config/config.go` scope. Follows these steps to create custom options:
+
+1. Add json field into `GlobalConfig` type in `globalConfig.go`.
+2. Add new methods for new option handling in `globalConfig.go`.
+3. Add duplicated methods in `config/config.go`.
+4. Inject your logic inside the code, see ie Copyright methods: `EnableCopyright/DisableCopyright/ShowCopyrightText`
 
 ## MIT License
 

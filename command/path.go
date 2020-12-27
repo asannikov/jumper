@@ -5,7 +5,7 @@ import (
 )
 
 // GetProjectPath gets absolute path to the project without doing anything with docker
-func GetProjectPath(initf func(), cfg projectConfig, d dialog) *cli.Command {
+func GetProjectPath(initf func(bool), cfg projectConfig, d dialog) *cli.Command {
 	return &cli.Command{
 		Name:        "path",
 		Aliases:     []string{},
@@ -13,7 +13,7 @@ func GetProjectPath(initf func(), cfg projectConfig, d dialog) *cli.Command {
 		Description: ``,
 		//SkipFlagParsing: true,
 		Action: func(c *cli.Context) (err error) {
-			initf()
+			initf(true)
 			return nil
 		},
 	}

@@ -73,9 +73,13 @@ func (c *Config) Init() {
 }
 
 // LoadConfig loads configuration
-func (c *Config) LoadConfig() (err error) {
+func (c *Config) LoadConfig(seekProject bool) (err error) {
 	if err = c.lookupUserConfig(); err != nil {
 		return err
+	}
+
+	if !seekProject {
+		return nil
 	}
 
 	err = c.lookupProjectConfig()
@@ -183,4 +187,21 @@ func (c *Config) saveProjectFile() error {
 
 func (c *Config) getProjectFile() string {
 	return strings.TrimRight(c.projectConfig.GetPath(), string(os.PathSeparator)) + string(os.PathSeparator) + c.ProjectFile
+}
+
+// EnableCopyright Enable copyright output
+func (c *Config) EnableCopyright() error {
+	c.globalConfig.EnableCopyright()
+	return c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
+}
+
+// DisableCopyright Disable copyright output
+func (c *Config) DisableCopyright() error {
+	c.globalConfig.DisableCopyright()
+	return c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
+}
+
+// ShowCopyrightText check the status of copyright output
+func (c *Config) ShowCopyrightText() bool {
+	return c.globalConfig.ShowCopyrightText()
 }

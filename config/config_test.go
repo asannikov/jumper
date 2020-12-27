@@ -173,7 +173,7 @@ func TestLoadConfigCase1(t *testing.T) {
 
 	cfg := Config{}
 	cfg.SetFileSystem(&fs)
-	err := cfg.LoadConfig()
+	err := cfg.LoadConfig(true)
 	assert.EqualError(t, err, "user config error")
 }
 
@@ -195,7 +195,7 @@ func TestLoadConfigCase2(t *testing.T) {
 
 	cfg := Config{}
 	cfg.SetFileSystem(&fs)
-	err := cfg.LoadConfig()
+	err := cfg.LoadConfig(true)
 	assert.EqualError(t, err, "lookupProjectConfig error")
 }
 
@@ -217,7 +217,7 @@ func TestLoadConfigCase3(t *testing.T) {
 
 	cfg := Config{}
 	cfg.SetFileSystem(&fs)
-	assert.Equal(t, nil, cfg.LoadConfig())
+	assert.Equal(t, nil, cfg.LoadConfig(true))
 }
 
 func TestFindProjectPathInJSONCase1(t *testing.T) {

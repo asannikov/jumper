@@ -85,15 +85,27 @@ type seekPathFileSystem interface {
 	GetWd() (string, error)
 }
 
-func seekPath(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem) error {
-	var currentDir string
-	var err error
-
+func loadGlobalConfig(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem) (err error) {
 	if err = definePaths(cfg, fs); err != nil {
 		return err
 	}
 
-	if err = cfg.LoadConfig(); err != nil {
+	if err = cfg.LoadConfig(false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func seekPath(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem, seekProject bool) error {
+	var currentDir string
+	var err error
+
+	if !seekProject {
+		return nil
+	}
+
+	if err = loadGlobalConfig(cfg, DLG, fs); err != nil {
 		return err
 	}
 
@@ -131,5 +143,5 @@ func seekPath(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem) err
 		return err
 	}
 
-	return cfg.LoadConfig()
+	return cfg.LoadConfig(seekProject)
 }
