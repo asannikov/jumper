@@ -5,16 +5,16 @@ import (
 	"jumper/config"
 	"jumper/container"
 	"jumper/dialog"
+	"jumper/lib"
 	"log"
 	"os"
-	"time"
 
 	"github.com/urfave/cli/v2"
 	// imports as package "cli"
 )
 
 const confgFile = "jumper.json"
-const version = "1.0.1"
+const version = "1.1.0"
 
 func main() {
 
@@ -29,17 +29,19 @@ func main() {
 	fs := &FileSystem{}
 	cfg.SetFileSystem(fs)
 
-	initf := func() {
-		if err := seekPath(cfg, &DLG, fs); err != nil {
+	// Loading only global config
+	loadGlobalConfig(cfg, &DLG, fs)
+
+	initf := func(seekProject bool) {
+		if err := seekPath(cfg, &DLG, fs, seekProject); err != nil {
 			log.Fatal(err)
 		}
 
-		currentDir, _ := fs.GetWd()
-
-		fmt.Printf("\nchanged user location to directory: %s\n\n", currentDir)
+		if seekProject == true {
+			currentDir, _ := fs.GetWd()
+			fmt.Printf("\nchanged user location to directory: %s\n\n", currentDir)
+		}
 	}
-
-	currentTime := time.Now()
 
 	app := &cli.App{
 		Name:                 "Jumper - the tool for quick docker project management in cli",
@@ -54,29 +56,7 @@ func main() {
 				Email: "",
 			},
 		},
-		Copyright: fmt.Sprintf(`
-MIT License
-
-Copyright (c) %d Anton Sannikov
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-`, currentTime.Year()),
+		Copyright: lib.GetCopyrightText(cfg),
 	}
 
 	err := app.Run(os.Args)

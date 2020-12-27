@@ -21,13 +21,13 @@ func CallStopAllContainersCommand(stopFuncton func([]string) error) *cli.Command
 }
 
 // CallStopMainContainerCommand stops main container
-func CallStopMainContainerCommand(stopFuncton func([]string) error, initf func(), cfg projectConfig, d dialog, containerList []string) *cli.Command {
+func CallStopMainContainerCommand(stopFuncton func([]string) error, initf func(bool), cfg projectConfig, d dialog, containerList []string) *cli.Command {
 	return &cli.Command{
 		Name:    "stop:maincontainer",
 		Aliases: []string{"smc"},
 		Usage:   "Stops main docker container",
 		Action: func(c *cli.Context) (err error) {
-			initf()
+			initf(true)
 
 			if err = defineProjectMainContainer(cfg, d, containerList); err != nil {
 				return err

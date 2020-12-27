@@ -133,6 +133,14 @@ func (c *Config) GetProjectMainContainer() string {
 }
 ```
 
+## How to add custom option to GlobalConfig:
+global config is visible only in `config/config.go` scope. Follows these steps to create custom options:
+
+1. Add json field into `GlobalConfig` type in `globalConfig.go`.
+2. Add new methods for new option handling in `globalConfig.go`.
+3. Add duplicated methods in `config/config.go`.
+4. Inject your logic inside the code, see ie Copyright methods: `EnableCopyright/DisableCopyright/ShowCopyrightText`
+
 ## MIT License
 
 Copyright (c) Anton Sannikov

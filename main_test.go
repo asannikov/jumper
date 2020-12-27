@@ -128,7 +128,7 @@ func TestSeekPath_DefinePaths(t *testing.T) {
 
 	dialog := &dialog.Dialog{}
 
-	err := seekPath(cfg, dialog, tfs)
+	err := seekPath(cfg, dialog, tfs, true)
 	assert.EqualError(t, err, "Cannot read directory")
 }
 
@@ -150,7 +150,7 @@ func TestSeekPath_LoadConfig(t *testing.T) {
 
 	dialog := &dialog.Dialog{}
 
-	err := seekPath(cfg, dialog, tfs)
+	err := seekPath(cfg, dialog, tfs, true)
 	assert.EqualError(t, err, "Cannot read config file")
 }
 
@@ -175,7 +175,7 @@ func TestSeekPath_GetWd(t *testing.T) {
 
 	dialog := &dialog.Dialog{}
 
-	err := seekPath(cfg, dialog, tfs)
+	err := seekPath(cfg, dialog, tfs, true)
 	assert.EqualError(t, err, "Cannot get current directory")
 }
 
@@ -209,7 +209,7 @@ func TestSeekPath_GetProjectNameList(t *testing.T) {
 	cfg.SetFileSystem(tfs)
 	dialog := &dialog.Dialog{}
 
-	err := seekPath(cfg, dialog, tfs)
+	err := seekPath(cfg, dialog, tfs, true)
 	assert.EqualError(t, err, "stop execution")
 
 	pl := cfg.GetProjectNameList()
@@ -250,7 +250,7 @@ func TestSeekPath_runDialogCase1(t *testing.T) {
 		},
 	}
 
-	err := seekPath(cfg, dialog, tfs)
+	err := seekPath(cfg, dialog, tfs, true)
 	assert.EqualError(t, err, "Error SelectProject dialog")
 }
 
@@ -300,7 +300,7 @@ func TestSeekPath_runDialogCase2(t *testing.T) {
 		},
 	}
 
-	err := seekPath(cfg, dialog, tfs)
+	err := seekPath(cfg, dialog, tfs, true)
 	assert.EqualError(t, err, "Is ok")
 }
 
@@ -353,7 +353,7 @@ func TestSeekPath_runDialogCase3(t *testing.T) {
 		},
 	}
 
-	err := seekPath(cfg, dialog, tfs)
+	err := seekPath(cfg, dialog, tfs, true)
 	assert.EqualError(t, err, "Is ok")
 }
 
@@ -406,7 +406,7 @@ func TestSeekPath_runDialogCase4(t *testing.T) {
 		},
 	}
 
-	err := seekPath(cfg, dialog, tfs)
+	err := seekPath(cfg, dialog, tfs, true)
 	assert.EqualError(t, err, "Add project name dialog error")
 }
 
@@ -478,7 +478,7 @@ func TestSeekPath_runDialogCase5(t *testing.T) {
 		},
 	}
 
-	err := seekPath(cfg, dialog, tfs)
+	err := seekPath(cfg, dialog, tfs, true)
 
 	assert.Equal(t, expectedName, name)
 	assert.Equal(t, expectedPath, path)
@@ -554,7 +554,7 @@ func TestSeekPath_runDialogCase6(t *testing.T) {
 		},
 	}
 
-	err := seekPath(cfg, dialog, tfs)
+	err := seekPath(cfg, dialog, tfs, true)
 
 	assert.Equal(t, expectedName, name)
 	assert.Equal(t, expectedPath, path)

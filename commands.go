@@ -10,7 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func getCommandList(c *config.Config, d *dialog.Dialog, initf func()) []*cli.Command {
+func getCommandList(c *config.Config, d *dialog.Dialog, initf func(bool)) []*cli.Command {
 
 	getCommandLocationF := bash.GetCommandLocation()
 
@@ -52,6 +52,9 @@ func getCommandList(c *config.Config, d *dialog.Dialog, initf func()) []*cli.Com
 
 		// Get Project Path
 		command.GetProjectPath(initf, c, d),
+
+		// Copyright
+		command.CallCopyrightCommand(initf, c, d),
 
 		// docker pull https://docs.docker.com/engine/api/sdk/examples/
 	}
