@@ -37,7 +37,7 @@ func GetCopyrightText(cfg copyRightGlobalConfig) string {
 	Copyright (c) %d Anton Sannikov`
 
 	if cfg.ShowCopyrightText() {
-		copyrightText = copyrightText + description
+		copyrightText = copyrightText + "\n\n\t" + description
 	}
 
 	return fmt.Sprintf(copyrightText, currentTime.Year())
