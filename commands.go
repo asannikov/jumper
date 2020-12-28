@@ -20,7 +20,7 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool)) []*cli.
 
 	getCommandLocationF := bash.GetCommandLocation()
 
-	dck := &docker.Docker{}
+	dck := docker.GetDockerInstance()
 
 	cl := &dockerStartDialog{}
 	cl.setDialog(d)
