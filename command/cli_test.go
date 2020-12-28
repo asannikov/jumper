@@ -62,11 +62,15 @@ func (d *testCliDialog) SetMainContaner([]string) (int, string, error) {
 	return 0, "", nil
 }
 
-func (d *testCliDialog) SetStartCommand() (string, error) {
+func (d *testCliDialog) StartCommand() (string, error) {
 	return "", nil
 }
 
 func (d *testCliDialog) StartDocker() (string, error) {
+	return "", nil
+}
+
+func (d *testCliDialog) DockerService() (string, error) {
 	return "", nil
 }
 

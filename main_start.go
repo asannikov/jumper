@@ -85,6 +85,18 @@ type seekPathFileSystem interface {
 	GetWd() (string, error)
 }
 
+func defineDockerCommand(cfg *config.Config, DLG *dialog.Dialog) (err error) {
+	command := cfg.GetDockerCommand()
+	if command == "" {
+		if command, err = DLG.DockerService(); err != nil {
+			return err
+		}
+
+		cfg.SetDockerCommand(command)
+	}
+	return nil
+}
+
 func loadGlobalConfig(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem) (err error) {
 	if err = definePaths(cfg, fs); err != nil {
 		return err

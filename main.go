@@ -31,6 +31,9 @@ func main() {
 	// Loading only global config
 	loadGlobalConfig(cfg, &DLG, fs)
 
+	// Define docker command
+	defineDockerCommand(cfg, &DLG)
+
 	initf := func(seekProject bool) {
 		if err := seekPath(cfg, &DLG, fs, seekProject); err != nil {
 			log.Fatal(err)

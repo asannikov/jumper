@@ -13,7 +13,7 @@ import (
 
 func defineStartCommand(cfg projectConfig, d dialog, containerlist []string) (err error) {
 	if cfg.GetStartCommand() == "" {
-		startCommand, err := d.SetStartCommand()
+		startCommand, err := d.DockerService()
 
 		if err != nil {
 			return err

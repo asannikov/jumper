@@ -8,8 +8,19 @@ type GlobalProjectConfig struct {
 
 // GlobalConfig contains file config
 type GlobalConfig struct {
-	Projects  []GlobalProjectConfig `json:"projects"`
-	Copyright bool                  `json:"copyright_text"`
+	Projects      []GlobalProjectConfig `json:"projects"`
+	Copyright     bool                  `json:"copyright_text"`
+	DockerCommand string                `json:"docker_service"`
+}
+
+// SetDockerCommand define docker command
+func (g *GlobalConfig) SetDockerCommand(c string) {
+	g.DockerCommand = c
+}
+
+// GetDockerCommand gets the docker command
+func (g *GlobalConfig) GetDockerCommand() string {
+	return g.DockerCommand
 }
 
 // EnableCopyright Enable copyright output

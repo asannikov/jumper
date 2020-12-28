@@ -2,8 +2,10 @@ package docker
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -28,10 +30,34 @@ func (d *Docker) InitClient() (err error) {
 	return err
 }
 
+// macos open --hide -a Docker
+func openDocker(command string) error {
+
+	cmdSlice := strings.Split(command, " ")
+
+	if len(cmdSlice) == 0 {
+		return errors.New("Docker instance is empty. Please, define it")
+	}
+
+	command = strings.Trim(cmdSlice[0], " ")
+	args := []string{}
+
+	for _, v := range cmdSlice[1:] {
+		args = append(args, strings.Trim(v, " "))
+	}
+
+	cmd := exec.Command(command, args...)
+
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Run starts docker service
-func (d *Docker) Run() (err error) {
-	cmd := exec.Command("open", "--hide", "-a", "Docker")
-	if err = cmd.Run(); err != nil {
+func (d *Docker) Run(cmd string) (err error) {
+	if err = openDocker(cmd); err != nil {
 		return err
 	}
 

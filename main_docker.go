@@ -7,15 +7,16 @@ import (
 )
 
 type dockerInstance interface {
-	Run() error
+	Run(string) error
 	GetContanerList() ([]string, error)
 	Stat() (string, error)
 	InitClient() error
 }
 
 type dockerStartDialog struct {
-	dialog *dialog.Dialog
-	docker *docker.Docker
+	dialog        *dialog.Dialog
+	docker        *docker.Docker
+	dockerService string
 }
 
 func (dsd *dockerStartDialog) GetContainerList() ([]string, error) {
@@ -37,7 +38,7 @@ func (dsd *dockerStartDialog) GetContainerList() ([]string, error) {
 	}
 
 	if choice == "y" || choice == "Y" {
-		err = dsd.docker.Run()
+		err = dsd.docker.Run(dsd.dockerService)
 	} else {
 		err = dsd.docker.InitClient()
 	}
@@ -55,6 +56,10 @@ func (dsd *dockerStartDialog) GetContainerList() ([]string, error) {
 
 func (dsd *dockerStartDialog) setDialog(d dialogCommand) {
 	dsd.dialog = d.(*dialog.Dialog)
+}
+
+func (dsd *dockerStartDialog) setDockerService(c string) {
+	dsd.dockerService = c
 }
 
 func (dsd *dockerStartDialog) setDocker(d dockerInstance) {

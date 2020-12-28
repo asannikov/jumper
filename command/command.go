@@ -13,8 +13,9 @@ type projectConfig interface {
 
 type dialog interface {
 	SetMainContaner([]string) (int, string, error)
-	SetStartCommand() (string, error)
+	StartCommand() (string, error)
 	StartDocker() (string, error)
+	DockerService() (string, error)
 }
 
 type containerlist interface {

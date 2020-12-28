@@ -11,8 +11,9 @@ import (
 
 type dialogCommand interface {
 	SetMainContaner([]string) (int, string, error)
-	SetStartCommand() (string, error)
+	StartCommand() (string, error)
 	StartDocker() (string, error)
+	DockerService() (string, error)
 }
 
 func getCommandList(c *config.Config, d dialogCommand, initf func(bool)) []*cli.Command {
@@ -24,6 +25,7 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool)) []*cli.
 	cl := &dockerStartDialog{}
 	cl.setDialog(d)
 	cl.setDocker(dck)
+	cl.setDockerService(c.GetDockerCommand())
 
 	return []*cli.Command{
 		// cli commands

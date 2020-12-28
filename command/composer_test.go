@@ -33,11 +33,15 @@ func (d *testComposerDialog) SetMainContaner([]string) (int, string, error) {
 	return 0, "", nil
 }
 
-func (d *testComposerDialog) SetStartCommand() (string, error) {
+func (d *testComposerDialog) StartCommand() (string, error) {
 	return "", nil
 }
 
 func (d *testComposerDialog) StartDocker() (string, error) {
+	return "", nil
+}
+
+func (d *testComposerDialog) DockerService() (string, error) {
 	return "", nil
 }
 
