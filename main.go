@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"jumper/config"
-	"jumper/container"
 	"jumper/dialog"
 	"jumper/lib"
 	"log"
@@ -14,7 +13,7 @@ import (
 )
 
 const confgFile = "jumper.json"
-const version = "1.1.0"
+const version = "1.2.0"
 
 func main() {
 
@@ -31,6 +30,9 @@ func main() {
 
 	// Loading only global config
 	loadGlobalConfig(cfg, &DLG, fs)
+
+	// Define docker command
+	defineDockerCommand(cfg, &DLG)
 
 	initf := func(seekProject bool) {
 		if err := seekPath(cfg, &DLG, fs, seekProject); err != nil {
@@ -64,8 +66,4 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func getContainerList() []string {
-	return container.GetContanerList()
 }

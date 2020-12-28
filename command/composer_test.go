@@ -33,7 +33,15 @@ func (d *testComposerDialog) SetMainContaner([]string) (int, string, error) {
 	return 0, "", nil
 }
 
-func (d *testComposerDialog) SetStartCommand() (string, error) {
+func (d *testComposerDialog) StartCommand() (string, error) {
+	return "", nil
+}
+
+func (d *testComposerDialog) StartDocker() (string, error) {
+	return "", nil
+}
+
+func (d *testComposerDialog) DockerService() (string, error) {
 	return "", nil
 }
 
@@ -95,7 +103,12 @@ func TestComposerHandleCase1(t *testing.T) {
 		slice: []string{},
 	}
 
-	_, err := composerHandle(cfg, dlg, cmp, a)
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	_, err := composerHandle(cfg, dlg, cmp, cl, a)
 
 	assert.EqualError(t, err, "Container name is empty. Set the container name")
 }
@@ -114,7 +127,12 @@ func TestComposerHandleCase2(t *testing.T) {
 		slice: []string{},
 	}
 
-	_, err := composerHandle(cfg, dlg, cmp, a)
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	_, err := composerHandle(cfg, dlg, cmp, cl, a)
 
 	assert.Nil(t, err)
 }
@@ -139,7 +157,12 @@ func TestComposerHandleCase3(t *testing.T) {
 		slice: []string{},
 	}
 
-	args, err := composerHandle(cfg, dlg, cmp, a)
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	args, err := composerHandle(cfg, dlg, cmp, cl, a)
 
 	assert.Nil(t, err)
 	assert.Equal(t, []string{"exec", "-it", "containerName", "composer"}, args)
@@ -167,7 +190,12 @@ func TestComposerHandleCase4(t *testing.T) {
 		},
 	}
 
-	args, err := composerHandle(cfg, dlg, cmp, a)
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	args, err := composerHandle(cfg, dlg, cmp, cl, a)
 
 	assert.Nil(t, err)
 	assert.Equal(t, []string{"exec", "-it", "containerName", "composer", "update"}, args)
@@ -199,7 +227,12 @@ func TestComposerHandleCase5(t *testing.T) {
 		},
 	}
 
-	args, err := composerHandle(cfg, dlg, cmp, a)
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	args, err := composerHandle(cfg, dlg, cmp, cl, a)
 
 	assert.Nil(t, err)
 	assert.Equal(t, []string{"exec", "-i", "containerName", "/path/to/php", "-d", "memory_limit=-1", "/path/to/composer", "update"}, args)
@@ -227,7 +260,12 @@ func TestComposerHandleCase6(t *testing.T) {
 		},
 	}
 
-	args, err := composerHandle(cfg, dlg, cmp, a)
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	args, err := composerHandle(cfg, dlg, cmp, cl, a)
 
 	assert.Nil(t, err)
 	assert.Equal(t, []string{"exec", "-i", "containerName", "/path/to/php", "-d", "memory_limit=-1", "/path/to/composer", "update", "--help"}, args)
@@ -258,7 +296,12 @@ func TestComposerHandleCase7(t *testing.T) {
 		},
 	}
 
-	_, err := composerHandle(cfg, dlg, cmp, a)
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	_, err := composerHandle(cfg, dlg, cmp, cl, a)
 
 	assert.EqualError(t, err, "Error on getting php path")
 }
@@ -288,7 +331,12 @@ func TestComposerHandleCase8(t *testing.T) {
 		},
 	}
 
-	_, err := composerHandle(cfg, dlg, cmp, a)
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	_, err := composerHandle(cfg, dlg, cmp, cl, a)
 
 	assert.EqualError(t, err, "Error on getting composer path")
 }

@@ -1,18 +1,9 @@
-package container
-
-import (
-	"context"
-	"fmt"
-	"io"
-	"os"
-
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/client"
-)
+package docker
 
 // StartBackground docker image in background
-func StartBackground() {
+// See how to use custom port
+// https://stackoverflow.com/questions/45429276/how-to-run-docker-run-using-go-sdk-for-docker
+/*func StartBackground() {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -30,6 +21,7 @@ func StartBackground() {
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: imageName,
 	}, nil, nil, "")
+
 	if err != nil {
 		panic(err)
 	}
@@ -39,4 +31,4 @@ func StartBackground() {
 	}
 
 	fmt.Println(resp.ID)
-}
+}*/

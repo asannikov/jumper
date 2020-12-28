@@ -11,17 +11,26 @@ type Dialog struct {
 	setMainContaner func([]string) (int, string, error)
 	setStartCommand func() (string, error)
 
-	//SetProjectPath func() (string, error)
-	//SetProjectName func() (string, error)
-
 	// Project management
 	SelectProject  func([]string) (int, string, error)
 	AddProjectPath func(string) (string, error)
 	AddProjectName func() (string, error)
+	startDocker    func() (string, error)
+	dockerService  func() (string, error)
 }
 
-// SetStartCommand sets main container name
-func (d *Dialog) SetStartCommand() (string, error) {
+// DockerService call the request dialog to define docker service
+func (d *Dialog) DockerService() (string, error) {
+	return d.dockerService()
+}
+
+// StartDocker call the request dialog to start docker
+func (d *Dialog) StartDocker() (string, error) {
+	return d.startDocker()
+}
+
+// StartCommand sets main container name
+func (d *Dialog) StartCommand() (string, error) {
 	return d.setStartCommand()
 }
 
@@ -33,14 +42,14 @@ func (d *Dialog) SetMainContaner(cl []string) (int, string, error) {
 // InitDialogFunctions initiate all methods
 func InitDialogFunctions() Dialog {
 	return Dialog{
-		//SetPhpContaner: selectPhpContainer,
-		//SetProjectPath: selectProjectPath,
 		SelectProject:  selectProject,
 		AddProjectPath: addProjectPath,
 		AddProjectName: addProjectName,
 
 		setMainContaner: setMainContaner,
 		setStartCommand: setStartCommand,
+		startDocker:     startDocker,
+		dockerService:   dockerService,
 	}
 }
 
@@ -133,9 +142,36 @@ func setStartCommand() (string, error) {
 	}
 
 	prompt := promptui.Prompt{
-		Label:    "Set start start",
+		Label:    "Set start command",
 		Validate: validate,
 		Default:  "docker-compose -f docker-compose.yml up --force-recreate -d --remove-orphans $1",
+	}
+
+	return prompt.Run()
+}
+
+func dockerService() (string, error) {
+	validate := func(c string) error {
+		if c == "" {
+			return fmt.Errorf("Command name cannot be empty")
+		}
+		return nil
+	}
+
+	prompt := promptui.Prompt{
+		Label:    "Set docker service command",
+		Validate: validate,
+		Default:  "service docker start",
+	}
+
+	return prompt.Run()
+}
+
+func startDocker() (string, error) {
+	prompt := promptui.Prompt{
+		Label:     "Start Docker",
+		IsConfirm: true,
+		Default:   "y",
 	}
 
 	return prompt.Run()

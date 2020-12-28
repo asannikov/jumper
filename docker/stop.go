@@ -1,4 +1,4 @@
-package container
+package docker
 
 import (
 	"context"
@@ -6,22 +6,16 @@ import (
 	"strings"
 
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
 )
 
-// StopContainers stops docker containers
-func StopContainers() func([]string) error {
+// StopContainers stop containers by filter
+func (d *Docker) StopContainers() func([]string) error {
 	return func(filter []string) (err error) {
-		ctx := context.Background()
-
-		var cli *client.Client
 		var containers []types.Container
 
-		if cli, err = client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation()); err != nil {
-			return err
-		}
+		ctx := context.Background()
 
-		if containers, err = cli.ContainerList(ctx, types.ContainerListOptions{}); err != nil {
+		if containers, err = d.GetClient().ContainerList(ctx, types.ContainerListOptions{}); err != nil {
 			return err
 		}
 
@@ -49,7 +43,7 @@ func StopContainers() func([]string) error {
 				fmt.Print(name, " ... ")
 			}
 
-			if err := cli.ContainerStop(ctx, container.ID, nil); err != nil {
+			if err := d.GetClient().ContainerStop(ctx, container.ID, nil); err != nil {
 				return err
 			}
 

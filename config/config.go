@@ -205,3 +205,14 @@ func (c *Config) DisableCopyright() error {
 func (c *Config) ShowCopyrightText() bool {
 	return c.globalConfig.ShowCopyrightText()
 }
+
+// SetDockerCommand define docker command
+func (c *Config) SetDockerCommand(command string) error {
+	c.globalConfig.SetDockerCommand(command)
+	return c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
+}
+
+// GetDockerCommand gets the docker command
+func (c *Config) GetDockerCommand() string {
+	return c.globalConfig.GetDockerCommand()
+}
