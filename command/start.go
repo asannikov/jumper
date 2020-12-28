@@ -52,7 +52,7 @@ func runStartProject(c *cli.Context, cfg projectConfig, args []string) error {
 }
 
 // CallStartProjectBasic runs docker project
-func CallStartProjectBasic(initf func(bool), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+func CallStartProjectBasic(initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:            "start",
 		Aliases:         []string{"st"},
@@ -62,11 +62,17 @@ func CallStartProjectBasic(initf func(bool), cfg projectConfig, d dialog, contai
 		Action: func(c *cli.Context) (err error) {
 			initf(true)
 
-			if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+			var cl []string
+
+			if cl, err = clist.GetContainerList(); err != nil {
 				return err
 			}
 
-			if err = defineStartCommand(cfg, d, containerlist); err != nil {
+			if err = defineProjectMainContainer(cfg, d, cl); err != nil {
+				return err
+			}
+
+			if err = defineStartCommand(cfg, d, cl); err != nil {
 				return err
 			}
 
@@ -78,7 +84,7 @@ func CallStartProjectBasic(initf func(bool), cfg projectConfig, d dialog, contai
 }
 
 // CallStartProjectForceRecreate runs docker project
-func CallStartProjectForceRecreate(initf func(bool), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+func CallStartProjectForceRecreate(initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:force",
 		Aliases: []string{"s:f"},
@@ -90,11 +96,17 @@ func CallStartProjectForceRecreate(initf func(bool), cfg projectConfig, d dialog
 		Action: func(c *cli.Context) (err error) {
 			initf(true)
 
-			if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+			var cl []string
+
+			if cl, err = clist.GetContainerList(); err != nil {
 				return err
 			}
 
-			if err = defineStartCommand(cfg, d, containerlist); err != nil {
+			if err = defineProjectMainContainer(cfg, d, cl); err != nil {
+				return err
+			}
+
+			if err = defineStartCommand(cfg, d, cl); err != nil {
 				return err
 			}
 
@@ -106,7 +118,7 @@ func CallStartProjectForceRecreate(initf func(bool), cfg projectConfig, d dialog
 }
 
 // CallStartProjectOrphans runs docker project
-func CallStartProjectOrphans(initf func(bool), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+func CallStartProjectOrphans(initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:orphans",
 		Aliases: []string{"s:o"},
@@ -118,11 +130,17 @@ func CallStartProjectOrphans(initf func(bool), cfg projectConfig, d dialog, cont
 		Action: func(c *cli.Context) (err error) {
 			initf(true)
 
-			if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+			var cl []string
+
+			if cl, err = clist.GetContainerList(); err != nil {
 				return err
 			}
 
-			if err = defineStartCommand(cfg, d, containerlist); err != nil {
+			if err = defineProjectMainContainer(cfg, d, cl); err != nil {
+				return err
+			}
+
+			if err = defineStartCommand(cfg, d, cl); err != nil {
 				return err
 			}
 
@@ -134,7 +152,7 @@ func CallStartProjectOrphans(initf func(bool), cfg projectConfig, d dialog, cont
 }
 
 // CallStartProjectForceOrphans runs docker project
-func CallStartProjectForceOrphans(initf func(bool), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+func CallStartProjectForceOrphans(initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:force-orphans",
 		Aliases: []string{"s:fo"},
@@ -147,11 +165,17 @@ func CallStartProjectForceOrphans(initf func(bool), cfg projectConfig, d dialog,
 		Action: func(c *cli.Context) (err error) {
 			initf(true)
 
-			if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+			var cl []string
+
+			if cl, err = clist.GetContainerList(); err != nil {
 				return err
 			}
 
-			if err = defineStartCommand(cfg, d, containerlist); err != nil {
+			if err = defineProjectMainContainer(cfg, d, cl); err != nil {
+				return err
+			}
+
+			if err = defineStartCommand(cfg, d, cl); err != nil {
 				return err
 			}
 
@@ -163,7 +187,7 @@ func CallStartProjectForceOrphans(initf func(bool), cfg projectConfig, d dialog,
 }
 
 // CallStartMainContainer runs docker main container
-func CallStartMainContainer(initf func(bool), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+func CallStartMainContainer(initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:maincontainer",
 		Aliases: []string{"startmc"},
@@ -171,7 +195,13 @@ func CallStartMainContainer(initf func(bool), cfg projectConfig, d dialog, conta
 		Action: func(c *cli.Context) (err error) {
 			initf(true)
 
-			if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+			var cl []string
+
+			if cl, err = clist.GetContainerList(); err != nil {
+				return err
+			}
+
+			if err = defineProjectMainContainer(cfg, d, cl); err != nil {
 				return err
 			}
 
@@ -190,7 +220,7 @@ func CallStartMainContainer(initf func(bool), cfg projectConfig, d dialog, conta
 }
 
 // CallRestartMainContainer restarts docker main container
-func CallRestartMainContainer(initf func(bool), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+func CallRestartMainContainer(initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "restart:maincontainer",
 		Aliases: []string{"rmc"},
@@ -198,7 +228,13 @@ func CallRestartMainContainer(initf func(bool), cfg projectConfig, d dialog, con
 		Action: func(c *cli.Context) (err error) {
 			initf(true)
 
-			if err = defineProjectMainContainer(cfg, d, containerlist); err != nil {
+			var cl []string
+
+			if cl, err = clist.GetContainerList(); err != nil {
+				return err
+			}
+
+			if err = defineProjectMainContainer(cfg, d, cl); err != nil {
 				return err
 			}
 

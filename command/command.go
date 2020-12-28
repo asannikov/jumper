@@ -14,6 +14,11 @@ type projectConfig interface {
 type dialog interface {
 	SetMainContaner([]string) (int, string, error)
 	SetStartCommand() (string, error)
+	StartDocker() (string, error)
+}
+
+type containerlist interface {
+	GetContainerList() ([]string, error)
 }
 
 func defineProjectMainContainer(cfg projectConfig, d dialog, containerlist []string) (err error) {

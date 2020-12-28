@@ -66,10 +66,13 @@ func (d *testCliDialog) SetStartCommand() (string, error) {
 	return "", nil
 }
 
+func (d *testCliDialog) StartDocker() (string, error) {
+	return "", nil
+}
+
 type testCli struct {
-	containerList []string
-	args          map[string][]string
-	command       map[string]string
+	args    map[string][]string
+	command map[string]string
 }
 
 func (tc *testCli) GetCommand(cmd string) string {
@@ -80,8 +83,13 @@ func (tc *testCli) GetArgs() map[string][]string {
 	return tc.args
 }
 
-func (tc *testCli) GetContainerList() []string {
-	return tc.containerList
+type testContainerlist struct {
+	containerList []string
+	err           error
+}
+
+func (tcl *testContainerlist) GetContainerList() ([]string, error) {
+	return tcl.containerList, tcl.err
 }
 
 func TestCliHandleCase1(t *testing.T) {
@@ -98,7 +106,12 @@ func TestCliHandleCase1(t *testing.T) {
 		slice: []string{},
 	}
 
-	_, err := cliCommandHandle("cli", cfg, dlg, cli, a)
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	_, err := cliCommandHandle("cli", cfg, dlg, cli, cl, a)
 
 	assert.EqualError(t, err, "Container name is empty. Set the container name")
 }
@@ -117,7 +130,12 @@ func TestCliHandleCase2(t *testing.T) {
 		slice: []string{},
 	}
 
-	_, err := cliCommandHandle("cli", cfg, dlg, cli, a)
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	_, err := cliCommandHandle("cli", cfg, dlg, cli, cl, a)
 
 	assert.EqualError(t, err, "Please specify a CLI command (ex. ls)")
 }
@@ -143,7 +161,12 @@ func TestCliHandleCase3(t *testing.T) {
 		slice: []string{},
 	}
 
-	args, err := cliCommandHandle("cli", cfg, dlg, cli, a)
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	args, err := cliCommandHandle("cli", cfg, dlg, cli, cl, a)
 
 	assert.Nil(t, err)
 	assert.Equal(t, []string{"exec", "-it", "containerName", "bash"}, args)

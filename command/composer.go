@@ -32,10 +32,6 @@ func (cmp *composer) GetComposerCommand() string {
 	return cmp.command
 }
 
-func (cmp *composer) GetContainerList() []string {
-	return cmp.containerList
-}
-
 func parseCommand(composercommand string) (string, string, string) {
 	commandstack := strings.Split(composercommand, ":")
 
@@ -64,7 +60,7 @@ func parseCommand(composercommand string) (string, string, string) {
 // CallComposerCommand generates composer commands
 // https://medium.com/@ssttehrani/containers-from-scratch-with-golang-5276576f9909
 // https://phase2.github.io/devtools/common-tasks/ssh-into-a-container/
-func CallComposerCommand(composercommand string, initf func(bool), cfg projectConfig, d dialog, containerlist []string, getCommandLocation func(string, string) (string, error)) *cli.Command {
+func CallComposerCommand(composercommand string, initf func(bool), cfg projectConfig, d dialog, cl containerlist, getCommandLocation func(string, string) (string, error)) *cli.Command {
 	index, calltype, dockercmd := parseCommand(composercommand)
 
 	cmp := &composer{
@@ -92,10 +88,9 @@ func CallComposerCommand(composercommand string, initf func(bool), cfg projectCo
 			"update":          "phpContainer is taken from project config file",
 			"update:memory":   "phpContainer is taken from project config file, php and composer commands will be found automatically",
 		},
-		containerList: containerlist,
-		locaton:       getCommandLocation,
-		ctype:         calltype,
-		command:       dockercmd,
+		locaton: getCommandLocation,
+		ctype:   calltype,
+		command: dockercmd,
 	}
 
 	return &cli.Command{
@@ -109,7 +104,7 @@ func CallComposerCommand(composercommand string, initf func(bool), cfg projectCo
 
 			var args []string
 
-			if args, err = composerHandle(cfg, d, cmp, c.Args()); err != nil {
+			if args, err = composerHandle(cfg, d, cmp, cl, c.Args()); err != nil {
 				return err
 			}
 
@@ -130,13 +125,17 @@ type composerInterface interface {
 	GetCommandLocaton() func(string, string) (string, error)
 	GetCallType() string
 	GetComposerCommand() string
-	GetContainerList() []string
 }
 
-func composerHandle(cfg projectConfig, d dialog, c composerInterface, a cli.Args) ([]string, error) {
+func composerHandle(cfg projectConfig, d dialog, c composerInterface, clist containerlist, a cli.Args) ([]string, error) {
 	var err error
+	var cl []string
 
-	if err = defineProjectMainContainer(cfg, d, c.GetContainerList()); err != nil {
+	if cl, err = clist.GetContainerList(); err != nil {
+		return []string{}, err
+	}
+
+	if err = defineProjectMainContainer(cfg, d, cl); err != nil {
 		return []string{}, err
 	}
 

@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"jumper/config"
-	"jumper/container"
 	"jumper/dialog"
 	"jumper/lib"
 	"log"
@@ -14,7 +13,7 @@ import (
 )
 
 const confgFile = "jumper.json"
-const version = "1.1.0"
+const version = "1.2.0"
 
 func main() {
 
@@ -64,8 +63,4 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func getContainerList() []string {
-	return container.GetContanerList()
 }

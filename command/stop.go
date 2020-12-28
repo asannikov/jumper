@@ -21,7 +21,7 @@ func CallStopAllContainersCommand(stopFuncton func([]string) error) *cli.Command
 }
 
 // CallStopMainContainerCommand stops main container
-func CallStopMainContainerCommand(stopFuncton func([]string) error, initf func(bool), cfg projectConfig, d dialog, containerList []string) *cli.Command {
+func CallStopMainContainerCommand(stopFuncton func([]string) error, initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	return &cli.Command{
 		Name:    "stop:maincontainer",
 		Aliases: []string{"smc"},
@@ -29,7 +29,13 @@ func CallStopMainContainerCommand(stopFuncton func([]string) error, initf func(b
 		Action: func(c *cli.Context) (err error) {
 			initf(true)
 
-			if err = defineProjectMainContainer(cfg, d, containerList); err != nil {
+			var cl []string
+
+			if cl, err = clist.GetContainerList(); err != nil {
+				return err
+			}
+
+			if err = defineProjectMainContainer(cfg, d, cl); err != nil {
 				return err
 			}
 
@@ -40,7 +46,7 @@ func CallStopMainContainerCommand(stopFuncton func([]string) error, initf func(b
 }
 
 // CallStopSelectedContainersCommand stops selected docker containers
-func CallStopSelectedContainersCommand(stopFuncton func([]string) error, containerList []string) *cli.Command {
+func CallStopSelectedContainersCommand(stopFuncton func([]string) error) *cli.Command {
 	return &cli.Command{
 		Name:    "stop:containers",
 		Aliases: []string{"scs"},
@@ -64,7 +70,7 @@ func CallStopSelectedContainersCommand(stopFuncton func([]string) error, contain
 
 // CallStopOneContainerCommand stops selected docker containers
 // @todo
-func CallStopOneContainerCommand(stopFuncton func([]string) error, containerList []string) *cli.Command {
+func CallStopOneContainerCommand(stopFuncton func([]string) error) *cli.Command {
 	return &cli.Command{
 		Name:    "stop:container",
 		Aliases: []string{"stopc"},

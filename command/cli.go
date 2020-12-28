@@ -11,15 +11,10 @@ import (
 )
 
 type cliCommand struct {
-	usage         map[string]string
-	aliases       map[string]string
-	args          map[string][]string
-	containerList []string
-	command       map[string]string
-}
-
-func (cli *cliCommand) GetContainerList() []string {
-	return cli.containerList
+	usage   map[string]string
+	aliases map[string]string
+	args    map[string][]string
+	command map[string]string
 }
 
 func (cli *cliCommand) GetCommand(cmd string) string {
@@ -31,7 +26,7 @@ func (cli *cliCommand) GetArgs() map[string][]string {
 }
 
 // CallCliCommand calls a range of differnt cli commands
-func CallCliCommand(commandName string, initf func(bool), cfg projectConfig, d dialog, containerlist []string) *cli.Command {
+func CallCliCommand(commandName string, initf func(bool), cfg projectConfig, d dialog, cl containerlist) *cli.Command {
 	clic := &cliCommand{
 		usage: map[string]string{
 			"cli":          "Runs cli command in conatiner: {docker exec main_conatain} [command] [custom parameters]",
@@ -54,7 +49,6 @@ func CallCliCommand(commandName string, initf func(bool), cfg projectConfig, d d
 			"clinotty":     []string{"-i"},
 			"clirootnotty": []string{"-u", "root", "-i"},
 		},
-		containerList: containerlist,
 		command: map[string]string{
 			"cli":          "",
 			"bash":         "bash",
@@ -74,7 +68,7 @@ func CallCliCommand(commandName string, initf func(bool), cfg projectConfig, d d
 
 			var args []string
 
-			if args, err = cliCommandHandle(commandName, cfg, d, clic, c.Args()); err != nil {
+			if args, err = cliCommandHandle(commandName, cfg, d, clic, cl, c.Args()); err != nil {
 				return err
 			}
 
@@ -91,15 +85,19 @@ func CallCliCommand(commandName string, initf func(bool), cfg projectConfig, d d
 }
 
 type cliCommandInterface interface {
-	GetContainerList() []string
 	GetCommand(string) string
 	GetArgs() map[string][]string
 }
 
-func cliCommandHandle(index string, cfg projectConfig, d dialog, c cliCommandInterface, a cli.Args) ([]string, error) {
+func cliCommandHandle(index string, cfg projectConfig, d dialog, c cliCommandInterface, clist containerlist, a cli.Args) ([]string, error) {
 	var err error
+	var cl []string
 
-	if err = defineProjectMainContainer(cfg, d, c.GetContainerList()); err != nil {
+	if cl, err = clist.GetContainerList(); err != nil {
+		return []string{}, err
+	}
+
+	if err = defineProjectMainContainer(cfg, d, cl); err != nil {
 		return []string{}, err
 	}
 

@@ -11,13 +11,16 @@ type Dialog struct {
 	setMainContaner func([]string) (int, string, error)
 	setStartCommand func() (string, error)
 
-	//SetProjectPath func() (string, error)
-	//SetProjectName func() (string, error)
-
 	// Project management
 	SelectProject  func([]string) (int, string, error)
 	AddProjectPath func(string) (string, error)
 	AddProjectName func() (string, error)
+	startDocker    func() (string, error)
+}
+
+// StartDocker call the request dialog to start docker
+func (d *Dialog) StartDocker() (string, error) {
+	return d.startDocker()
 }
 
 // SetStartCommand sets main container name
@@ -41,6 +44,7 @@ func InitDialogFunctions() Dialog {
 
 		setMainContaner: setMainContaner,
 		setStartCommand: setStartCommand,
+		startDocker:     startDocker,
 	}
 }
 
@@ -136,6 +140,16 @@ func setStartCommand() (string, error) {
 		Label:    "Set start start",
 		Validate: validate,
 		Default:  "docker-compose -f docker-compose.yml up --force-recreate -d --remove-orphans $1",
+	}
+
+	return prompt.Run()
+}
+
+func startDocker() (string, error) {
+	prompt := promptui.Prompt{
+		Label:     "Start Docker",
+		IsConfirm: true,
+		Default:   "y",
 	}
 
 	return prompt.Run()
