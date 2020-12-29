@@ -16,10 +16,10 @@ import (
 type Docker struct {
 	client            *client.Client
 	exec              func(string, ...string) *exec.Cmd
-	initClient        func() error
+	initClient        func(*Docker) error
 	clientping        func(cli *client.Client) (types.Ping, error)
-	ping              func() (types.Ping, error)
-	run               func(string) error
+	ping              func(*Docker) (types.Ping, error)
+	run               func(*Docker, string) error
 	newClientWithOpts func(...client.Opt) (*client.Client, error)
 }
 
@@ -28,14 +28,13 @@ func GetDockerInstance() *Docker {
 	docker := &Docker{}
 
 	docker.newClientWithOpts = client.NewClientWithOpts
+	docker.exec = exec.Command
 
-	docker.initClient = func() (err error) {
+	docker.initClient = func(d *Docker) (err error) {
 		var cli *client.Client
-		if cli, err = docker.newClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation()); err == nil {
+		if cli, err = d.newClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation()); err == nil {
 			docker.client = cli
 		}
-
-		docker.exec = exec.Command
 
 		return err
 	}
@@ -51,19 +50,19 @@ func GetDockerInstance() *Docker {
 		return ping, nil
 	}
 
-	docker.ping = func() (types.Ping, error) {
+	docker.ping = func(d *Docker) (types.Ping, error) {
 
-		cli, err := docker.newClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		cli, err := d.newClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 
 		if err != nil {
 			return types.Ping{}, err
 		}
 
-		return docker.clientping(cli)
+		return d.clientping(cli)
 	}
 
-	docker.run = func(cmd string) (err error) {
-		if err = openDocker(cmd, docker.exec); err != nil {
+	docker.run = func(d *Docker, cmd string) (err error) {
+		if err = openDocker(cmd, d.exec); err != nil {
 			return err
 		}
 
@@ -84,7 +83,7 @@ func GetDockerInstance() *Docker {
 			break
 		}
 
-		return docker.InitClient()
+		return d.InitClient()
 	}
 
 	return docker
@@ -97,7 +96,7 @@ func (d *Docker) GetClient() *client.Client {
 
 // InitClient gets docker client
 func (d *Docker) InitClient() error {
-	return d.initClient()
+	return d.initClient(d)
 }
 
 func getCommand(command string) (string, []string) {
@@ -134,12 +133,12 @@ func openDocker(command string, ecmd func(string, ...string) *exec.Cmd) error {
 
 // Run starts docker service
 func (d *Docker) Run(cmd string) (err error) {
-	return d.run(cmd)
+	return d.run(d, cmd)
 }
 
 // Ping checks the docker instance state
 func (d *Docker) Ping() (types.Ping, error) {
-	return d.ping()
+	return d.ping(d)
 }
 
 // Stat gets docker instance API version

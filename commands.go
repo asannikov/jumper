@@ -22,7 +22,7 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool)) []*cli.
 
 	dck := docker.GetDockerInstance()
 
-	cl := &dockerStartDialog{}
+	cl := getDockerStartDialog()
 	cl.setDialog(d)
 	cl.setDocker(dck)
 	cl.setDockerService(c.GetDockerCommand())

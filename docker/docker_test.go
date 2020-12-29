@@ -166,11 +166,11 @@ func TestRunCase1(t *testing.T) {
 
 	docker.exec = fakeExecCommand
 
-	docker.initClient = func() error {
+	docker.initClient = func(d *Docker) error {
 		return nil
 	}
 
-	docker.ping = func() (types.Ping, error) {
+	docker.ping = func(d *Docker) (types.Ping, error) {
 		t := types.Ping{
 			APIVersion: "1.0",
 		}
@@ -187,11 +187,11 @@ func TestRunCase2(t *testing.T) {
 
 	docker.exec = fakeExecCommand
 
-	docker.initClient = func() error {
+	docker.initClient = func(d *Docker) error {
 		return nil
 	}
 
-	docker.ping = func() (types.Ping, error) {
+	docker.ping = func(d *Docker) (types.Ping, error) {
 		t := types.Ping{
 			APIVersion: "1.0",
 		}

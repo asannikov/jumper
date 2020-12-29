@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.2.1 (29.12.2020)
+- bugfix
+    - 17 Add unittests for docker wrapper object
+    - 17 Add unittests for docker start dialog object
+
 ## 1.2.0 (28.12.2020)
 - features
     - 16 Add docker start option
