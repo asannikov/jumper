@@ -220,12 +220,16 @@ func CallStartMainContainer(initf func(bool), cfg projectConfig, d dialog, clist
 }
 
 // CallRestartMainContainer restarts docker main container
-func CallRestartMainContainer(initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
+func CallRestartMainContainer(initf func(bool), dockerStatus bool, cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "restart:maincontainer",
 		Aliases: []string{"rmc"},
 		Usage:   `restarts main container`,
 		Action: func(c *cli.Context) (err error) {
+			if !dockerStatus {
+				return errors.New("Docker is not running")
+			}
+
 			initf(true)
 
 			var cl []string
@@ -288,12 +292,16 @@ func CallStartContainers(initf func(bool)) *cli.Command {
 }
 
 // CallRestartContainers restart docker custom containers
-func CallRestartContainers(initf func(bool)) *cli.Command {
+func CallRestartContainers(initf func(bool), dockerStatus bool) *cli.Command {
 	cmd := cli.Command{
 		Name:    "restart:containers",
 		Aliases: []string{"rc"},
 		Usage:   `runs defined command: {docker start} [container]`,
 		Action: func(c *cli.Context) (err error) {
+			if !dockerStatus {
+				return errors.New("Docker is not running")
+			}
+
 			initf(true)
 
 			args := []string{"stop"}

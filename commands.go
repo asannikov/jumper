@@ -27,6 +27,11 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool)) []*cli.
 	cl.setDocker(dck)
 	cl.setDockerService(c.GetDockerCommand())
 
+	dockerStatus := false
+	if dockerAPIVersiongo, _ := dck.Stat(); dockerAPIVersiongo != "" {
+		dockerStatus = true
+	}
+
 	return []*cli.Command{
 		// cli commands
 		command.CallCliCommand("cli", initf, c, d, cl),
@@ -52,14 +57,14 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool)) []*cli.
 		command.CallStartContainers(initf),
 
 		// Docker restart
-		command.CallRestartMainContainer(initf, c, d, cl),
-		command.CallRestartContainers(initf),
+		command.CallRestartMainContainer(initf, dockerStatus, c, d, cl),
+		command.CallRestartContainers(initf, dockerStatus),
 
 		// Stop all docker containers
-		command.CallStopAllContainersCommand(dck.StopContainers()),
-		command.CallStopSelectedContainersCommand(dck.StopContainers()),
-		command.CallStopMainContainerCommand(dck.StopContainers(), initf, c, d, cl),
-		command.CallStopOneContainerCommand(dck.StopContainers()),
+		command.CallStopAllContainersCommand(initf, dockerStatus, dck.StopContainers()),
+		command.CallStopSelectedContainersCommand(initf, dockerStatus, dck.StopContainers()),
+		command.CallStopMainContainerCommand(initf, dockerStatus, dck.StopContainers(), c, d, cl),
+		command.CallStopOneContainerCommand(initf, dockerStatus, dck.StopContainers()),
 
 		// Get Project Path
 		command.GetProjectPath(initf, c, d),

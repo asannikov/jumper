@@ -1,6 +1,7 @@
 package command
 
 import (
+	"errors"
 	"fmt"
 	"github.com/urfave/cli/v2" // imports as package "cli"
 	"os"
@@ -9,24 +10,33 @@ import (
 )
 
 // CallStopAllContainersCommand stops all docker containers
-func CallStopAllContainersCommand(stopFuncton func([]string) error) *cli.Command {
+func CallStopAllContainersCommand(initf func(bool), dockerStatus bool, stopFuncton func([]string) error) *cli.Command {
 	return &cli.Command{
 		Name:    "stopallcontainers",
 		Aliases: []string{"sac"},
 		Usage:   "Stops all docker containers",
 		Action: func(c *cli.Context) (err error) {
-			return stopFuncton([]string{})
+			initf(false)
+			if dockerStatus {
+				return stopFuncton([]string{})
+			}
+
+			return errors.New("Docker is not running")
 		},
 	}
 }
 
 // CallStopMainContainerCommand stops main container
-func CallStopMainContainerCommand(stopFuncton func([]string) error, initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
+func CallStopMainContainerCommand(initf func(bool), dockerStatus bool, stopFuncton func([]string) error, cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	return &cli.Command{
 		Name:    "stop:maincontainer",
 		Aliases: []string{"smc"},
 		Usage:   "Stops main docker container",
 		Action: func(c *cli.Context) (err error) {
+			if !dockerStatus {
+				return errors.New("Docker is not running")
+			}
+
 			initf(true)
 
 			var cl []string
@@ -46,12 +56,18 @@ func CallStopMainContainerCommand(stopFuncton func([]string) error, initf func(b
 }
 
 // CallStopSelectedContainersCommand stops selected docker containers
-func CallStopSelectedContainersCommand(stopFuncton func([]string) error) *cli.Command {
+func CallStopSelectedContainersCommand(initf func(bool), dockerStatus bool, stopFuncton func([]string) error) *cli.Command {
 	return &cli.Command{
 		Name:    "stop:containers",
 		Aliases: []string{"scs"},
 		Usage:   "Stops docker containers",
 		Action: func(c *cli.Context) (err error) {
+			initf(false)
+
+			if !dockerStatus {
+				return errors.New("Docker is not running")
+			}
+
 			args := []string{"stop"}
 
 			args = append(args, c.Args().Slice()...)
@@ -70,12 +86,18 @@ func CallStopSelectedContainersCommand(stopFuncton func([]string) error) *cli.Co
 
 // CallStopOneContainerCommand stops selected docker containers
 // @todo
-func CallStopOneContainerCommand(stopFuncton func([]string) error) *cli.Command {
+func CallStopOneContainerCommand(initf func(bool), dockerStatus bool, stopFuncton func([]string) error) *cli.Command {
 	return &cli.Command{
 		Name:    "stop:container",
 		Aliases: []string{"stopc"},
 		Usage:   "Stops selected docker containers",
 		Action: func(c *cli.Context) (err error) {
+			initf(false)
+
+			if !dockerStatus {
+				return errors.New("Docker is not running")
+			}
+
 			args := []string{"stop"}
 
 			args = append(args, c.Args().Slice()...)
