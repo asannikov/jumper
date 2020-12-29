@@ -1,5 +1,11 @@
 package docker
 
+/**
+ * @todo - improve:
+ * Docker type has privat func methods for unittesting.
+ * It's not the best implementation, cause each funtion has no access to docker object pointer
+ * and for that reason each such function has a parameter with the pointer within.
+ */
 import (
 	"context"
 	"errors"

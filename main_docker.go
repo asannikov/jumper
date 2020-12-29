@@ -1,5 +1,12 @@
 package main
 
+/**
+ * @todo - improve:
+ * dockerStartDialog type has privat func methods for unittesting.
+ * It's not the best implementation, cause each funtion has no access to dockerStartDialog object pointer
+ * and for that reason each such function has a parameter with the pointer within.
+ */
+
 import (
 	"errors"
 	"jumper/dialog"
