@@ -1,9 +1,18 @@
 package main
 
+/**
+ * @todo - improve:
+ * dockerStartDialog type has privat func methods for unittesting.
+ * It's not the best implementation, cause each funtion has no access to dockerStartDialog object pointer
+ * and for that reason each such function has a parameter with the pointer within.
+ */
+
 import (
 	"errors"
 	"jumper/dialog"
 	"jumper/docker"
+
+	"github.com/docker/docker/client"
 )
 
 type dockerInstance interface {
@@ -14,44 +23,78 @@ type dockerInstance interface {
 }
 
 type dockerStartDialog struct {
-	dialog        *dialog.Dialog
-	docker        *docker.Docker
-	dockerService string
+	dialog            *dialog.Dialog
+	docker            *docker.Docker
+	dockerService     string
+	stat              func(*dockerStartDialog) (string, error)
+	initClient        func(*dockerStartDialog) error
+	run               func(*dockerStartDialog) error
+	startDockerDialog func(*dockerStartDialog) (string, error)
+	getClient         func(*dockerStartDialog) *client.Client
+	containerList     func(*dockerStartDialog) ([]string, error)
+}
+
+func getDockerStartDialog() *dockerStartDialog {
+	cl := &dockerStartDialog{}
+	cl.stat = func(cl *dockerStartDialog) (string, error) {
+		return cl.docker.Stat()
+	}
+	cl.initClient = func(cl *dockerStartDialog) error {
+		return cl.docker.InitClient()
+	}
+
+	cl.run = func(cl *dockerStartDialog) error {
+		return cl.docker.Run(cl.dockerService)
+	}
+
+	cl.startDockerDialog = func(cl *dockerStartDialog) (string, error) {
+		return cl.dialog.StartDocker()
+	}
+
+	cl.getClient = func(cl *dockerStartDialog) *client.Client {
+		return cl.docker.GetClient()
+	}
+
+	cl.containerList = func(cl *dockerStartDialog) ([]string, error) {
+		return cl.docker.GetContanerList()
+	}
+
+	return cl
 }
 
 func (dsd *dockerStartDialog) GetContainerList() ([]string, error) {
 	var err error
 	var apiVersion string
 
-	if apiVersion, err = dsd.docker.Stat(); err != nil && apiVersion != "" {
-		return nil, err
+	if apiVersion, err = dsd.stat(dsd); err != nil && apiVersion != "" {
+		return []string{}, err
 	}
 
 	var choice string
 
 	if apiVersion == "" {
-		choice, err = dsd.dialog.StartDocker()
+		choice, err = dsd.startDockerDialog(dsd)
 	}
 
 	if err != nil {
-		return nil, err
+		return []string{}, err
 	}
 
 	if choice == "y" || choice == "Y" {
-		err = dsd.docker.Run(dsd.dockerService)
+		err = dsd.run(dsd)
 	} else {
-		err = dsd.docker.InitClient()
+		err = dsd.initClient(dsd)
 	}
 
 	if err != nil {
-		return nil, err
+		return []string{}, err
 	}
 
-	if dsd.docker.GetClient() == nil {
-		return nil, errors.New("This command requires Docker to be run. Please, start it first")
+	if dsd.getClient(dsd) == nil {
+		return []string{}, errors.New("This command requires Docker to be run. Please, start it first")
 	}
 
-	return dsd.docker.GetContanerList()
+	return dsd.containerList(dsd)
 }
 
 func (dsd *dockerStartDialog) setDialog(d dialogCommand) {

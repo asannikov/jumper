@@ -8,25 +8,25 @@ import (
 
 // Dialog contains methods for the iteraction with promptui
 type Dialog struct {
-	setMainContaner func([]string) (int, string, error)
-	setStartCommand func() (string, error)
+	setMainContaner  func([]string) (int, string, error)
+	setStartCommand  func() (string, error)
+	SetStartDocker   func() (string, error)
+	setDockerService func() (string, error)
 
 	// Project management
 	SelectProject  func([]string) (int, string, error)
 	AddProjectPath func(string) (string, error)
 	AddProjectName func() (string, error)
-	startDocker    func() (string, error)
-	dockerService  func() (string, error)
 }
 
 // DockerService call the request dialog to define docker service
 func (d *Dialog) DockerService() (string, error) {
-	return d.dockerService()
+	return d.setDockerService()
 }
 
 // StartDocker call the request dialog to start docker
 func (d *Dialog) StartDocker() (string, error) {
-	return d.startDocker()
+	return d.SetStartDocker()
 }
 
 // StartCommand sets main container name
@@ -46,10 +46,10 @@ func InitDialogFunctions() Dialog {
 		AddProjectPath: addProjectPath,
 		AddProjectName: addProjectName,
 
-		setMainContaner: setMainContaner,
-		setStartCommand: setStartCommand,
-		startDocker:     startDocker,
-		dockerService:   dockerService,
+		setMainContaner:  setMainContaner,
+		setStartCommand:  setStartCommand,
+		SetStartDocker:   startDocker,
+		setDockerService: dockerService,
 	}
 }
 
