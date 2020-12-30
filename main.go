@@ -13,7 +13,7 @@ import (
 )
 
 const confgFile = "jumper.json"
-const version = "1.2.0"
+const version = "1.3.0"
 
 func main() {
 
@@ -34,7 +34,7 @@ func main() {
 	// Define docker command
 	defineDockerCommand(cfg, &DLG)
 
-	initf := func(seekProject bool) {
+	initf := func(seekProject bool) string {
 		if err := seekPath(cfg, &DLG, fs, seekProject); err != nil {
 			log.Fatal(err)
 		}
@@ -42,7 +42,10 @@ func main() {
 		if seekProject == true {
 			currentDir, _ := fs.GetWd()
 			fmt.Printf("\nchanged user location to directory: %s\n\n", currentDir)
+			return currentDir
 		}
+
+		return ""
 	}
 
 	app := &cli.App{

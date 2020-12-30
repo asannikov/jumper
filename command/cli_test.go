@@ -52,6 +52,14 @@ func (tc *testCliConfig) GetStartCommand() string {
 	return ""
 }
 
+func (tc *testCliConfig) GetProjectDockerPath() string {
+	return ""
+}
+
+func (tc *testCliConfig) SaveDockerProjectPath(c string) error {
+	return nil
+}
+
 func (tc *testCliConfig) SaveStartCommandToProjectConfig(c string) error {
 	return nil
 }
@@ -71,6 +79,10 @@ func (d *testCliDialog) StartDocker() (string, error) {
 }
 
 func (d *testCliDialog) DockerService() (string, error) {
+	return "", nil
+}
+
+func (d *testCliDialog) DockerProjectPath(c string) (string, error) {
 	return "", nil
 }
 

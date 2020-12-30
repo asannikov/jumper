@@ -163,6 +163,11 @@ func (c *Config) GetProjectMainContainer() string {
 	return c.projectConfig.GetMainContainer()
 }
 
+// GetProjectDockerPath gets project main container
+func (c *Config) GetProjectDockerPath() string {
+	return c.projectConfig.GetDockerProjectPath()
+}
+
 // main start command
 
 // GetStartCommand gets start command
@@ -173,6 +178,12 @@ func (c *Config) GetStartCommand() string {
 // SaveStartCommandToProjectConfig saves container name into project file
 func (c *Config) SaveStartCommandToProjectConfig(cmd string) (err error) {
 	c.projectConfig.StartCommand = cmd
+	return c.saveProjectFile()
+}
+
+// SaveDockerProjectPath saves path to project in container into project file
+func (c *Config) SaveDockerProjectPath(path string) (err error) {
+	c.projectConfig.DockerProjectPath = path
 	return c.saveProjectFile()
 }
 

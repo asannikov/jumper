@@ -52,7 +52,7 @@ func runStartProject(c *cli.Context, cfg projectConfig, args []string) error {
 }
 
 // CallStartProjectBasic runs docker project
-func CallStartProjectBasic(initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
+func CallStartProjectBasic(initf func(bool) string, cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:            "start",
 		Aliases:         []string{"st"},
@@ -84,7 +84,7 @@ func CallStartProjectBasic(initf func(bool), cfg projectConfig, d dialog, clist 
 }
 
 // CallStartProjectForceRecreate runs docker project
-func CallStartProjectForceRecreate(initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
+func CallStartProjectForceRecreate(initf func(bool) string, cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:force",
 		Aliases: []string{"s:f"},
@@ -118,7 +118,7 @@ func CallStartProjectForceRecreate(initf func(bool), cfg projectConfig, d dialog
 }
 
 // CallStartProjectOrphans runs docker project
-func CallStartProjectOrphans(initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
+func CallStartProjectOrphans(initf func(bool) string, cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:orphans",
 		Aliases: []string{"s:o"},
@@ -152,7 +152,7 @@ func CallStartProjectOrphans(initf func(bool), cfg projectConfig, d dialog, clis
 }
 
 // CallStartProjectForceOrphans runs docker project
-func CallStartProjectForceOrphans(initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
+func CallStartProjectForceOrphans(initf func(bool) string, cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:force-orphans",
 		Aliases: []string{"s:fo"},
@@ -187,7 +187,7 @@ func CallStartProjectForceOrphans(initf func(bool), cfg projectConfig, d dialog,
 }
 
 // CallStartMainContainer runs docker main container
-func CallStartMainContainer(initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
+func CallStartMainContainer(initf func(bool) string, cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:maincontainer",
 		Aliases: []string{"startmc"},
@@ -206,7 +206,7 @@ func CallStartMainContainer(initf func(bool), cfg projectConfig, d dialog, clist
 			}
 
 			args := []string{"start", cfg.GetProjectMainContainer()}
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 			cmd := exec.Command("docker", args...)
 
 			cmd.Stdin = os.Stdin
@@ -220,12 +220,16 @@ func CallStartMainContainer(initf func(bool), cfg projectConfig, d dialog, clist
 }
 
 // CallRestartMainContainer restarts docker main container
-func CallRestartMainContainer(initf func(bool), cfg projectConfig, d dialog, clist containerlist) *cli.Command {
+func CallRestartMainContainer(initf func(bool) string, dockerStatus bool, cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "restart:maincontainer",
 		Aliases: []string{"rmc"},
 		Usage:   `restarts main container`,
 		Action: func(c *cli.Context) (err error) {
+			if !dockerStatus {
+				return errors.New("Docker is not running")
+			}
+
 			initf(true)
 
 			var cl []string
@@ -239,7 +243,7 @@ func CallRestartMainContainer(initf func(bool), cfg projectConfig, d dialog, cli
 			}
 
 			args := []string{"stop", cfg.GetProjectMainContainer()}
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 			cmd := exec.Command("docker", args...)
 
 			cmd.Stdin = os.Stdin
@@ -250,7 +254,7 @@ func CallRestartMainContainer(initf func(bool), cfg projectConfig, d dialog, cli
 			}
 
 			args = []string{"start", cfg.GetProjectMainContainer()}
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 			cmd = exec.Command("docker", args...)
 
 			cmd.Stdin = os.Stdin
@@ -264,7 +268,7 @@ func CallRestartMainContainer(initf func(bool), cfg projectConfig, d dialog, cli
 }
 
 // CallStartContainers runs docker custom container
-func CallStartContainers(initf func(bool)) *cli.Command {
+func CallStartContainers(initf func(bool) string) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:containers",
 		Aliases: []string{"startc"},
@@ -274,7 +278,7 @@ func CallStartContainers(initf func(bool)) *cli.Command {
 
 			args := []string{"start"}
 			args = append(args, c.Args().Slice()...)
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 			cmd := exec.Command("docker", args...)
 
 			cmd.Stdin = os.Stdin
@@ -288,17 +292,21 @@ func CallStartContainers(initf func(bool)) *cli.Command {
 }
 
 // CallRestartContainers restart docker custom containers
-func CallRestartContainers(initf func(bool)) *cli.Command {
+func CallRestartContainers(initf func(bool) string, dockerStatus bool) *cli.Command {
 	cmd := cli.Command{
 		Name:    "restart:containers",
 		Aliases: []string{"rc"},
 		Usage:   `runs defined command: {docker start} [container]`,
 		Action: func(c *cli.Context) (err error) {
+			if !dockerStatus {
+				return errors.New("Docker is not running")
+			}
+
 			initf(true)
 
 			args := []string{"stop"}
 			args = append(args, c.Args().Slice()...)
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 			cmd := exec.Command("docker", args...)
 
 			cmd.Stdin = os.Stdin
@@ -311,7 +319,7 @@ func CallRestartContainers(initf func(bool)) *cli.Command {
 
 			args = []string{"start"}
 			args = append(args, c.Args().Slice()...)
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 			cmd = exec.Command("docker", args...)
 
 			cmd.Stdin = os.Stdin

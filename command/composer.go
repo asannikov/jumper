@@ -60,7 +60,7 @@ func parseCommand(composercommand string) (string, string, string) {
 // CallComposerCommand generates composer commands
 // https://medium.com/@ssttehrani/containers-from-scratch-with-golang-5276576f9909
 // https://phase2.github.io/devtools/common-tasks/ssh-into-a-container/
-func CallComposerCommand(composercommand string, initf func(bool), cfg projectConfig, d dialog, cl containerlist, getCommandLocation func(string, string) (string, error)) *cli.Command {
+func CallComposerCommand(composercommand string, initf func(bool) string, cfg projectConfig, d dialog, cl containerlist, getCommandLocation func(string, string) (string, error)) *cli.Command {
 	index, calltype, dockercmd := parseCommand(composercommand)
 
 	cmp := &composer{
@@ -108,7 +108,7 @@ func CallComposerCommand(composercommand string, initf func(bool), cfg projectCo
 				return err
 			}
 
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 
 			cmd := exec.Command("docker", args...)
 

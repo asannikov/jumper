@@ -2,15 +2,21 @@ package config
 
 // ProjectConfig contains project settings
 type ProjectConfig struct {
-	Path          string `json:"path"`
-	Name          string `json:"name"`
-	MainContainer string `json:"main_container"`
-	StartCommand  string `json:"start_command"`
+	Path              string `json:"-"`
+	Name              string `json:"name"`
+	MainContainer     string `json:"main_container"`
+	StartCommand      string `json:"start_command"`
+	DockerProjectPath string `json:"path"`
 }
 
 // GetPath gets path to project
 func (p *ProjectConfig) GetPath() string {
 	return p.Path
+}
+
+// GetDockerProjectPath gets path to project
+func (p *ProjectConfig) GetDockerProjectPath() string {
+	return p.DockerProjectPath
 }
 
 // GetName gets project name

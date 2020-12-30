@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 1.3.0 (30.12.2020)
+- features
+    - 3 Add sync container -> host and host -> container
+- bugfix
+    - 3 Fix typo in dialog titles for project path naming 
+    - 3 Add docker status check for stop commands
+    - 3 Initf function now has project path return 
+
 ## 1.2.1 (29.12.2020)
 - bugfix
     - 17 Add unittests for docker wrapper object

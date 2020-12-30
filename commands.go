@@ -14,9 +14,10 @@ type dialogCommand interface {
 	StartCommand() (string, error)
 	StartDocker() (string, error)
 	DockerService() (string, error)
+	DockerProjectPath(string) (string, error)
 }
 
-func getCommandList(c *config.Config, d dialogCommand, initf func(bool)) []*cli.Command {
+func getCommandList(c *config.Config, d dialogCommand, initf func(bool) string) []*cli.Command {
 
 	getCommandLocationF := bash.GetCommandLocation()
 
@@ -26,6 +27,11 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool)) []*cli.
 	cl.setDialog(d)
 	cl.setDocker(dck)
 	cl.setDockerService(c.GetDockerCommand())
+
+	dockerStatus := false
+	if dockerAPIVersiongo, _ := dck.Stat(); dockerAPIVersiongo != "" {
+		dockerStatus = true
+	}
 
 	return []*cli.Command{
 		// cli commands
@@ -52,20 +58,24 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool)) []*cli.
 		command.CallStartContainers(initf),
 
 		// Docker restart
-		command.CallRestartMainContainer(initf, c, d, cl),
-		command.CallRestartContainers(initf),
+		command.CallRestartMainContainer(initf, dockerStatus, c, d, cl),
+		command.CallRestartContainers(initf, dockerStatus),
 
 		// Stop all docker containers
-		command.CallStopAllContainersCommand(dck.StopContainers()),
-		command.CallStopSelectedContainersCommand(dck.StopContainers()),
-		command.CallStopMainContainerCommand(dck.StopContainers(), initf, c, d, cl),
-		command.CallStopOneContainerCommand(dck.StopContainers()),
+		command.CallStopAllContainersCommand(initf, dockerStatus, dck.StopContainers()),
+		command.CallStopSelectedContainersCommand(initf, dockerStatus, dck.StopContainers()),
+		command.CallStopMainContainerCommand(initf, dockerStatus, dck.StopContainers(), c, d, cl),
+		command.CallStopOneContainerCommand(initf, dockerStatus, dck.StopContainers()),
 
 		// Get Project Path
 		command.GetProjectPath(initf, c, d),
 
 		// Copyright
 		command.CallCopyrightCommand(initf, c, d),
+
+		// Sync Paths
+		command.SyncCommand("copyto", initf, dockerStatus, c, d, cl),
+		command.SyncCommand("copyfrom", initf, dockerStatus, c, d, cl),
 
 		// docker pull https://docs.docker.com/engine/api/sdk/examples/
 	}
