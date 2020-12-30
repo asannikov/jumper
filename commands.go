@@ -17,7 +17,7 @@ type dialogCommand interface {
 	DockerProjectPath(string) (string, error)
 }
 
-func getCommandList(c *config.Config, d dialogCommand, initf func(bool)) []*cli.Command {
+func getCommandList(c *config.Config, d dialogCommand, initf func(bool) string) []*cli.Command {
 
 	getCommandLocationF := bash.GetCommandLocation()
 

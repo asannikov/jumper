@@ -104,7 +104,10 @@ cli, c                          Runs cli command in conatiner: {docker exec main
    stop:containers, scs            Stops docker containers
    stop:maincontainer, smc         Stops main docker container
    stop:container, stopc           Stops selected docker containers
-   help, h                         Shows a list of commands or help for one command
+   path                            gets project path
+   copyright                       
+   copyto, cpt                     Sync local -> docker container, set related path, ie `vendor/folder/` for syncing as a parameter, or use --all to sync all project
+   copyfrom, cpf                   Sync docker container -> local, set related path, ie `vendor/folder/` for syncing as a parameter, or use --all to sync all project
    ```
 
 # FAQ
