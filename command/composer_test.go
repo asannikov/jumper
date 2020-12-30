@@ -15,15 +15,23 @@ func (tc *testComposerConfig) GetProjectMainContainer() string {
 	return tc.mainContainer
 }
 
-func (tc *testComposerConfig) SaveContainerNameToProjectConfig(container string) error {
-	return nil
-}
-
 func (tc *testComposerConfig) GetStartCommand() string {
 	return ""
 }
 
+func (tc *testComposerConfig) GetProjectDockerPath() string {
+	return ""
+}
+
+func (tc *testComposerConfig) SaveContainerNameToProjectConfig(container string) error {
+	return nil
+}
+
 func (tc *testComposerConfig) SaveStartCommandToProjectConfig(c string) error {
+	return nil
+}
+
+func (tc *testComposerConfig) SaveDockerProjectPath(c string) error {
 	return nil
 }
 
@@ -41,7 +49,15 @@ func (d *testComposerDialog) StartDocker() (string, error) {
 	return "", nil
 }
 
+func (d *testComposerDialog) SaveDockerProjectPath() (string, error) {
+	return "", nil
+}
+
 func (d *testComposerDialog) DockerService() (string, error) {
+	return "", nil
+}
+
+func (d *testComposerDialog) DockerProjectPath(p string) (string, error) {
 	return "", nil
 }
 

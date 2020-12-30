@@ -108,7 +108,7 @@ func CallComposerCommand(composercommand string, initf func(bool), cfg projectCo
 				return err
 			}
 
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 
 			cmd := exec.Command("docker", args...)
 

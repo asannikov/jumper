@@ -206,7 +206,7 @@ func CallStartMainContainer(initf func(bool), cfg projectConfig, d dialog, clist
 			}
 
 			args := []string{"start", cfg.GetProjectMainContainer()}
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 			cmd := exec.Command("docker", args...)
 
 			cmd.Stdin = os.Stdin
@@ -243,7 +243,7 @@ func CallRestartMainContainer(initf func(bool), dockerStatus bool, cfg projectCo
 			}
 
 			args := []string{"stop", cfg.GetProjectMainContainer()}
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 			cmd := exec.Command("docker", args...)
 
 			cmd.Stdin = os.Stdin
@@ -254,7 +254,7 @@ func CallRestartMainContainer(initf func(bool), dockerStatus bool, cfg projectCo
 			}
 
 			args = []string{"start", cfg.GetProjectMainContainer()}
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 			cmd = exec.Command("docker", args...)
 
 			cmd.Stdin = os.Stdin
@@ -278,7 +278,7 @@ func CallStartContainers(initf func(bool)) *cli.Command {
 
 			args := []string{"start"}
 			args = append(args, c.Args().Slice()...)
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 			cmd := exec.Command("docker", args...)
 
 			cmd.Stdin = os.Stdin
@@ -306,7 +306,7 @@ func CallRestartContainers(initf func(bool), dockerStatus bool) *cli.Command {
 
 			args := []string{"stop"}
 			args = append(args, c.Args().Slice()...)
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 			cmd := exec.Command("docker", args...)
 
 			cmd.Stdin = os.Stdin
@@ -319,7 +319,7 @@ func CallRestartContainers(initf func(bool), dockerStatus bool) *cli.Command {
 
 			args = []string{"start"}
 			args = append(args, c.Args().Slice()...)
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 			cmd = exec.Command("docker", args...)
 
 			cmd.Stdin = os.Stdin

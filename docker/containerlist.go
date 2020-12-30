@@ -4,7 +4,6 @@ package docker
 
 import (
 	"context"
-	"errors"
 	"strings"
 
 	"github.com/docker/docker/api/types"
@@ -26,8 +25,8 @@ func (d *Docker) GetContanerList() ([]string, error) {
 		}
 	}
 
-	if len(containerList) == 0 {
+	/*if len(containerList) == 0 {
 		return nil, errors.New("No running projects. Start project using docker-compose up and then run again `jumper start`")
-	}
+	}*/
 	return containerList, nil
 }

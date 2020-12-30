@@ -8,15 +8,21 @@ import (
 
 // Dialog contains methods for the iteraction with promptui
 type Dialog struct {
-	setMainContaner  func([]string) (int, string, error)
-	setStartCommand  func() (string, error)
-	SetStartDocker   func() (string, error)
-	setDockerService func() (string, error)
+	setMainContaner      func([]string) (int, string, error)
+	setStartCommand      func() (string, error)
+	setStartDocker       func() (string, error)
+	setDockerService     func() (string, error)
+	setDockerProjectPath func(string) (string, error)
 
 	// Project management
 	SelectProject  func([]string) (int, string, error)
 	AddProjectPath func(string) (string, error)
 	AddProjectName func() (string, error)
+}
+
+// DockerProjectPath gets the path to container
+func (d *Dialog) DockerProjectPath(defaulPath string) (string, error) {
+	return d.setDockerProjectPath(defaulPath)
 }
 
 // DockerService call the request dialog to define docker service
@@ -26,7 +32,7 @@ func (d *Dialog) DockerService() (string, error) {
 
 // StartDocker call the request dialog to start docker
 func (d *Dialog) StartDocker() (string, error) {
-	return d.SetStartDocker()
+	return d.setStartDocker()
 }
 
 // StartCommand sets main container name
@@ -46,10 +52,11 @@ func InitDialogFunctions() Dialog {
 		AddProjectPath: addProjectPath,
 		AddProjectName: addProjectName,
 
-		setMainContaner:  setMainContaner,
-		setStartCommand:  setStartCommand,
-		SetStartDocker:   startDocker,
-		setDockerService: dockerService,
+		setMainContaner:      setMainContaner,
+		setStartCommand:      setStartCommand,
+		setStartDocker:       startDocker,
+		setDockerService:     dockerService,
+		setDockerProjectPath: dockerProjectPath,
 	}
 }
 
@@ -94,7 +101,7 @@ func selectProject(projects []string) (int, string, error) {
 func addProjectPath(path string) (string, error) {
 	validate := func(p string) error {
 		if p == "" {
-			return fmt.Errorf("Project name cannot be empty")
+			return fmt.Errorf("Project path cannot be empty")
 		}
 		return nil
 	}
@@ -172,6 +179,23 @@ func startDocker() (string, error) {
 		Label:     "Start Docker",
 		IsConfirm: true,
 		Default:   "y",
+	}
+
+	return prompt.Run()
+}
+
+func dockerProjectPath(path string) (string, error) {
+	validate := func(p string) error {
+		if p == "" {
+			return fmt.Errorf("Project path cannot be empty")
+		}
+		return nil
+	}
+
+	prompt := promptui.Prompt{
+		Label:    "Add project path in docker container",
+		Validate: validate,
+		Default:  path,
 	}
 
 	return prompt.Run()

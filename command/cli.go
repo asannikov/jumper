@@ -72,7 +72,7 @@ func CallCliCommand(commandName string, initf func(bool), cfg projectConfig, d d
 				return err
 			}
 
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 
 			cmd := exec.Command("docker", args...)
 

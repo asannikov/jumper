@@ -14,6 +14,7 @@ type dialogCommand interface {
 	StartCommand() (string, error)
 	StartDocker() (string, error)
 	DockerService() (string, error)
+	DockerProjectPath(string) (string, error)
 }
 
 func getCommandList(c *config.Config, d dialogCommand, initf func(bool)) []*cli.Command {
@@ -71,6 +72,10 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool)) []*cli.
 
 		// Copyright
 		command.CallCopyrightCommand(initf, c, d),
+
+		// Sync Paths
+		command.SyncCommand("copyto", initf, dockerStatus, c, d, cl),
+		command.SyncCommand("copyfrom", initf, dockerStatus, c, d, cl),
 
 		// docker pull https://docs.docker.com/engine/api/sdk/examples/
 	}

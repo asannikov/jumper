@@ -72,7 +72,7 @@ func CallStopSelectedContainersCommand(initf func(bool), dockerStatus bool, stop
 
 			args = append(args, c.Args().Slice()...)
 
-			fmt.Printf("\n command: %s\n\n", "docker "+strings.Join(args, " "))
+			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
 
 			cmd := exec.Command("docker", args...)
 

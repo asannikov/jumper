@@ -7,8 +7,10 @@ import (
 type projectConfig interface {
 	GetProjectMainContainer() string
 	GetStartCommand() string
+	GetProjectDockerPath() string
 	SaveContainerNameToProjectConfig(string) error
 	SaveStartCommandToProjectConfig(string) error
+	SaveDockerProjectPath(string) error
 }
 
 type dialog interface {
@@ -16,6 +18,7 @@ type dialog interface {
 	StartCommand() (string, error)
 	StartDocker() (string, error)
 	DockerService() (string, error)
+	DockerProjectPath(string) (string, error)
 }
 
 type containerlist interface {
@@ -35,6 +38,23 @@ func defineProjectMainContainer(cfg projectConfig, d dialog, containerlist []str
 		}
 
 		return cfg.SaveContainerNameToProjectConfig(container)
+	}
+
+	return nil
+}
+
+func defineProjectDockerPath(cfg projectConfig, d dialog, defaultPath string) (err error) {
+	if cfg.GetProjectDockerPath() == "" {
+		var path string
+		if path, err = d.DockerProjectPath(defaultPath); err != nil {
+			return err
+		}
+
+		if path == "" {
+			return errors.New("Container path is empty. Set the path to project in container")
+		}
+
+		return cfg.SaveDockerProjectPath(path)
 	}
 
 	return nil
