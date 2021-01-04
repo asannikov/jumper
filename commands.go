@@ -31,6 +31,7 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool) string) 
 	dockerStatus := false
 	if dockerAPIVersiongo, _ := dck.Stat(); dockerAPIVersiongo != "" {
 		dockerStatus = true
+		dck.InitClient()
 	}
 
 	return []*cli.Command{

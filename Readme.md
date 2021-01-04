@@ -111,6 +111,9 @@ cli, c                          Runs cli command in conatiner: {docker exec main
    ```
 
 # FAQ
+## How to run bash commands inside container:
+```jumper clirootnotty bash -c "cd src && ls"```
+
 ## How to hide long copyright text:
 ```$ jumper copyright disable```
 

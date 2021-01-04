@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.3.1 (04.01.2021)
+- bugfix
+    - 17 Was not possible to stop containers, cause docker object was not initialized. Fixed.
+
 ## 1.3.0 (30.12.2020)
 - features
     - 3 Add sync container -> host and host -> container
