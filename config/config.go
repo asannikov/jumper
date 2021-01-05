@@ -43,7 +43,7 @@ func (c *Config) SetProjectName(name string) {
 	c.projectConfig.Name = name
 }
 
-// LookupProjectConfig seeks for a appropriate config
+// lookupProjectConfig seeks for a appropriate config
 func (c *Config) lookupProjectConfig() (err error) {
 	c.hasProjectFile = false
 	if err = c.fileSystem.ReadConfigFile(c.ProjectFile, c.projectConfig); err == nil {
@@ -72,6 +72,17 @@ func (c *Config) Init() {
 	c.globalConfig = &GlobalConfig{}
 }
 
+// LoadProjectConfig loads project config
+func (c *Config) LoadProjectConfig() (status bool, err error) {
+	err = c.lookupProjectConfig()
+
+	if err != nil && strings.Contains(err.Error(), "no such file or directory") == false {
+		return false, err
+	}
+
+	return c.hasProjectFile, nil
+}
+
 // LoadConfig loads configuration
 func (c *Config) LoadConfig(seekProject bool) (err error) {
 	if err = c.lookupUserConfig(); err != nil {
@@ -82,13 +93,9 @@ func (c *Config) LoadConfig(seekProject bool) (err error) {
 		return nil
 	}
 
-	err = c.lookupProjectConfig()
+	_, err = c.LoadProjectConfig()
 
-	if err != nil && strings.Contains(err.Error(), "no such file or directory") == false {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // FindProjectPathInJSON check if project path in the json

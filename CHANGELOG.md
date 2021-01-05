@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.3.2 (05.01.2021)
+- bugfix
+    - 22 User is always asked for a project select even he is in the folder with jumper.json.
+      Now jumper checks if the file exists and if the configuration appropriate.
+
 ## 1.3.1 (04.01.2021)
 - bugfix
     - 17 Was not possible to stop containers, cause docker object was not initialized. Fixed.

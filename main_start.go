@@ -109,6 +109,23 @@ func loadGlobalConfig(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSys
 	return nil
 }
 
+func loadProjectConfig(cfg *config.Config, fs seekPathFileSystem) (err error) {
+	var currentDir string
+	var status bool
+
+	if currentDir, err = fs.GetWd(); err != nil {
+		return err
+	}
+
+	status, _ = cfg.LoadProjectConfig()
+
+	if status && cfg.GetProjectName() != "" {
+		cfg.SetProjectPath(currentDir)
+	}
+
+	return nil
+}
+
 func seekPath(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem, seekProject bool) error {
 	var currentDir string
 	var err error
