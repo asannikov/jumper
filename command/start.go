@@ -219,6 +219,28 @@ func CallStartMainContainer(initf func(bool) string, cfg projectConfig, d dialog
 	return &cmd
 }
 
+func restartMainContainer(cfg projectConfig) error {
+	args := []string{"stop", cfg.GetProjectMainContainer()}
+	fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
+	cmd := exec.Command("docker", args...)
+
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+
+	args = []string{"start", cfg.GetProjectMainContainer()}
+	fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
+	cmd = exec.Command("docker", args...)
+
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+
 // CallRestartMainContainer restarts docker main container
 func CallRestartMainContainer(initf func(bool) string, dockerStatus bool, cfg projectConfig, d dialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
@@ -242,25 +264,7 @@ func CallRestartMainContainer(initf func(bool) string, dockerStatus bool, cfg pr
 				return err
 			}
 
-			args := []string{"stop", cfg.GetProjectMainContainer()}
-			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-			cmd := exec.Command("docker", args...)
-
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			if err := cmd.Run(); err != nil {
-				return err
-			}
-
-			args = []string{"start", cfg.GetProjectMainContainer()}
-			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-			cmd = exec.Command("docker", args...)
-
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			return cmd.Run()
+			return restartMainContainer(cfg)
 		},
 	}
 

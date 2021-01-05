@@ -119,28 +119,7 @@ func XDebugCommand(xdebugAction string, initf func(bool) string, dockerStatus bo
 				fmt.Printf("Fpm Xdebug disabled \n")
 			}
 
-			return nil
+			return restartMainContainer(cfg)
 		},
 	}
 }
-
-/*
-docker-compose exec phpfpm sed -i -e 's/^zend_extension/\;zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-docker-compose exec phpfpm  sed -i -e 's/^\;zend_extension/zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-
-#!/bin/bash
-if [ "$1" == "disable" ]; then
-  bin/cli sed -i -e 's/^zend_extension/\;zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-  sleep 1
-  bin/restart phpfpm
-  echo "Xdebug has been disabled."
-elif [ "$1" == "enable" ]; then
-  bin/cli sed -i -e 's/^\;zend_extension/zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-  sleep 1
-  bin/restart phpfpm
-  echo "Xdebug has been enabled."
-else
-  echo "Please specify either 'enable' or 'disable' as an argument"
-fi
-
-*/
