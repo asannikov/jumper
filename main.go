@@ -13,7 +13,7 @@ import (
 )
 
 const confgFile = "jumper.json"
-const version = "1.3.1"
+const version = "1.3.2"
 
 func main() {
 
@@ -30,6 +30,9 @@ func main() {
 
 	// Loading only global config
 	loadGlobalConfig(cfg, &DLG, fs)
+
+	// Loading project config if exists
+	loadProjectConfig(cfg, fs)
 
 	// Define docker command
 	defineDockerCommand(cfg, &DLG)
