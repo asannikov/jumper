@@ -170,9 +170,41 @@ func (c *Config) GetProjectMainContainer() string {
 	return c.projectConfig.GetMainContainer()
 }
 
+// Docker project path
+
 // GetProjectDockerPath gets project main container
 func (c *Config) GetProjectDockerPath() string {
 	return c.projectConfig.GetDockerProjectPath()
+}
+
+// SaveDockerProjectPath saves path to project in container into project file
+func (c *Config) SaveDockerProjectPath(path string) (err error) {
+	c.projectConfig.DockerProjectPath = path
+	return c.saveProjectFile()
+}
+
+// Xdebug
+
+// GetCliXdebugIniFilePath gets cli xdebug ini file path
+func (c *Config) GetCliXdebugIniFilePath() string {
+	return c.projectConfig.GetXDebugCliIniPath()
+}
+
+// GetFpmXdebugIniFilePath gets fpm xdebug ini file path
+func (c *Config) GetFpmXdebugIniFilePath() string {
+	return c.projectConfig.GetXDebugFpmIniPath()
+}
+
+// SaveDockerCliXdebugIniFilePath saves xdebug cli ini file path into project file
+func (c *Config) SaveDockerCliXdebugIniFilePath(path string) (err error) {
+	c.projectConfig.XDebugCliIniPath = path
+	return c.saveProjectFile()
+}
+
+// SaveDockerFpmXdebugIniFilePath saves xdebug fpm ini file path into project file
+func (c *Config) SaveDockerFpmXdebugIniFilePath(path string) (err error) {
+	c.projectConfig.XDebugFpmIniPath = path
+	return c.saveProjectFile()
 }
 
 // main start command
@@ -188,13 +220,7 @@ func (c *Config) SaveStartCommandToProjectConfig(cmd string) (err error) {
 	return c.saveProjectFile()
 }
 
-// SaveDockerProjectPath saves path to project in container into project file
-func (c *Config) SaveDockerProjectPath(path string) (err error) {
-	c.projectConfig.DockerProjectPath = path
-	return c.saveProjectFile()
-}
-
-// GetFile fsfdsafsd
+// GetFile gets project file
 func (c *Config) GetFile() string {
 	return c.ProjectFile
 }
@@ -206,6 +232,8 @@ func (c *Config) saveProjectFile() error {
 func (c *Config) getProjectFile() string {
 	return strings.TrimRight(c.projectConfig.GetPath(), string(os.PathSeparator)) + string(os.PathSeparator) + c.ProjectFile
 }
+
+// Copyright
 
 // EnableCopyright Enable copyright output
 func (c *Config) EnableCopyright() error {
@@ -223,6 +251,8 @@ func (c *Config) DisableCopyright() error {
 func (c *Config) ShowCopyrightText() bool {
 	return c.globalConfig.ShowCopyrightText()
 }
+
+// Docker instance command
 
 // SetDockerCommand define docker command
 func (c *Config) SetDockerCommand(command string) error {

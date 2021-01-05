@@ -64,6 +64,22 @@ func (tc *testCliConfig) SaveStartCommandToProjectConfig(c string) error {
 	return nil
 }
 
+func (tc *testCliConfig) SaveDockerCliXdebugIniFilePath(c string) error {
+	return nil
+}
+
+func (tc *testCliConfig) SaveDockerFpmXdebugIniFilePath(c string) error {
+	return nil
+}
+
+func (tc *testCliConfig) GetCliXdebugIniFilePath() string {
+	return ""
+}
+
+func (tc *testCliConfig) GetFpmXdebugIniFilePath() string {
+	return ""
+}
+
 type testCliDialog struct{}
 
 func (d *testCliDialog) SetMainContaner([]string) (int, string, error) {
@@ -83,6 +99,14 @@ func (d *testCliDialog) DockerService() (string, error) {
 }
 
 func (d *testCliDialog) DockerProjectPath(c string) (string, error) {
+	return "", nil
+}
+
+func (d *testCliDialog) DockerCliXdebugIniFilePath(c string) (string, error) {
+	return "", nil
+}
+
+func (d *testCliDialog) DockerFpmXdebugIniFilePath(c string) (string, error) {
 	return "", nil
 }
 

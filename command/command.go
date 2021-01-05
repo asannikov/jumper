@@ -8,9 +8,13 @@ type projectConfig interface {
 	GetProjectMainContainer() string
 	GetStartCommand() string
 	GetProjectDockerPath() string
+	GetCliXdebugIniFilePath() string
+	GetFpmXdebugIniFilePath() string
 	SaveContainerNameToProjectConfig(string) error
 	SaveStartCommandToProjectConfig(string) error
 	SaveDockerProjectPath(string) error
+	SaveDockerCliXdebugIniFilePath(string) error
+	SaveDockerFpmXdebugIniFilePath(string) error
 }
 
 type dialog interface {
@@ -19,6 +23,8 @@ type dialog interface {
 	StartDocker() (string, error)
 	DockerService() (string, error)
 	DockerProjectPath(string) (string, error)
+	DockerCliXdebugIniFilePath(string) (string, error)
+	DockerFpmXdebugIniFilePath(string) (string, error)
 }
 
 type containerlist interface {
@@ -55,6 +61,40 @@ func defineProjectDockerPath(cfg projectConfig, d dialog, defaultPath string) (e
 		}
 
 		return cfg.SaveDockerProjectPath(path)
+	}
+
+	return nil
+}
+
+func defineCliXdebugIniFilePath(cfg projectConfig, d dialog, defaultPath string) (err error) {
+	if cfg.GetCliXdebugIniFilePath() == "" {
+		var path string
+		if path, err = d.DockerCliXdebugIniFilePath(defaultPath); err != nil {
+			return err
+		}
+
+		if path == "" {
+			return errors.New("Cli Xdebug ini file path is empty")
+		}
+
+		return cfg.SaveDockerCliXdebugIniFilePath(path)
+	}
+
+	return nil
+}
+
+func defineFpmXdebugIniFilePath(cfg projectConfig, d dialog, defaultPath string) (err error) {
+	if cfg.GetFpmXdebugIniFilePath() == "" {
+		var path string
+		if path, err = d.DockerFpmXdebugIniFilePath(defaultPath); err != nil {
+			return err
+		}
+
+		if path == "" {
+			return errors.New("Fpm Xdebug ini file path is empty")
+		}
+
+		return cfg.SaveDockerFpmXdebugIniFilePath(path)
 	}
 
 	return nil

@@ -7,6 +7,8 @@ type ProjectConfig struct {
 	MainContainer     string `json:"main_container"`
 	StartCommand      string `json:"start_command"`
 	DockerProjectPath string `json:"path"`
+	XDebugCliIniPath  string `json:"xdebug_path_cli"`
+	XDebugFpmIniPath  string `json:"xdebug_path_fpm"`
 }
 
 // GetPath gets path to project
@@ -17,6 +19,16 @@ func (p *ProjectConfig) GetPath() string {
 // GetDockerProjectPath gets path to project
 func (p *ProjectConfig) GetDockerProjectPath() string {
 	return p.DockerProjectPath
+}
+
+// GetXDebugCliIniPath gets path to project
+func (p *ProjectConfig) GetXDebugCliIniPath() string {
+	return p.XDebugCliIniPath
+}
+
+// GetXDebugFpmIniPath gets path to project
+func (p *ProjectConfig) GetXDebugFpmIniPath() string {
+	return p.XDebugFpmIniPath
 }
 
 // GetName gets project name
