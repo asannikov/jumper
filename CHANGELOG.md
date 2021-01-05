@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 1.4.0 (05.01.2021)
+- features
+    - 4 Add xdebug enable/disable
+- bugfix
+    - 4 Added sync test
+    - 4 some containers do not use bash. sh was set by default
+
 ## 1.3.2 (05.01.2021)
 - bugfix
     - 22 User is always asked for a project select even he is in the folder with jumper.json.

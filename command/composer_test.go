@@ -35,6 +35,30 @@ func (tc *testComposerConfig) SaveDockerProjectPath(c string) error {
 	return nil
 }
 
+func (tc *testComposerConfig) SaveDockerCliXdebugIniFilePath(c string) error {
+	return nil
+}
+
+func (tc *testComposerConfig) SaveDockerFpmXdebugIniFilePath(c string) error {
+	return nil
+}
+
+func (tc *testComposerConfig) SaveXDebugConifgLocaton(c string) error {
+	return nil
+}
+
+func (tc *testComposerConfig) GetXDebugCliIniPath() string {
+	return ""
+}
+
+func (tc *testComposerConfig) GetXDebugFpmIniPath() string {
+	return ""
+}
+
+func (tc *testComposerConfig) GetXDebugConifgLocaton() string {
+	return ""
+}
+
 type testComposerDialog struct{}
 
 func (d *testComposerDialog) SetMainContaner([]string) (int, string, error) {
@@ -59,6 +83,18 @@ func (d *testComposerDialog) DockerService() (string, error) {
 
 func (d *testComposerDialog) DockerProjectPath(p string) (string, error) {
 	return "", nil
+}
+
+func (d *testComposerDialog) DockerCliXdebugIniFilePath(c string) (string, error) {
+	return "", nil
+}
+
+func (d *testComposerDialog) DockerFpmXdebugIniFilePath(c string) (string, error) {
+	return "", nil
+}
+
+func (d *testComposerDialog) XDebugConfigLocation() (int, string, error) {
+	return 0, "", nil
 }
 
 type testComposer struct {

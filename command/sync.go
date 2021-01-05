@@ -11,13 +11,9 @@ import (
 )
 
 type sync struct {
-	usage         map[string]string
-	aliases       map[string]string
-	description   map[string]string
-	initFunction  func()
-	containerList []string
-	ctype         string
-	command       string
+	usage       map[string]string
+	aliases     map[string]string
+	description map[string]string
 }
 
 func getSyncPath(path string) string {

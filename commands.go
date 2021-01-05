@@ -15,6 +15,9 @@ type dialogCommand interface {
 	StartDocker() (string, error)
 	DockerService() (string, error)
 	DockerProjectPath(string) (string, error)
+	DockerCliXdebugIniFilePath(string) (string, error)
+	DockerFpmXdebugIniFilePath(string) (string, error)
+	XDebugConfigLocation() (int, string, error)
 }
 
 func getCommandList(c *config.Config, d dialogCommand, initf func(bool) string) []*cli.Command {
@@ -37,7 +40,7 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool) string) 
 	return []*cli.Command{
 		// cli commands
 		command.CallCliCommand("cli", initf, c, d, cl),
-		command.CallCliCommand("bash", initf, c, d, cl),
+		command.CallCliCommand("sh", initf, c, d, cl),
 		command.CallCliCommand("clinotty", initf, c, d, cl),
 		command.CallCliCommand("cliroot", initf, c, d, cl),
 		command.CallCliCommand("clirootnotty", initf, c, d, cl),
@@ -77,6 +80,12 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool) string) 
 		// Sync Paths
 		command.SyncCommand("copyto", initf, dockerStatus, c, d, cl),
 		command.SyncCommand("copyfrom", initf, dockerStatus, c, d, cl),
+
+		// Xdebug
+		command.XDebugCommand("xdebug:fpm:enable", initf, dockerStatus, c, d, cl),
+		command.XDebugCommand("xdebug:fpm:disable", initf, dockerStatus, c, d, cl),
+		command.XDebugCommand("xdebug:cli:enable", initf, dockerStatus, c, d, cl),
+		command.XDebugCommand("xdebug:cli:disable", initf, dockerStatus, c, d, cl),
 
 		// docker pull https://docs.docker.com/engine/api/sdk/examples/
 	}

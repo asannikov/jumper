@@ -14,15 +14,16 @@ common things:
 * run docker project from any path of your local machine.
 * container management (start/stop/restart)
 * stop all containers
+* certain path or whole project synchronization
+* get project path
 
 PHP
 * run composer install/update with/without memory constraint
 * run composer commands
+* xdebug enable/disable for cli or fpm
 
 @todo
-* xDebug on/off 
 * mysqldump
-* file sync
 * redis and varnish management
 * Magento2 command support
 * Laravel artisan support
@@ -111,6 +112,19 @@ cli, c                          Runs cli command in conatiner: {docker exec main
    ```
 
 # FAQ
+## How to configure xdebug:
+Xdebug config ini files might be mounted to the container or able to be found directly in the container without mounting.
+Depending on case, you have to select following option on xdebug:* running:
+
+* mounted config file: 
+     
+   set path to config file on host. It has to be related to project root folder.
+
+* config file in container:
+
+   set absolute path to file in container
+
+
 ## How to run bash commands inside container:
 ```jumper clirootnotty bash -c "cd src && ls"```
 

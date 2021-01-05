@@ -30,28 +30,28 @@ func CallCliCommand(commandName string, initf func(bool) string, cfg projectConf
 	clic := &cliCommand{
 		usage: map[string]string{
 			"cli":          "Runs cli command in conatiner: {docker exec main_conatain} [command] [custom parameters]",
-			"bash":         "Runs cli bash command in conatiner: {docker exec main_conatain bash} [custom parameters]",
+			"sh":           "Runs cli bash command in conatiner: {docker exec main_conatain sh} [custom parameters]",
 			"clinotty":     "Runs command {docker exec -t main_container} [command] [custom parameters]",
 			"cliroot":      "Runs command {docker exec -u root main_container} [command] [custom parameters]",
 			"clirootnotty": "Runs command {docker exec -u root -t main_container} [command] [custom parameters]",
 		},
 		aliases: map[string]string{
 			"cli":          "c",
-			"bash":         "b",
+			"sh":           "sh",
 			"clinotty":     "cnt",
 			"cliroot":      "cr",
 			"clirootnotty": "crnt",
 		},
 		args: map[string][]string{
 			"cli":          []string{"-it"},
-			"bash":         []string{"-it"},
+			"sh":           []string{"-it"},
 			"cliroot":      []string{"-u", "root", "-it"},
 			"clinotty":     []string{"-i"},
 			"clirootnotty": []string{"-u", "root", "-i"},
 		},
 		command: map[string]string{
 			"cli":          "",
-			"bash":         "bash",
+			"sh":           "sh",
 			"clinotty":     "",
 			"cliroot":      "",
 			"clirootnotty": "",
