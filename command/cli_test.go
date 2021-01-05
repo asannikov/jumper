@@ -72,11 +72,19 @@ func (tc *testCliConfig) SaveDockerFpmXdebugIniFilePath(c string) error {
 	return nil
 }
 
-func (tc *testCliConfig) GetCliXdebugIniFilePath() string {
+func (tc *testCliConfig) SaveXDebugConifgLocaton(c string) error {
+	return nil
+}
+
+func (tc *testCliConfig) GetXDebugCliIniPath() string {
 	return ""
 }
 
-func (tc *testCliConfig) GetFpmXdebugIniFilePath() string {
+func (tc *testCliConfig) GetXDebugFpmIniPath() string {
+	return ""
+}
+
+func (tc *testCliConfig) GetXDebugConifgLocaton() string {
 	return ""
 }
 
@@ -108,6 +116,10 @@ func (d *testCliDialog) DockerCliXdebugIniFilePath(c string) (string, error) {
 
 func (d *testCliDialog) DockerFpmXdebugIniFilePath(c string) (string, error) {
 	return "", nil
+}
+
+func (d *testCliDialog) XDebugConfigLocation() (int, string, error) {
+	return 0, "", nil
 }
 
 type testCli struct {
@@ -192,7 +204,7 @@ func TestCliHandleCase3(t *testing.T) {
 			"cli": []string{"-it"},
 		},
 		command: map[string]string{
-			"cli": "bash",
+			"cli": "sh",
 		},
 	}
 
@@ -209,5 +221,5 @@ func TestCliHandleCase3(t *testing.T) {
 	args, err := cliCommandHandle("cli", cfg, dlg, cli, cl, a)
 
 	assert.Nil(t, err)
-	assert.Equal(t, []string{"exec", "-it", "containerName", "bash"}, args)
+	assert.Equal(t, []string{"exec", "-it", "containerName", "sh"}, args)
 }

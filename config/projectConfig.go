@@ -1,5 +1,9 @@
 package config
 
+/**
+ * @todo add different sh types bash/sh
+ */
+
 // ProjectConfig contains project settings
 type ProjectConfig struct {
 	Path              string `json:"-"`
@@ -7,8 +11,15 @@ type ProjectConfig struct {
 	MainContainer     string `json:"main_container"`
 	StartCommand      string `json:"start_command"`
 	DockerProjectPath string `json:"path"`
+	XDebugLocation    string `json:"xdebug_location"`
 	XDebugCliIniPath  string `json:"xdebug_path_cli"`
 	XDebugFpmIniPath  string `json:"xdebug_path_fpm"`
+	Shell             string `json:"-"`
+}
+
+// GetShell gets path to project
+func (p *ProjectConfig) GetShell() string {
+	return p.Shell
 }
 
 // GetPath gets path to project
@@ -29,6 +40,11 @@ func (p *ProjectConfig) GetXDebugCliIniPath() string {
 // GetXDebugFpmIniPath gets path to project
 func (p *ProjectConfig) GetXDebugFpmIniPath() string {
 	return p.XDebugFpmIniPath
+}
+
+// GetXDebugConifgLocaton gets xdebug file config location
+func (p *ProjectConfig) GetXDebugConifgLocaton() string {
+	return p.XDebugLocation
 }
 
 // GetName gets project name

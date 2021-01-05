@@ -8,13 +8,15 @@ type projectConfig interface {
 	GetProjectMainContainer() string
 	GetStartCommand() string
 	GetProjectDockerPath() string
-	GetCliXdebugIniFilePath() string
-	GetFpmXdebugIniFilePath() string
+	GetXDebugCliIniPath() string
+	GetXDebugFpmIniPath() string
+	GetXDebugConifgLocaton() string
 	SaveContainerNameToProjectConfig(string) error
 	SaveStartCommandToProjectConfig(string) error
 	SaveDockerProjectPath(string) error
 	SaveDockerCliXdebugIniFilePath(string) error
 	SaveDockerFpmXdebugIniFilePath(string) error
+	SaveXDebugConifgLocaton(string) error
 }
 
 type dialog interface {
@@ -25,6 +27,7 @@ type dialog interface {
 	DockerProjectPath(string) (string, error)
 	DockerCliXdebugIniFilePath(string) (string, error)
 	DockerFpmXdebugIniFilePath(string) (string, error)
+	XDebugConfigLocation() (int, string, error)
 }
 
 type containerlist interface {
@@ -67,7 +70,7 @@ func defineProjectDockerPath(cfg projectConfig, d dialog, defaultPath string) (e
 }
 
 func defineCliXdebugIniFilePath(cfg projectConfig, d dialog, defaultPath string) (err error) {
-	if cfg.GetCliXdebugIniFilePath() == "" {
+	if cfg.GetXDebugCliIniPath() == "" {
 		var path string
 		if path, err = d.DockerCliXdebugIniFilePath(defaultPath); err != nil {
 			return err
@@ -84,7 +87,7 @@ func defineCliXdebugIniFilePath(cfg projectConfig, d dialog, defaultPath string)
 }
 
 func defineFpmXdebugIniFilePath(cfg projectConfig, d dialog, defaultPath string) (err error) {
-	if cfg.GetFpmXdebugIniFilePath() == "" {
+	if cfg.GetXDebugFpmIniPath() == "" {
 		var path string
 		if path, err = d.DockerFpmXdebugIniFilePath(defaultPath); err != nil {
 			return err
@@ -95,6 +98,24 @@ func defineFpmXdebugIniFilePath(cfg projectConfig, d dialog, defaultPath string)
 		}
 
 		return cfg.SaveDockerFpmXdebugIniFilePath(path)
+	}
+
+	return nil
+}
+
+func defineXdebugIniFileLocation(cfg projectConfig, d dialog) (err error) {
+	if cfg.GetXDebugConifgLocaton() == "" {
+		var path string
+
+		if _, path, err = d.XDebugConfigLocation(); err != nil {
+			return err
+		}
+
+		if path == "" {
+			return errors.New("Xdebug config file locaton cannot be empty")
+		}
+
+		return cfg.SaveXDebugConifgLocaton(path)
 	}
 
 	return nil

@@ -43,11 +43,19 @@ func (tc *testComposerConfig) SaveDockerFpmXdebugIniFilePath(c string) error {
 	return nil
 }
 
-func (tc *testComposerConfig) GetCliXdebugIniFilePath() string {
+func (tc *testComposerConfig) SaveXDebugConifgLocaton(c string) error {
+	return nil
+}
+
+func (tc *testComposerConfig) GetXDebugCliIniPath() string {
 	return ""
 }
 
-func (tc *testComposerConfig) GetFpmXdebugIniFilePath() string {
+func (tc *testComposerConfig) GetXDebugFpmIniPath() string {
+	return ""
+}
+
+func (tc *testComposerConfig) GetXDebugConifgLocaton() string {
 	return ""
 }
 
@@ -83,6 +91,10 @@ func (d *testComposerDialog) DockerCliXdebugIniFilePath(c string) (string, error
 
 func (d *testComposerDialog) DockerFpmXdebugIniFilePath(c string) (string, error) {
 	return "", nil
+}
+
+func (d *testComposerDialog) XDebugConfigLocation() (int, string, error) {
+	return 0, "", nil
 }
 
 type testComposer struct {

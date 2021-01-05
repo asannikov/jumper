@@ -125,6 +125,11 @@ func (c *Config) GetProjectName() string {
 	return c.projectConfig.GetName()
 }
 
+// GetShell gets shell command
+func (c *Config) GetShell() string {
+	return c.projectConfig.GetShell()
+}
+
 // ProjectConfgFileFound checks if current path has config file
 func (c *Config) ProjectConfgFileFound() bool {
 	return c.hasProjectFile
@@ -159,6 +164,12 @@ func (c *Config) AddProjectConfigFile() (err error) {
 
 // main container
 
+// SaveShellCommand saves linux shell command
+func (c *Config) SaveShellCommand(cmd string) (err error) {
+	c.projectConfig.Shell = cmd
+	return c.saveProjectFile()
+}
+
 // SaveContainerNameToProjectConfig saves container name into project file
 func (c *Config) SaveContainerNameToProjectConfig(cn string) (err error) {
 	c.projectConfig.MainContainer = cn
@@ -185,14 +196,25 @@ func (c *Config) SaveDockerProjectPath(path string) (err error) {
 
 // Xdebug
 
-// GetCliXdebugIniFilePath gets cli xdebug ini file path
-func (c *Config) GetCliXdebugIniFilePath() string {
+// GetXDebugConifgLocaton gets cli xdebug ini file path
+func (c *Config) GetXDebugConifgLocaton() string {
+	return c.projectConfig.GetXDebugConifgLocaton()
+}
+
+// GetXDebugCliIniPath gets cli xdebug ini file path
+func (c *Config) GetXDebugCliIniPath() string {
 	return c.projectConfig.GetXDebugCliIniPath()
 }
 
-// GetFpmXdebugIniFilePath gets fpm xdebug ini file path
-func (c *Config) GetFpmXdebugIniFilePath() string {
+// GetXDebugFpmIniPath gets fpm xdebug ini file path
+func (c *Config) GetXDebugFpmIniPath() string {
 	return c.projectConfig.GetXDebugFpmIniPath()
+}
+
+// SaveXDebugConifgLocaton saves xdebug file location
+func (c *Config) SaveXDebugConifgLocaton(path string) (err error) {
+	c.projectConfig.XDebugLocation = path
+	return c.saveProjectFile()
 }
 
 // SaveDockerCliXdebugIniFilePath saves xdebug cli ini file path into project file

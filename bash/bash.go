@@ -20,7 +20,7 @@ func GetCommandLocation() func(string, string) (string, error) {
 			return "", errors.New("Command is not defined")
 		}
 
-		var args = []string{"exec", "-i", containerName, "bash"}
+		var args = []string{"exec", "-i", containerName, "sh"}
 
 		cmd := exec.Command("docker", args...)
 

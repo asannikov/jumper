@@ -17,6 +17,7 @@ type dialogCommand interface {
 	DockerProjectPath(string) (string, error)
 	DockerCliXdebugIniFilePath(string) (string, error)
 	DockerFpmXdebugIniFilePath(string) (string, error)
+	XDebugConfigLocation() (int, string, error)
 }
 
 func getCommandList(c *config.Config, d dialogCommand, initf func(bool) string) []*cli.Command {
@@ -39,7 +40,7 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool) string) 
 	return []*cli.Command{
 		// cli commands
 		command.CallCliCommand("cli", initf, c, d, cl),
-		command.CallCliCommand("bash", initf, c, d, cl),
+		command.CallCliCommand("sh", initf, c, d, cl),
 		command.CallCliCommand("clinotty", initf, c, d, cl),
 		command.CallCliCommand("cliroot", initf, c, d, cl),
 		command.CallCliCommand("clirootnotty", initf, c, d, cl),

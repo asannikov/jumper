@@ -16,6 +16,23 @@ func (d *Dialog) DockerFpmXdebugIniFilePath(defaulPath string) (string, error) {
 	return d.setDockerFmpXdebugIniFilePath(defaulPath)
 }
 
+// XDebugConfigLocation defines config location
+func (d *Dialog) XDebugConfigLocation() (int, string, error) {
+	return d.setXdebugFileConfigLocation()
+}
+
+func xdebugFileConfigLocation() (int, string, error) {
+	prompt := promptui.Select{
+		Label: "Select XDebug config file location",
+		Items: []string{
+			"local",
+			"container",
+		},
+	}
+
+	return prompt.Run()
+}
+
 func dockerCliXdebugIniFilePath(path string) (string, error) {
 	validate := func(p string) error {
 		if p == "" {
