@@ -24,7 +24,14 @@ func getSyncPath(path string) string {
 	return string(os.PathSeparator) + strings.Trim(path, string(os.PathSeparator))
 }
 
-func getSyncArgs(cfg projectConfig, direction string, syncPath string, projectRoot string) []string {
+type syncProjectConfig interface {
+	GetProjectMainContainer() string
+	GetProjectDockerPath() string
+	SaveContainerNameToProjectConfig(string) error
+	SaveDockerProjectPath(string) error
+}
+
+func getSyncArgs(cfg syncProjectConfig, direction string, syncPath string, projectRoot string) []string {
 	projectRoot = strings.TrimRight(projectRoot, string(os.PathSeparator))
 
 	args := []string{"cp", projectRoot + syncPath, cfg.GetProjectMainContainer() + ":" + strings.TrimRight(cfg.GetProjectDockerPath(), string(os.PathSeparator)) + syncPath}
@@ -37,7 +44,7 @@ func getSyncArgs(cfg projectConfig, direction string, syncPath string, projectRo
 }
 
 //SyncCommand does the syncronization between container and project
-func SyncCommand(direction string, initf func(bool) string, dockerStatus bool, cfg projectConfig, d dialog, clist containerlist) *cli.Command {
+func SyncCommand(direction string, initf func(bool) string, dockerStatus bool, cfg syncProjectConfig, d dialog, clist containerlist) *cli.Command {
 
 	s := &sync{
 		usage: map[string]string{

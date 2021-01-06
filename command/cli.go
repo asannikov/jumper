@@ -25,8 +25,13 @@ func (cli *cliCommand) GetArgs() map[string][]string {
 	return cli.args
 }
 
+type cliCommandHandleProjectConfig interface {
+	GetProjectMainContainer() string
+	SaveContainerNameToProjectConfig(string) error
+}
+
 // CallCliCommand calls a range of differnt cli commands
-func CallCliCommand(commandName string, initf func(bool) string, cfg projectConfig, d dialog, cl containerlist) *cli.Command {
+func CallCliCommand(commandName string, initf func(bool) string, cfg cliCommandHandleProjectConfig, d dialog, cl containerlist) *cli.Command {
 	clic := &cliCommand{
 		usage: map[string]string{
 			"cli":          "Runs cli command in conatiner: {docker exec main_conatain} [command] [custom parameters]",
@@ -89,7 +94,7 @@ type cliCommandInterface interface {
 	GetArgs() map[string][]string
 }
 
-func cliCommandHandle(index string, cfg projectConfig, d dialog, c cliCommandInterface, clist containerlist, a cli.Args) ([]string, error) {
+func cliCommandHandle(index string, cfg cliCommandHandleProjectConfig, d dialog, c cliCommandInterface, clist containerlist, a cli.Args) ([]string, error) {
 	var err error
 	var cl []string
 

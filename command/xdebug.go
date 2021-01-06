@@ -1,6 +1,7 @@
 package command
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -15,7 +16,18 @@ type xdebug struct {
 	description map[string]string
 }
 
-func getXdebugArgs(cfg projectConfig, command string, currentPath string) []string {
+type xdebugProjectConfig interface {
+	GetXDebugFpmIniPath() string
+	GetXDebugCliIniPath() string
+	GetXDebugConifgLocaton() string
+	GetProjectMainContainer() string
+	SaveContainerNameToProjectConfig(string) error
+	SaveDockerCliXdebugIniFilePath(string) error
+	SaveDockerFpmXdebugIniFilePath(string) error
+	SaveXDebugConifgLocaton(string) error
+}
+
+func getXdebugArgs(cfg xdebugProjectConfig, command string, currentPath string) []string {
 
 	action := `s/^\;zend_extension/zend_extension/g`
 
@@ -41,7 +53,7 @@ func getXdebugArgs(cfg projectConfig, command string, currentPath string) []stri
 }
 
 //XDebugCommand enable/disable xDebug
-func XDebugCommand(xdebugAction string, initf func(bool) string, dockerStatus bool, cfg projectConfig, d dialog, clist containerlist) *cli.Command {
+func XDebugCommand(xdebugAction string, initf func(bool) string, dockerStatus bool, cfg xdebugProjectConfig, d dialog, clist containerlist) *cli.Command {
 
 	x := &xdebug{
 		usage: map[string]string{
@@ -122,4 +134,71 @@ func XDebugCommand(xdebugAction string, initf func(bool) string, dockerStatus bo
 			return restartMainContainer(cfg)
 		},
 	}
+}
+
+type defineCliXdebugIniFilePathProjectConfig interface {
+	SaveDockerCliXdebugIniFilePath(string) error
+	GetXDebugCliIniPath() string
+}
+
+func defineCliXdebugIniFilePath(cfg defineCliXdebugIniFilePathProjectConfig, d dialog, defaultPath string) (err error) {
+	if cfg.GetXDebugCliIniPath() == "" {
+		var path string
+		if path, err = d.DockerCliXdebugIniFilePath(defaultPath); err != nil {
+			return err
+		}
+
+		if path == "" {
+			return errors.New("Cli Xdebug ini file path is empty")
+		}
+
+		return cfg.SaveDockerCliXdebugIniFilePath(path)
+	}
+
+	return nil
+}
+
+type defineFpmXdebugIniFilePathProjectConfig interface {
+	SaveDockerFpmXdebugIniFilePath(string) error
+	GetXDebugFpmIniPath() string
+}
+
+func defineFpmXdebugIniFilePath(cfg defineFpmXdebugIniFilePathProjectConfig, d dialog, defaultPath string) (err error) {
+	if cfg.GetXDebugFpmIniPath() == "" {
+		var path string
+		if path, err = d.DockerFpmXdebugIniFilePath(defaultPath); err != nil {
+			return err
+		}
+
+		if path == "" {
+			return errors.New("Fpm Xdebug ini file path is empty")
+		}
+
+		return cfg.SaveDockerFpmXdebugIniFilePath(path)
+	}
+
+	return nil
+}
+
+type defineXdebugIniFileLocationProjectConfig interface {
+	SaveXDebugConifgLocaton(string) error
+	GetXDebugConifgLocaton() string
+}
+
+func defineXdebugIniFileLocation(cfg defineXdebugIniFileLocationProjectConfig, d dialog) (err error) {
+	if cfg.GetXDebugConifgLocaton() == "" {
+		var path string
+
+		if _, path, err = d.XDebugConfigLocation(); err != nil {
+			return err
+		}
+
+		if path == "" {
+			return errors.New("Xdebug config file locaton cannot be empty")
+		}
+
+		return cfg.SaveXDebugConifgLocaton(path)
+	}
+
+	return nil
 }
