@@ -16,10 +16,6 @@ func (sc *syncConfig) GetProjectMainContainer() string {
 	return sc.projectMainContainer
 }
 
-func (sc *syncConfig) GetStartCommand() string {
-	return ""
-}
-
 func (sc *syncConfig) GetProjectDockerPath() string {
 	return sc.projectDockerPath
 }
@@ -34,30 +30,6 @@ func (sc *syncConfig) SaveStartCommandToProjectConfig(s string) error {
 
 func (sc *syncConfig) SaveDockerProjectPath(s string) error {
 	return nil
-}
-
-func (sc *syncConfig) SaveDockerCliXdebugIniFilePath(c string) error {
-	return nil
-}
-
-func (sc *syncConfig) SaveDockerFpmXdebugIniFilePath(c string) error {
-	return nil
-}
-
-func (sc *syncConfig) SaveXDebugConifgLocaton(c string) error {
-	return nil
-}
-
-func (sc *syncConfig) GetXDebugCliIniPath() string {
-	return ""
-}
-
-func (sc *syncConfig) GetXDebugFpmIniPath() string {
-	return ""
-}
-
-func (sc *syncConfig) GetXDebugConifgLocaton() string {
-	return ""
 }
 
 func TestGetSyncPath(t *testing.T) {
