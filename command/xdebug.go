@@ -19,7 +19,7 @@ type xdebug struct {
 type xdebugProjectConfig interface {
 	GetXDebugFpmIniPath() string
 	GetXDebugCliIniPath() string
-	GetXDebugConifgLocaton() string
+	GetXDebugConfigLocaton() string
 	GetProjectMainContainer() string
 	SaveContainerNameToProjectConfig(string) error
 	SaveDockerCliXdebugIniFilePath(string) error
@@ -27,7 +27,14 @@ type xdebugProjectConfig interface {
 	SaveXDebugConifgLocaton(string) error
 }
 
-func getXdebugArgs(cfg xdebugProjectConfig, command string, currentPath string) []string {
+type xdebugArgsProjectConfig interface {
+	GetXDebugFpmIniPath() string
+	GetXDebugCliIniPath() string
+	GetXDebugConfigLocaton() string
+	GetProjectMainContainer() string
+}
+
+func getXdebugArgs(cfg xdebugArgsProjectConfig, command string, currentPath string) []string {
 
 	action := `s/^\;zend_extension/zend_extension/g`
 
@@ -43,8 +50,8 @@ func getXdebugArgs(cfg xdebugProjectConfig, command string, currentPath string) 
 
 	args := []string{}
 
-	if cfg.GetXDebugConifgLocaton() == "local" {
-		args = []string{"sed", "-i", "-e", action, currentPath + string(os.PathSeparator) + strings.Trim(xdebugFileConfigPath, string(os.PathSeparator))}
+	if cfg.GetXDebugConfigLocaton() == "local" {
+		args = []string{"sed", "-i", "-e", action, strings.TrimRight(currentPath, string(os.PathSeparator)) + string(os.PathSeparator) + strings.Trim(xdebugFileConfigPath, string(os.PathSeparator))}
 	} else {
 		args = []string{"docker", "exec", cfg.GetProjectMainContainer(), "sed", "-i", "-e", action, xdebugFileConfigPath}
 	}
@@ -197,7 +204,7 @@ func defineFpmXdebugIniFilePath(cfg defineFpmXdebugIniFilePathProjectConfig, d d
 
 type defineXdebugIniFileLocationProjectConfig interface {
 	SaveXDebugConifgLocaton(string) error
-	GetXDebugConifgLocaton() string
+	GetXDebugConfigLocaton() string
 }
 
 type defineXdebugIniFileLocationDialog interface {
@@ -205,7 +212,7 @@ type defineXdebugIniFileLocationDialog interface {
 }
 
 func defineXdebugIniFileLocation(cfg defineXdebugIniFileLocationProjectConfig, d defineXdebugIniFileLocationDialog) (err error) {
-	if cfg.GetXDebugConifgLocaton() == "" {
+	if cfg.GetXDebugConfigLocaton() == "" {
 		var path string
 
 		if _, path, err = d.XDebugConfigLocation(); err != nil {

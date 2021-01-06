@@ -10,7 +10,7 @@ type projectConfig interface {
 	GetProjectDockerPath() string
 	GetXDebugCliIniPath() string
 	GetXDebugFpmIniPath() string
-	GetXDebugConifgLocaton() string
+	GetXDebugConfigLocaton() string
 	SaveContainerNameToProjectConfig(string) error
 	SaveStartCommandToProjectConfig(string) error
 	SaveDockerProjectPath(string) error
