@@ -72,7 +72,7 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool) string) 
 		command.CallStopOneContainerCommand(initf, dockerStatus, dck.StopContainers()),
 
 		// Get Project Path
-		command.GetProjectPath(initf, c, d),
+		command.GetProjectPath(initf, d),
 
 		// Copyright
 		command.CallCopyrightCommand(initf, c, d),

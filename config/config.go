@@ -196,9 +196,9 @@ func (c *Config) SaveDockerProjectPath(path string) (err error) {
 
 // Xdebug
 
-// GetXDebugConifgLocaton gets cli xdebug ini file path
-func (c *Config) GetXDebugConifgLocaton() string {
-	return c.projectConfig.GetXDebugConifgLocaton()
+// GetXDebugConfigLocaton gets cli xdebug ini file path
+func (c *Config) GetXDebugConfigLocaton() string {
+	return c.projectConfig.GetXDebugConfigLocaton()
 }
 
 // GetXDebugCliIniPath gets cli xdebug ini file path

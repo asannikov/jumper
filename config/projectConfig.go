@@ -42,8 +42,8 @@ func (p *ProjectConfig) GetXDebugFpmIniPath() string {
 	return p.XDebugFpmIniPath
 }
 
-// GetXDebugConifgLocaton gets xdebug file config location
-func (p *ProjectConfig) GetXDebugConifgLocaton() string {
+// GetXDebugConfigLocaton gets xdebug file config location
+func (p *ProjectConfig) GetXDebugConfigLocaton() string {
 	return p.XDebugLocation
 }
 
