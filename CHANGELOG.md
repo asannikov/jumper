@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.4.1 (06.01.2021)
+- bugfix
+    - 25 refactored unittests 
+    - 25 add xdebug unittests
+    - 25 refactored interfaces for commands, main interface splitted into different interfaces
+
 ## 1.4.0 (05.01.2021)
 - features
     - 4 Add xdebug enable/disable
