@@ -7,93 +7,22 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type testComposerConfig struct {
+type testComposerHandleBaseProjectConfig struct {
 	mainContainer string
 }
 
-func (tc *testComposerConfig) GetProjectMainContainer() string {
+func (tc *testComposerHandleBaseProjectConfig) GetProjectMainContainer() string {
 	return tc.mainContainer
 }
 
-func (tc *testComposerConfig) GetStartCommand() string {
-	return ""
-}
-
-func (tc *testComposerConfig) GetProjectDockerPath() string {
-	return ""
-}
-
-func (tc *testComposerConfig) SaveContainerNameToProjectConfig(container string) error {
+func (tc *testComposerHandleBaseProjectConfig) SaveContainerNameToProjectConfig(container string) error {
 	return nil
 }
 
-func (tc *testComposerConfig) SaveStartCommandToProjectConfig(c string) error {
-	return nil
+type testComposerHandleBaseComposerDialog struct {
 }
 
-func (tc *testComposerConfig) SaveDockerProjectPath(c string) error {
-	return nil
-}
-
-func (tc *testComposerConfig) SaveDockerCliXdebugIniFilePath(c string) error {
-	return nil
-}
-
-func (tc *testComposerConfig) SaveDockerFpmXdebugIniFilePath(c string) error {
-	return nil
-}
-
-func (tc *testComposerConfig) SaveXDebugConifgLocaton(c string) error {
-	return nil
-}
-
-func (tc *testComposerConfig) GetXDebugCliIniPath() string {
-	return ""
-}
-
-func (tc *testComposerConfig) GetXDebugFpmIniPath() string {
-	return ""
-}
-
-func (tc *testComposerConfig) GetXDebugConifgLocaton() string {
-	return ""
-}
-
-type testComposerDialog struct{}
-
-func (d *testComposerDialog) SetMainContaner([]string) (int, string, error) {
-	return 0, "", nil
-}
-
-func (d *testComposerDialog) StartCommand() (string, error) {
-	return "", nil
-}
-
-func (d *testComposerDialog) StartDocker() (string, error) {
-	return "", nil
-}
-
-func (d *testComposerDialog) SaveDockerProjectPath() (string, error) {
-	return "", nil
-}
-
-func (d *testComposerDialog) DockerService() (string, error) {
-	return "", nil
-}
-
-func (d *testComposerDialog) DockerProjectPath(p string) (string, error) {
-	return "", nil
-}
-
-func (d *testComposerDialog) DockerCliXdebugIniFilePath(c string) (string, error) {
-	return "", nil
-}
-
-func (d *testComposerDialog) DockerFpmXdebugIniFilePath(c string) (string, error) {
-	return "", nil
-}
-
-func (d *testComposerDialog) XDebugConfigLocation() (int, string, error) {
+func (d *testComposerHandleBaseComposerDialog) SetMainContaner([]string) (int, string, error) {
 	return 0, "", nil
 }
 
@@ -142,11 +71,11 @@ func TestParseCommand(t *testing.T) {
 }
 
 func TestComposerHandleCase1(t *testing.T) {
-	cfg := &testComposerConfig{
+	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "",
 	}
 
-	dlg := &testComposerDialog{}
+	dlg := &testComposerHandleBaseComposerDialog{}
 
 	cmp := &testComposer{}
 
@@ -166,11 +95,11 @@ func TestComposerHandleCase1(t *testing.T) {
 }
 
 func TestComposerHandleCase2(t *testing.T) {
-	cfg := &testComposerConfig{
+	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
 
-	dlg := &testComposerDialog{}
+	dlg := &testComposerHandleBaseComposerDialog{}
 
 	cmp := &testComposer{}
 
@@ -190,11 +119,11 @@ func TestComposerHandleCase2(t *testing.T) {
 }
 
 func TestComposerHandleCase3(t *testing.T) {
-	cfg := &testComposerConfig{
+	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
 
-	dlg := &testComposerDialog{}
+	dlg := &testComposerHandleBaseComposerDialog{}
 
 	cmp := &testComposer{
 		locaton: func(container string, service string) (string, error) {
@@ -221,11 +150,11 @@ func TestComposerHandleCase3(t *testing.T) {
 }
 
 func TestComposerHandleCase4(t *testing.T) {
-	cfg := &testComposerConfig{
+	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
 
-	dlg := &testComposerDialog{}
+	dlg := &testComposerHandleBaseComposerDialog{}
 
 	cmp := &testComposer{
 		locaton: func(container string, service string) (string, error) {
@@ -254,11 +183,11 @@ func TestComposerHandleCase4(t *testing.T) {
 }
 
 func TestComposerHandleCase5(t *testing.T) {
-	cfg := &testComposerConfig{
+	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
 
-	dlg := &testComposerDialog{}
+	dlg := &testComposerHandleBaseComposerDialog{}
 
 	cmp := &testComposer{
 		locaton: func(container string, service string) (string, error) {
@@ -291,11 +220,11 @@ func TestComposerHandleCase5(t *testing.T) {
 }
 
 func TestComposerHandleCase6(t *testing.T) {
-	cfg := &testComposerConfig{
+	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
 
-	dlg := &testComposerDialog{}
+	dlg := &testComposerHandleBaseComposerDialog{}
 
 	cmp := &testComposer{
 		locaton: func(container string, service string) (string, error) {
@@ -324,11 +253,11 @@ func TestComposerHandleCase6(t *testing.T) {
 }
 
 func TestComposerHandleCase7(t *testing.T) {
-	cfg := &testComposerConfig{
+	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
 
-	dlg := &testComposerDialog{}
+	dlg := &testComposerHandleBaseComposerDialog{}
 
 	cmp := &testComposer{
 		locaton: func(container string, service string) (string, error) {
@@ -359,11 +288,11 @@ func TestComposerHandleCase7(t *testing.T) {
 }
 
 func TestComposerHandleCase8(t *testing.T) {
-	cfg := &testComposerConfig{
+	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
 
-	dlg := &testComposerDialog{}
+	dlg := &testComposerHandleBaseComposerDialog{}
 
 	cmp := &testComposer{
 		locaton: func(container string, service string) (string, error) {
