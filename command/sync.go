@@ -43,8 +43,13 @@ func getSyncArgs(cfg syncProjectConfig, direction string, syncPath string, proje
 	return args
 }
 
+type syncCommandDialog interface {
+	SetMainContaner([]string) (int, string, error)
+	DockerProjectPath(string) (string, error)
+}
+
 //SyncCommand does the syncronization between container and project
-func SyncCommand(direction string, initf func(bool) string, dockerStatus bool, cfg syncProjectConfig, d dialog, clist containerlist) *cli.Command {
+func SyncCommand(direction string, initf func(bool) string, dockerStatus bool, cfg syncProjectConfig, d syncCommandDialog, clist containerlist) *cli.Command {
 
 	s := &sync{
 		usage: map[string]string{

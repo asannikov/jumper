@@ -31,8 +31,12 @@ type callStopMainContainerCommandProjectConfig interface {
 	SaveContainerNameToProjectConfig(string) error
 }
 
+type callStopMainContainerCommandDialog interface {
+	SetMainContaner([]string) (int, string, error)
+}
+
 // CallStopMainContainerCommand stops main container
-func CallStopMainContainerCommand(initf func(bool) string, dockerStatus bool, stopFuncton func([]string) error, cfg callStopMainContainerCommandProjectConfig, d dialog, clist containerlist) *cli.Command {
+func CallStopMainContainerCommand(initf func(bool) string, dockerStatus bool, stopFuncton func([]string) error, cfg callStopMainContainerCommandProjectConfig, d callStopMainContainerCommandDialog, clist containerlist) *cli.Command {
 	return &cli.Command{
 		Name:    "stop:maincontainer",
 		Aliases: []string{"smc"},

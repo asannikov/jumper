@@ -39,7 +39,11 @@ type projectMainContainerProjectConfig interface {
 	GetProjectMainContainer() string
 }
 
-func defineProjectMainContainer(cfg projectMainContainerProjectConfig, d dialog, containerlist []string) (err error) {
+type defineProjectMainContainerDialog interface {
+	SetMainContaner([]string) (int, string, error)
+}
+
+func defineProjectMainContainer(cfg projectMainContainerProjectConfig, d defineProjectMainContainerDialog, containerlist []string) (err error) {
 	if cfg.GetProjectMainContainer() == "" {
 		_, container, err := d.SetMainContaner(containerlist)
 
@@ -62,7 +66,11 @@ type dockerPathProjectConfig interface {
 	GetProjectDockerPath() string
 }
 
-func defineProjectDockerPath(cfg dockerPathProjectConfig, d dialog, defaultPath string) (err error) {
+type defineProjectDockerPathDialog interface {
+	DockerProjectPath(string) (string, error)
+}
+
+func defineProjectDockerPath(cfg dockerPathProjectConfig, d defineProjectDockerPathDialog, defaultPath string) (err error) {
 	if cfg.GetProjectDockerPath() == "" {
 		var path string
 		if path, err = d.DockerProjectPath(defaultPath); err != nil {

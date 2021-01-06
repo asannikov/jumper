@@ -16,7 +16,11 @@ type defineStartCommandProjectConfig interface {
 	SaveStartCommandToProjectConfig(string) error
 }
 
-func defineStartCommand(cfg defineStartCommandProjectConfig, d dialog, containerlist []string) (err error) {
+type defineStartCommandDialog interface {
+	StartCommand() (string, error)
+}
+
+func defineStartCommand(cfg defineStartCommandProjectConfig, d defineStartCommandDialog, containerlist []string) (err error) {
 	if cfg.GetStartCommand() == "" {
 		startCommand, err := d.StartCommand()
 
@@ -67,8 +71,13 @@ type callStartProjectBasicProjectConfig interface {
 	SaveStartCommandToProjectConfig(string) error
 }
 
+type callStartProjectBasicDialog interface {
+	SetMainContaner([]string) (int, string, error)
+	StartCommand() (string, error)
+}
+
 // CallStartProjectBasic runs docker project
-func CallStartProjectBasic(initf func(bool) string, cfg callStartProjectBasicProjectConfig, d dialog, clist containerlist) *cli.Command {
+func CallStartProjectBasic(initf func(bool) string, cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:            "start",
 		Aliases:         []string{"st"},
@@ -100,7 +109,7 @@ func CallStartProjectBasic(initf func(bool) string, cfg callStartProjectBasicPro
 }
 
 // CallStartProjectForceRecreate runs docker project
-func CallStartProjectForceRecreate(initf func(bool) string, cfg callStartProjectBasicProjectConfig, d dialog, clist containerlist) *cli.Command {
+func CallStartProjectForceRecreate(initf func(bool) string, cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:force",
 		Aliases: []string{"s:f"},
@@ -134,7 +143,7 @@ func CallStartProjectForceRecreate(initf func(bool) string, cfg callStartProject
 }
 
 // CallStartProjectOrphans runs docker project
-func CallStartProjectOrphans(initf func(bool) string, cfg callStartProjectBasicProjectConfig, d dialog, clist containerlist) *cli.Command {
+func CallStartProjectOrphans(initf func(bool) string, cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:orphans",
 		Aliases: []string{"s:o"},
@@ -168,7 +177,7 @@ func CallStartProjectOrphans(initf func(bool) string, cfg callStartProjectBasicP
 }
 
 // CallStartProjectForceOrphans runs docker project
-func CallStartProjectForceOrphans(initf func(bool) string, cfg callStartProjectBasicProjectConfig, d dialog, clist containerlist) *cli.Command {
+func CallStartProjectForceOrphans(initf func(bool) string, cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:force-orphans",
 		Aliases: []string{"s:fo"},
@@ -208,7 +217,7 @@ type callStartMainContainerProjectConfig interface {
 }
 
 // CallStartMainContainer runs docker main container
-func CallStartMainContainer(initf func(bool) string, cfg callStartMainContainerProjectConfig, d dialog, clist containerlist) *cli.Command {
+func CallStartMainContainer(initf func(bool) string, cfg callStartMainContainerProjectConfig, d callStartProjectBasicDialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:maincontainer",
 		Aliases: []string{"startmc"},
@@ -267,7 +276,7 @@ func restartMainContainer(cfg restartMainContainerProjectConfig) error {
 }
 
 // CallRestartMainContainer restarts docker main container
-func CallRestartMainContainer(initf func(bool) string, dockerStatus bool, cfg callStartMainContainerProjectConfig, d dialog, clist containerlist) *cli.Command {
+func CallRestartMainContainer(initf func(bool) string, dockerStatus bool, cfg callStartMainContainerProjectConfig, d callStartProjectBasicDialog, clist containerlist) *cli.Command {
 	cmd := cli.Command{
 		Name:    "restart:maincontainer",
 		Aliases: []string{"rmc"},
