@@ -125,11 +125,6 @@ func (c *Config) GetProjectName() string {
 	return c.projectConfig.GetName()
 }
 
-// GetShell gets shell command
-func (c *Config) GetShell() string {
-	return c.projectConfig.GetShell()
-}
-
 // ProjectConfgFileFound checks if current path has config file
 func (c *Config) ProjectConfgFileFound() bool {
 	return c.hasProjectFile
@@ -162,86 +157,6 @@ func (c *Config) AddProjectConfigFile() (err error) {
 	return c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
 }
 
-// main container
-
-// SaveShellCommand saves linux shell command
-func (c *Config) SaveShellCommand(cmd string) (err error) {
-	c.projectConfig.Shell = cmd
-	return c.saveProjectFile()
-}
-
-// SaveContainerNameToProjectConfig saves container name into project file
-func (c *Config) SaveContainerNameToProjectConfig(cn string) (err error) {
-	c.projectConfig.MainContainer = cn
-	return c.saveProjectFile()
-}
-
-// GetProjectMainContainer gets project main container
-func (c *Config) GetProjectMainContainer() string {
-	return c.projectConfig.GetMainContainer()
-}
-
-// Docker project path
-
-// GetProjectDockerPath gets project main container
-func (c *Config) GetProjectDockerPath() string {
-	return c.projectConfig.GetDockerProjectPath()
-}
-
-// SaveDockerProjectPath saves path to project in container into project file
-func (c *Config) SaveDockerProjectPath(path string) (err error) {
-	c.projectConfig.DockerProjectPath = path
-	return c.saveProjectFile()
-}
-
-// Xdebug
-
-// GetXDebugConfigLocaton gets cli xdebug ini file path
-func (c *Config) GetXDebugConfigLocaton() string {
-	return c.projectConfig.GetXDebugConfigLocaton()
-}
-
-// GetXDebugCliIniPath gets cli xdebug ini file path
-func (c *Config) GetXDebugCliIniPath() string {
-	return c.projectConfig.GetXDebugCliIniPath()
-}
-
-// GetXDebugFpmIniPath gets fpm xdebug ini file path
-func (c *Config) GetXDebugFpmIniPath() string {
-	return c.projectConfig.GetXDebugFpmIniPath()
-}
-
-// SaveXDebugConifgLocaton saves xdebug file location
-func (c *Config) SaveXDebugConifgLocaton(path string) (err error) {
-	c.projectConfig.XDebugLocation = path
-	return c.saveProjectFile()
-}
-
-// SaveDockerCliXdebugIniFilePath saves xdebug cli ini file path into project file
-func (c *Config) SaveDockerCliXdebugIniFilePath(path string) (err error) {
-	c.projectConfig.XDebugCliIniPath = path
-	return c.saveProjectFile()
-}
-
-// SaveDockerFpmXdebugIniFilePath saves xdebug fpm ini file path into project file
-func (c *Config) SaveDockerFpmXdebugIniFilePath(path string) (err error) {
-	c.projectConfig.XDebugFpmIniPath = path
-	return c.saveProjectFile()
-}
-
-// main start command
-
-// GetStartCommand gets start command
-func (c *Config) GetStartCommand() string {
-	return c.projectConfig.GetStartCommand()
-}
-
-// SaveStartCommandToProjectConfig saves container name into project file
-func (c *Config) SaveStartCommandToProjectConfig(cmd string) (err error) {
-	c.projectConfig.StartCommand = cmd
-	return c.saveProjectFile()
-}
-
 // GetFile gets project file
 func (c *Config) GetFile() string {
 	return c.ProjectFile
@@ -253,36 +168,4 @@ func (c *Config) saveProjectFile() error {
 
 func (c *Config) getProjectFile() string {
 	return strings.TrimRight(c.projectConfig.GetPath(), string(os.PathSeparator)) + string(os.PathSeparator) + c.ProjectFile
-}
-
-// Copyright
-
-// EnableCopyright Enable copyright output
-func (c *Config) EnableCopyright() error {
-	c.globalConfig.EnableCopyright()
-	return c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
-}
-
-// DisableCopyright Disable copyright output
-func (c *Config) DisableCopyright() error {
-	c.globalConfig.DisableCopyright()
-	return c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
-}
-
-// ShowCopyrightText check the status of copyright output
-func (c *Config) ShowCopyrightText() bool {
-	return c.globalConfig.ShowCopyrightText()
-}
-
-// Docker instance command
-
-// SetDockerCommand define docker command
-func (c *Config) SetDockerCommand(command string) error {
-	c.globalConfig.SetDockerCommand(command)
-	return c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
-}
-
-// GetDockerCommand gets the docker command
-func (c *Config) GetDockerCommand() string {
-	return c.globalConfig.GetDockerCommand()
 }

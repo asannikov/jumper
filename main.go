@@ -13,7 +13,7 @@ import (
 )
 
 const confgFile = "jumper.json"
-const version = "1.4.1"
+const version = "1.5.0"
 
 func main() {
 

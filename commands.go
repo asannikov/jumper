@@ -4,23 +4,13 @@ import (
 	"jumper/bash"
 	"jumper/command"
 	"jumper/config"
+	"jumper/dialog"
 	"jumper/docker"
 
 	"github.com/urfave/cli/v2"
 )
 
-type dialogCommand interface {
-	SetMainContaner([]string) (int, string, error)
-	StartCommand() (string, error)
-	StartDocker() (string, error)
-	DockerService() (string, error)
-	DockerProjectPath(string) (string, error)
-	DockerCliXdebugIniFilePath(string) (string, error)
-	DockerFpmXdebugIniFilePath(string) (string, error)
-	XDebugConfigLocation() (int, string, error)
-}
-
-func getCommandList(c *config.Config, d dialogCommand, initf func(bool) string) []*cli.Command {
+func getCommandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []*cli.Command {
 
 	getCommandLocationF := bash.GetCommandLocation()
 
@@ -86,6 +76,9 @@ func getCommandList(c *config.Config, d dialogCommand, initf func(bool) string) 
 		command.XDebugCommand("xdebug:fpm:disable", initf, dockerStatus, c, d, cl),
 		command.XDebugCommand("xdebug:cli:enable", initf, dockerStatus, c, d, cl),
 		command.XDebugCommand("xdebug:cli:disable", initf, dockerStatus, c, d, cl),
+
+		// Shell
+		command.ShellCommand(initf, c, d),
 
 		// docker pull https://docs.docker.com/engine/api/sdk/examples/
 	}

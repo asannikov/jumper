@@ -26,11 +26,6 @@ func (d *Dialog) CallAddProjectDialog(pc projectConfig) error {
 	return nil
 }
 
-// DockerProjectPath gets the path to container
-func (d *Dialog) DockerProjectPath(defaulPath string) (string, error) {
-	return d.setDockerProjectPath(defaulPath)
-}
-
 func addProjectPath(path string) (string, error) {
 	validate := func(p string) error {
 		if p == "" {
@@ -59,23 +54,6 @@ func addProjectName() (string, error) {
 	prompt := promptui.Prompt{
 		Label:    "Add project name",
 		Validate: validate,
-	}
-
-	return prompt.Run()
-}
-
-func dockerProjectPath(path string) (string, error) {
-	validate := func(p string) error {
-		if p == "" {
-			return fmt.Errorf("Project path cannot be empty")
-		}
-		return nil
-	}
-
-	prompt := promptui.Prompt{
-		Label:    "Add project path in docker container",
-		Validate: validate,
-		Default:  path,
 	}
 
 	return prompt.Run()

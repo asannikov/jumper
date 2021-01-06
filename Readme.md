@@ -82,8 +82,8 @@ Useful links: [Command not found go — on Mac after installing Go](https://stac
 
 implemented commands:
 ```
-cli, c                          Runs cli command in conatiner: {docker exec main_conatain} [command] [custom parameters]
-   bash, b                         Runs cli bash command in conatiner: {docker exec main_conatain bash} [custom parameters]
+   cli, c                          Runs cli command in conatiner: {docker exec main_conatain} [command] [custom parameters]
+   sh, sh                          Runs cli sh command in conatiner: {docker exec main_conatain {shell_type}} [custom parameters]
    clinotty, cnt                   Runs command {docker exec -t main_container} [command] [custom parameters]
    cliroot, cr                     Runs command {docker exec -u root main_container} [command] [custom parameters]
    clirootnotty, crnt              Runs command {docker exec -u root -t main_container} [command] [custom parameters]
@@ -109,9 +109,17 @@ cli, c                          Runs cli command in conatiner: {docker exec main
    copyright                       
    copyto, cpt                     Sync local -> docker container, set related path, ie `vendor/folder/` for syncing as a parameter, or use --all to sync all project
    copyfrom, cpf                   Sync docker container -> local, set related path, ie `vendor/folder/` for syncing as a parameter, or use --all to sync all project
+   xdebug:fpm:enable, xe           Enable fpm xdebug
+   xdebug:fpm:disable, xd          Disable fpm xdebug
+   xdebug:cli:enable, xce          Enable cli xdebug
+   xdebug:cli:disable, xcd         Disable cli xdebug
+   shell                           Change shell type for a project
    ```
 
 # FAQ
+## How to change shell type:
+Container might use only sh shell type and no bash. By default jumper uses `sh`. But you can use `bash` or even 	`csh`, `ksh` or `zsh`. Call `jumper shell` with no option and select shell type. It will be saved into project config `jumper.json` in `shell` node.
+
 ## How to configure xdebug:
 Xdebug config ini files might be mounted to the container or able to be found directly in the container without mounting.
 Depending on case, you have to select following option on xdebug:* running:

@@ -34,6 +34,8 @@ type dockerStartDialog struct {
 	containerList     func(*dockerStartDialog) ([]string, error)
 }
 
+type dialogCommand interface{}
+
 func getDockerStartDialog() *dockerStartDialog {
 	cl := &dockerStartDialog{}
 	cl.stat = func(cl *dockerStartDialog) (string, error) {
