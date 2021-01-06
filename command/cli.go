@@ -28,6 +28,7 @@ func (cli *cliCommand) GetArgs() map[string][]string {
 type cliCommandHandleProjectConfig interface {
 	GetProjectMainContainer() string
 	SaveContainerNameToProjectConfig(string) error
+	GetShell() string
 }
 
 type callCliCommandDialog interface {
@@ -39,7 +40,7 @@ func CallCliCommand(commandName string, initf func(bool) string, cfg cliCommandH
 	clic := &cliCommand{
 		usage: map[string]string{
 			"cli":          "Runs cli command in conatiner: {docker exec main_conatain} [command] [custom parameters]",
-			"sh":           "Runs cli bash command in conatiner: {docker exec main_conatain sh} [custom parameters]",
+			"sh":           "Runs cli sh command in conatiner: {docker exec main_conatain {shell_type}} [custom parameters]",
 			"clinotty":     "Runs command {docker exec -t main_container} [command] [custom parameters]",
 			"cliroot":      "Runs command {docker exec -u root main_container} [command] [custom parameters]",
 			"clirootnotty": "Runs command {docker exec -u root -t main_container} [command] [custom parameters]",
@@ -60,7 +61,7 @@ func CallCliCommand(commandName string, initf func(bool) string, cfg cliCommandH
 		},
 		command: map[string]string{
 			"cli":          "",
-			"sh":           "sh",
+			"sh":           cfg.GetShell(),
 			"clinotty":     "",
 			"cliroot":      "",
 			"clirootnotty": "",

@@ -14,7 +14,7 @@ type ProjectConfig struct {
 	XDebugLocation    string `json:"xdebug_location"`
 	XDebugCliIniPath  string `json:"xdebug_path_cli"`
 	XDebugFpmIniPath  string `json:"xdebug_path_fpm"`
-	Shell             string `json:"-"`
+	Shell             string `json:"shell"`
 }
 
 // GetShell gets path to project

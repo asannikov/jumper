@@ -70,6 +70,10 @@ func (tc *testCliHandleBaseProjectConfig) SaveContainerNameToProjectConfig(conta
 	return nil
 }
 
+func (tc *testCliHandleBaseProjectConfig) GetShell() string {
+	return ""
+}
+
 type testCliHandleBaseComposerDialog struct {
 }
 
