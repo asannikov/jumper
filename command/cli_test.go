@@ -36,92 +36,6 @@ func (a *args) Present() bool {
 	return true
 }
 
-type testCliConfig struct {
-	mainContainer string
-}
-
-func (tc *testCliConfig) GetProjectMainContainer() string {
-	return tc.mainContainer
-}
-
-func (tc *testCliConfig) SaveContainerNameToProjectConfig(container string) error {
-	return nil
-}
-
-func (tc *testCliConfig) GetStartCommand() string {
-	return ""
-}
-
-func (tc *testCliConfig) GetProjectDockerPath() string {
-	return ""
-}
-
-func (tc *testCliConfig) SaveDockerProjectPath(c string) error {
-	return nil
-}
-
-func (tc *testCliConfig) SaveStartCommandToProjectConfig(c string) error {
-	return nil
-}
-
-func (tc *testCliConfig) SaveDockerCliXdebugIniFilePath(c string) error {
-	return nil
-}
-
-func (tc *testCliConfig) SaveDockerFpmXdebugIniFilePath(c string) error {
-	return nil
-}
-
-func (tc *testCliConfig) SaveXDebugConifgLocaton(c string) error {
-	return nil
-}
-
-func (tc *testCliConfig) GetXDebugCliIniPath() string {
-	return ""
-}
-
-func (tc *testCliConfig) GetXDebugFpmIniPath() string {
-	return ""
-}
-
-func (tc *testCliConfig) GetXDebugConifgLocaton() string {
-	return ""
-}
-
-type testCliDialog struct{}
-
-func (d *testCliDialog) SetMainContaner([]string) (int, string, error) {
-	return 0, "", nil
-}
-
-func (d *testCliDialog) StartCommand() (string, error) {
-	return "", nil
-}
-
-func (d *testCliDialog) StartDocker() (string, error) {
-	return "", nil
-}
-
-func (d *testCliDialog) DockerService() (string, error) {
-	return "", nil
-}
-
-func (d *testCliDialog) DockerProjectPath(c string) (string, error) {
-	return "", nil
-}
-
-func (d *testCliDialog) DockerCliXdebugIniFilePath(c string) (string, error) {
-	return "", nil
-}
-
-func (d *testCliDialog) DockerFpmXdebugIniFilePath(c string) (string, error) {
-	return "", nil
-}
-
-func (d *testCliDialog) XDebugConfigLocation() (int, string, error) {
-	return 0, "", nil
-}
-
 type testCli struct {
 	args    map[string][]string
 	command map[string]string
@@ -144,12 +58,31 @@ func (tcl *testContainerlist) GetContainerList() ([]string, error) {
 	return tcl.containerList, tcl.err
 }
 
+type testCliHandleBaseProjectConfig struct {
+	mainContainer string
+}
+
+func (tc *testCliHandleBaseProjectConfig) GetProjectMainContainer() string {
+	return tc.mainContainer
+}
+
+func (tc *testCliHandleBaseProjectConfig) SaveContainerNameToProjectConfig(container string) error {
+	return nil
+}
+
+type testCliHandleBaseComposerDialog struct {
+}
+
+func (d *testCliHandleBaseComposerDialog) SetMainContaner([]string) (int, string, error) {
+	return 0, "", nil
+}
+
 func TestCliHandleCase1(t *testing.T) {
-	cfg := &testCliConfig{
+	cfg := &testCliHandleBaseProjectConfig{
 		mainContainer: "",
 	}
 
-	dlg := &testCliDialog{}
+	dlg := &testCliHandleBaseComposerDialog{}
 
 	cli := &testCli{}
 
@@ -169,11 +102,11 @@ func TestCliHandleCase1(t *testing.T) {
 }
 
 func TestCliHandleCase2(t *testing.T) {
-	cfg := &testCliConfig{
+	cfg := &testCliHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
 
-	dlg := &testCliDialog{}
+	dlg := &testCliHandleBaseComposerDialog{}
 
 	cli := &testCli{}
 
@@ -193,11 +126,11 @@ func TestCliHandleCase2(t *testing.T) {
 }
 
 func TestCliHandleCase3(t *testing.T) {
-	cfg := &testCliConfig{
+	cfg := &testCliHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
 
-	dlg := &testCliDialog{}
+	dlg := &testCliHandleBaseComposerDialog{}
 
 	cli := &testCli{
 		args: map[string][]string{
