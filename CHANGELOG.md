@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 1.5.0 (06.01.2021)
+- features
+    - 25 Add shell command, which set the default shell type for usage in main contaner
+- bugfix
+    - 25 Split logic for config package
+    - 25 Add missed xdebug unittests
+
 ## 1.4.1 (06.01.2021)
 - bugfix
     - 25 refactored unittests 
