@@ -5,7 +5,7 @@
 package=github.com/asannikov/jumper
 package_name=jumper
 
-platforms=("linux/amd64" "linux/386" "darwin/amd64" "windows/amd64" "windows/386")
+platforms=("linux/amd64" "linux/386" "darwin/amd64" "darwin/386" "windows/amd64" "windows/386")
 
 for platform in "${platforms[@]}"
 do

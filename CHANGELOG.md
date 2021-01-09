@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.5.1 (09.01.2021)
+- features
+    - add go build bash script
+    - prepared for built releases
+
 ## 1.5.0 (06.01.2021)
 - features
     - 25 Add shell command, which set the default shell type for usage in main contaner
