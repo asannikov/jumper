@@ -4,7 +4,9 @@ This tool has been created for helping developers out with daily docker routines
 
 I was inspired by [Mark's Shust](https://github.com/markshust/docker-magento) solutution for M2. Many thanks to Mark from my side for his ideas.
 
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/asannikov/jumper/blob/master/LICENSE)
 [![Build Status](https://travis-ci.com/asannikov/jumper.svg?branch=master)](https://travis-ci.com/asannikov/jumper)
+[![Release](https://img.shields.io/badge/release-1.5.3-brightgreen.svg)](https://github.com/asannikov/jumper/releases/tag/v1.5.3)
 
 It was not tested on Windows.
 
@@ -40,7 +42,7 @@ Once you call `jumper`, it looks for the `jumper.json` file in the current path 
 Case1:
 
 if the file `jumper.json` exists, it checks if the main container defined. If not, you will be asked to select the related container. IMPORTANT: docker project has to be run to select the related container. It's necessary once until container name is changed.
-If main container has been defined already, it runs the related command, ie start docker project.
+If main container has been defined already, it Runs the related command, ie start docker project.
 
 Case2:
 
@@ -69,12 +71,41 @@ Now you can call `jumper` in any folder.
 Useful links: [Command not found go — on Mac after installing Go](https://stackoverflow.com/questions/34708207/command-not-found-go-on-mac-after-installing-go)
 
 
-#### 2. Using brew
- - install brew
+#### 2. Using brew (does not work officially yet)
+
+> I prepared branch for pull reqest https://github.com/asannikov/homebrew-core/tree/jumper, but it's going to be in brew when the next goals will be reached:
+> 1) Magento, Mysql dumps and artisan management will be done
+> 2) Repository reached 70 stars and 30 forks (requirement by Brew team)
+> 3) Almost all code covered by tests and have no reported issues for a long time.
+
+
+- install brew
  ```
  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
  ```
- - run `brew install jumper` 
+ - ~~run `brew install jumper`~~
+
+but you can still use jumper in brew (mac os only) in test mode. Download file:
+```
+wget https://raw.githubusercontent.com/asannikov/jumper/master/jumper_install.sh
+```
+script will install jumper in test mode on your machine. Run it:
+```
+sh ./jumper_install.sh
+```
+It can ask the "Formula name", leave it empty and press enter.
+
+now you can call `jumper`.
+
+#### 3. Download source directly from repository.
+
+Every stable release has attached sources for "linux/amd64", "linux/386", "darwin/amd64", "windows/amd64" and "windows/386"
+
+For example:
+```
+https://github.com/asannikov/jumper/releases/tag/v1.5.3
+```
+Find related source there and download it. Now you can place use source at any place you want on your machine or make it global in a standard way.
 
 ## Usage
 
@@ -93,19 +124,19 @@ implemented commands:
    composer:install:memory, cmpim  Runs composer install with no memory constraint: {docker exec -i phpContainer /usr/bin/php -d memory_limit=-1 /usr/local/bin/composer install} [custom parameters]
    composer:update, cmpu           Runs composer update: {docker exec -it phpContainer composer update} [custom parameters]
    composer:update:memory, cmpum   Runs composer update with no memory constraint: {docker exec -i phpContainer /usr/bin/php -d memory_limit=-1 /usr/local/bin/composer update} [custom parameters]
-   start, st                       runs defined command: {docker-compose -f docker-compose.yml up} [custom parameters]
-   start:force, s:f                runs defined command: {docker-compose -f docker-compose.yml up --force-recreat} [custom parameters]
-   start:orphans, s:o              runs defined command: {docker-compose -f docker-compose.yml up --remove-orphans} [custom parameters]
-   start:force-orphans, s:fo       runs defined command: {docker-compose -f docker-compose.yml up --force-recreate --remove-orphans} [custom parameters]
-   start:maincontainer, startmc    runs defined command: {docker start main_container}
-   start:containers, startc        runs defined command: {docker start} [container]
+   start, st                       Runs defined command: {docker-compose -f docker-compose.yml up} [custom parameters]
+   start:force, s:f                Runs defined command: {docker-compose -f docker-compose.yml up --force-recreat} [custom parameters]
+   start:orphans, s:o              Runs defined command: {docker-compose -f docker-compose.yml up --remove-orphans} [custom parameters]
+   start:force-orphans, s:fo       Runs defined command: {docker-compose -f docker-compose.yml up --force-recreate --remove-orphans} [custom parameters]
+   start:maincontainer, startmc    Runs defined command: {docker start main_container}
+   start:containers, startc        Runs defined command: {docker start} [container]
    restart:maincontainer, rmc      restarts main container
-   restart:containers, rc          runs defined command: {docker start} [container]
+   restart:containers, rc          Runs defined command: {docker start} [container]
    stopallcontainers, sac          Stops all docker containers
    stop:containers, scs            Stops docker containers
    stop:maincontainer, smc         Stops main docker container
    stop:container, stopc           Stops selected docker containers
-   path                            gets project path
+   path                            Gets project path
    copyright                       
    copyto, cpt                     Sync local -> docker container, set related path, ie `vendor/folder/` for syncing as a parameter, or use --all to sync all project
    copyfrom, cpf                   Sync docker container -> local, set related path, ie `vendor/folder/` for syncing as a parameter, or use --all to sync all project

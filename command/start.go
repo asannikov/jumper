@@ -81,7 +81,7 @@ func CallStartProjectBasic(initf func(bool) string, cfg callStartProjectBasicPro
 	cmd := cli.Command{
 		Name:            "start",
 		Aliases:         []string{"st"},
-		Usage:           `runs defined command: {docker-compose -f docker-compose.yml up} [custom parameters]`,
+		Usage:           `Runs defined command: {docker-compose -f docker-compose.yml up} [custom parameters]`,
 		Description:     `It's possible to use any custom parameters coming after "up"`,
 		SkipFlagParsing: true,
 		Action: func(c *cli.Context) (err error) {
@@ -113,7 +113,7 @@ func CallStartProjectForceRecreate(initf func(bool) string, cfg callStartProject
 	cmd := cli.Command{
 		Name:    "start:force",
 		Aliases: []string{"s:f"},
-		Usage:   `runs defined command: {docker-compose -f docker-compose.yml up --force-recreat} [custom parameters]`,
+		Usage:   `Runs defined command: {docker-compose -f docker-compose.yml up --force-recreat} [custom parameters]`,
 		Description: `
 		--force-recreate - Recreate containers even if their configuration and image haven't changed
 		It's possible to use any custom parameters coming after "up"`,
@@ -147,7 +147,7 @@ func CallStartProjectOrphans(initf func(bool) string, cfg callStartProjectBasicP
 	cmd := cli.Command{
 		Name:    "start:orphans",
 		Aliases: []string{"s:o"},
-		Usage:   `runs defined command: {docker-compose -f docker-compose.yml up --remove-orphans} [custom parameters]`,
+		Usage:   `Runs defined command: {docker-compose -f docker-compose.yml up --remove-orphans} [custom parameters]`,
 		Description: `
 		--remove-orphans - Remove containers for services not defined in the Compose file
 		It's possible to use any custom parameters coming after "up"`,
@@ -181,7 +181,7 @@ func CallStartProjectForceOrphans(initf func(bool) string, cfg callStartProjectB
 	cmd := cli.Command{
 		Name:    "start:force-orphans",
 		Aliases: []string{"s:fo"},
-		Usage:   `runs defined command: {docker-compose -f docker-compose.yml up --force-recreate --remove-orphans} [custom parameters]`,
+		Usage:   `Runs defined command: {docker-compose -f docker-compose.yml up --force-recreate --remove-orphans} [custom parameters]`,
 		Description: `
 		--force-recreate - Recreate containers even if their configuration and image haven't changed
 		--remove-orphans - Remove containers for services not defined in the Compose file
@@ -221,7 +221,7 @@ func CallStartMainContainer(initf func(bool) string, cfg callStartMainContainerP
 	cmd := cli.Command{
 		Name:    "start:maincontainer",
 		Aliases: []string{"startmc"},
-		Usage:   `runs defined command: {docker start main_container}`,
+		Usage:   `Runs defined command: {docker start main_container}`,
 		Action: func(c *cli.Context) (err error) {
 			initf(true)
 
@@ -310,7 +310,7 @@ func CallStartContainers(initf func(bool) string) *cli.Command {
 	cmd := cli.Command{
 		Name:    "start:containers",
 		Aliases: []string{"startc"},
-		Usage:   `runs defined command: {docker start} [container]`,
+		Usage:   `Runs defined command: {docker start} [container]`,
 		Action: func(c *cli.Context) (err error) {
 			initf(true)
 
@@ -334,7 +334,7 @@ func CallRestartContainers(initf func(bool) string, dockerStatus bool) *cli.Comm
 	cmd := cli.Command{
 		Name:    "restart:containers",
 		Aliases: []string{"rc"},
-		Usage:   `runs defined command: {docker start} [container]`,
+		Usage:   `Runs defined command: {docker start} [container]`,
 		Action: func(c *cli.Context) (err error) {
 			if !dockerStatus {
 				return errors.New("Docker is not running")
