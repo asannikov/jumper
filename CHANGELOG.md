@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.5.2 (10.01.2021)
+- bugfix
+    - add homebrew macos support (linux was not tested)
+
 ## 1.5.1 (09.01.2021)
 - features
     - add go build bash script
