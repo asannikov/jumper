@@ -97,6 +97,16 @@ It can ask the "Formula name", leave it empty and press enter.
 
 now you can call `jumper`.
 
+#### 3. Download source directly from repository.
+
+Every stable release has attached sources for "linux/amd64", "linux/386", "darwin/amd64", "windows/amd64" and "windows/386"
+
+For example:
+```
+https://github.com/asannikov/jumper/releases/tag/v1.5.3
+```
+Find related source there and download it. Now you can place use source at any place you want on your machine or make it global in a standard way.
+
 ## Usage
 
 `jumper [global options] command [command options] [arguments...]`
