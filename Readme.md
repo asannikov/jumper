@@ -69,7 +69,7 @@ Now you can call `jumper` in any folder.
 Useful links: [Command not found go — on Mac after installing Go](https://stackoverflow.com/questions/34708207/command-not-found-go-on-mac-after-installing-go)
 
 
-#### 2. Using brew (for Mac OS only, does not work yet)
+#### 2. Using brew
  - install brew
  ```
  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"

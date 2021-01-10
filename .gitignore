@@ -21,6 +21,8 @@
 /vendor/
 /Godeps/
 
+/pkg/*
+
 ### macOS ###
 # General
 .DS_Store

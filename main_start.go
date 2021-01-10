@@ -2,9 +2,10 @@ package main
 
 import (
 	"errors"
-	"jumper/config"
-	"jumper/dialog"
 	"os"
+
+	"github.com/asannikov/jumper/config"
+	"github.com/asannikov/jumper/dialog"
 )
 
 type projectConfig struct {

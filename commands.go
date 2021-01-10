@@ -1,11 +1,11 @@
 package main
 
 import (
-	"jumper/bash"
-	"jumper/command"
-	"jumper/config"
-	"jumper/dialog"
-	"jumper/docker"
+	"github.com/asannikov/jumper/bash"
+	"github.com/asannikov/jumper/command"
+	"github.com/asannikov/jumper/config"
+	"github.com/asannikov/jumper/dialog"
+	"github.com/asannikov/jumper/docker"
 
 	"github.com/urfave/cli/v2"
 )
