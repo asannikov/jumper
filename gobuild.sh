@@ -35,12 +35,13 @@ do
     fi
 done
 
-cp LICENSE ./pkg/$version
+mkdir ./pkg/$version/
+cp LICENSE ./pkg/$version/
 
-echo "mv jumper-windows-amd64.exe ./pkg/$version"
-mv jumper-windows-amd64.exe ./pkg/$version
-echo "mv jumper-windows-386.exe ./pkg/$version"
-mv jumper-windows-386.exe ./pkg/$version
+echo "mv jumper-windows-amd64.exe ./pkg/$version/"
+mv jumper-windows-amd64.exe ./pkg/$version/
+echo "mv jumper-windows-386.exe ./pkg/$version/"
+mv jumper-windows-386.exe ./pkg/$version/
 
 echo "mv jumper-linux-amd64 ./pkg/$version/jumper"
 mv jumper-linux-amd64 ./pkg/$version/jumper
@@ -66,6 +67,8 @@ rm jumper
 
 # darwin 386 is end of life but we need it to use fgo tool, which requires darwin-386
 cp jumper-darwin-amd64.zip jumper-darwin-386.zip
+
+rm LICENSE
 
 cd ../../
 
