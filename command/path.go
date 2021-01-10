@@ -9,7 +9,7 @@ func GetProjectPath(initf func(bool) string, d dialog) *cli.Command {
 	return &cli.Command{
 		Name:        "path",
 		Aliases:     []string{},
-		Usage:       `gets project path`,
+		Usage:       `Gets project path`,
 		Description: ``,
 		//SkipFlagParsing: true,
 		Action: func(c *cli.Context) (err error) {

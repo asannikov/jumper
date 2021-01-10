@@ -1,6 +1,6 @@
-require 'rbconfig'
+require "rbconfig"
 class Jumper < Formula
-  desc "This tool has been created for helping developers out with daily docker routines"
+  desc "Tool helps developers out with daily docker monotonous routine"
   homepage "https://github.com/asannikov/jumper"
   version "1.5.2"
   license "MIT"
@@ -42,6 +42,4 @@ class Jumper < Formula
   test do
     system "jumper"
   end
-
 end
-
