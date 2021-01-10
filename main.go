@@ -2,18 +2,19 @@ package main
 
 import (
 	"fmt"
-	"jumper/config"
-	"jumper/dialog"
-	"jumper/lib"
 	"log"
 	"os"
+
+	"github.com/asannikov/jumper/config"
+	"github.com/asannikov/jumper/dialog"
+	"github.com/asannikov/jumper/lib"
 
 	"github.com/urfave/cli/v2"
 	// imports as package "cli"
 )
 
 const confgFile = "jumper.json"
-const version = "1.5.0"
+const version = "1.5.2"
 
 func main() {
 

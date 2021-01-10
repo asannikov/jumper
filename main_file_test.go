@@ -1,10 +1,11 @@
 package main
 
 import (
-	"jumper/config"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/asannikov/jumper/config"
 
 	"github.com/stretchr/testify/assert"
 )

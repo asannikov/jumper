@@ -3,11 +3,12 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"jumper/config"
-	"jumper/dialog"
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/asannikov/jumper/config"
+	"github.com/asannikov/jumper/dialog"
 
 	"github.com/stretchr/testify/assert"
 )

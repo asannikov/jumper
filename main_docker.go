@@ -9,8 +9,9 @@ package main
 
 import (
 	"errors"
-	"jumper/dialog"
-	"jumper/docker"
+
+	"github.com/asannikov/jumper/dialog"
+	"github.com/asannikov/jumper/docker"
 
 	"github.com/docker/docker/client"
 )
