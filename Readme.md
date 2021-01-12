@@ -173,7 +173,7 @@ Depending on case, you have to select following option on xdebug:* running:
 You accept terms of the agreement the by doing this.
 
 ## How to add custom command:
-Find method getCommandList in `commands.go` and write any custom method, ie:
+Find method getCommandList in `app/commands.go` and write any custom method, ie:
 `command.CustomMethod()`
 
 getCommandList function has 2 parameters:
@@ -182,8 +182,8 @@ getCommandList function has 2 parameters:
 - initf - function, that has to be called inside your command if you are going to interact with the config file or docker project.
 
 ## How to add extra config to project json file:
-Add new project fields here `config/ProjectConfig.go` 
-and add the related method to `config/config.go`, ie:
+Add new project fields here `app/config/ProjectConfig.go` 
+and add the related method to `app/config/config.go`, ie:
 ```
 // SaveContainerNameToProjectConfig saves container name into project file
 func (c *Config) SaveContainerNameToProjectConfig(cn string) (err error) {
@@ -198,11 +198,11 @@ func (c *Config) GetProjectMainContainer() string {
 ```
 
 ## How to add custom option to GlobalConfig:
-global config is visible only in `config/config.go` scope. Follows these steps to create custom options:
+global config is visible only in `app/config/config.go` scope. Follows these steps to create custom options:
 
 1. Add json field into `GlobalConfig` type in `globalConfig.go`.
 2. Add new methods for new option handling in `globalConfig.go`.
-3. Add duplicated methods in `config/config.go`.
+3. Add duplicated methods in `app/config/config.go`.
 4. Inject your logic inside the code, see ie Copyright methods: `EnableCopyright/DisableCopyright/ShowCopyrightText`
 
 ## MIT License

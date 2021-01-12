@@ -32,14 +32,14 @@ func (sc *syncConfig) SaveDockerProjectPath(s string) error {
 	return nil
 }
 
-func TestGetSyncPath(t *testing.T) {
+func testGetSyncPath(t *testing.T) {
 	assert.Equal(t, "/vendor/path", getSyncPath("/vendor/path/"))
 	assert.Equal(t, "/vendor/path", getSyncPath("/vendor/path"))
 	assert.Equal(t, "/./", getSyncPath("./"))
 	assert.Equal(t, "/./", getSyncPath("--all"))
 }
 
-func TestGetSyncArgs(t *testing.T) {
+func testGetSyncArgs(t *testing.T) {
 	cfg := &syncConfig{
 		projectMainContainer: "phpfmp",
 		projectDockerPath:    "/var/www/html/",

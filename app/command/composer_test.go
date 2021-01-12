@@ -49,7 +49,7 @@ func (tc *testComposer) GetContainerList() []string {
 	return tc.containerList
 }
 
-func TestParseCommand(t *testing.T) {
+func testParseCommand(t *testing.T) {
 
 	shortcommand, calltype, dockercmd := parseCommand("composer:update:memory")
 	assert.EqualValues(t, []string{"update:memory", "memory", "update"}, []string{shortcommand, calltype, dockercmd})
@@ -70,7 +70,7 @@ func TestParseCommand(t *testing.T) {
 	assert.EqualValues(t, []string{"composer:memory", "memory", ""}, []string{shortcommand, calltype, dockercmd})
 }
 
-func TestComposerHandleCase1(t *testing.T) {
+func testComposerHandleCase1(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "",
 	}
@@ -94,7 +94,7 @@ func TestComposerHandleCase1(t *testing.T) {
 	assert.EqualError(t, err, "Container name is empty. Set the container name")
 }
 
-func TestComposerHandleCase2(t *testing.T) {
+func testComposerHandleCase2(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
@@ -118,7 +118,7 @@ func TestComposerHandleCase2(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestComposerHandleCase3(t *testing.T) {
+func testComposerHandleCase3(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
@@ -149,7 +149,7 @@ func TestComposerHandleCase3(t *testing.T) {
 	assert.Equal(t, []string{"exec", "-it", "containerName", "composer"}, args)
 }
 
-func TestComposerHandleCase4(t *testing.T) {
+func testComposerHandleCase4(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
@@ -182,7 +182,7 @@ func TestComposerHandleCase4(t *testing.T) {
 	assert.Equal(t, []string{"exec", "-it", "containerName", "composer", "update"}, args)
 }
 
-func TestComposerHandleCase5(t *testing.T) {
+func testComposerHandleCase5(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
@@ -219,7 +219,7 @@ func TestComposerHandleCase5(t *testing.T) {
 	assert.Equal(t, []string{"exec", "-i", "containerName", "/path/to/php", "-d", "memory_limit=-1", "/path/to/composer", "update"}, args)
 }
 
-func TestComposerHandleCase6(t *testing.T) {
+func testComposerHandleCase6(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
@@ -252,7 +252,7 @@ func TestComposerHandleCase6(t *testing.T) {
 	assert.Equal(t, []string{"exec", "-i", "containerName", "/path/to/php", "-d", "memory_limit=-1", "/path/to/composer", "update", "--help"}, args)
 }
 
-func TestComposerHandleCase7(t *testing.T) {
+func testComposerHandleCase7(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
@@ -287,7 +287,7 @@ func TestComposerHandleCase7(t *testing.T) {
 	assert.EqualError(t, err, "Error on getting php path")
 }
 
-func TestComposerHandleCase8(t *testing.T) {
+func testComposerHandleCase8(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}

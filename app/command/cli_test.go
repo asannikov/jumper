@@ -81,7 +81,7 @@ func (d *testCliHandleBaseComposerDialog) SetMainContaner([]string) (int, string
 	return 0, "", nil
 }
 
-func TestCliHandleCase1(t *testing.T) {
+func testCliHandleCase1(t *testing.T) {
 	cfg := &testCliHandleBaseProjectConfig{
 		mainContainer: "",
 	}
@@ -105,7 +105,7 @@ func TestCliHandleCase1(t *testing.T) {
 	assert.EqualError(t, err, "Container name is empty. Set the container name")
 }
 
-func TestCliHandleCase2(t *testing.T) {
+func testCliHandleCase2(t *testing.T) {
 	cfg := &testCliHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}
@@ -129,7 +129,7 @@ func TestCliHandleCase2(t *testing.T) {
 	assert.EqualError(t, err, "Please specify a CLI command (ex. ls)")
 }
 
-func TestCliHandleCase3(t *testing.T) {
+func testCliHandleCase3(t *testing.T) {
 	cfg := &testCliHandleBaseProjectConfig{
 		mainContainer: "containerName",
 	}

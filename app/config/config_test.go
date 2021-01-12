@@ -58,7 +58,7 @@ func (tfs *testFileSystem) GoToProjectPath(projectpath string) error {
 	return tfs.goToProjectPath(projectpath)
 }
 
-func TestLookupProjectConfigCase1(t *testing.T) {
+func testLookupProjectConfigCase1(t *testing.T) {
 
 	fs := testFileSystem{
 		readConfigFile: func(filename string, configuration interface{}) error {
@@ -71,7 +71,7 @@ func TestLookupProjectConfigCase1(t *testing.T) {
 	assert.Equal(t, nil, cfg.lookupProjectConfig())
 }
 
-func TestLookupProjectConfigCase2(t *testing.T) {
+func testLookupProjectConfigCase2(t *testing.T) {
 	fs := testFileSystem{
 		readConfigFile: func(filename string, configuration interface{}) error {
 			return errors.New("Cannot read file")
@@ -84,7 +84,7 @@ func TestLookupProjectConfigCase2(t *testing.T) {
 	assert.EqualError(t, err, "Cannot read file")
 }
 
-func TestLookupUserConfigCase1(t *testing.T) {
+func testLookupUserConfigCase1(t *testing.T) {
 	fs := testFileSystem{
 		readConfigFile: func(filename string, configuration interface{}) error {
 			data := `{
@@ -132,7 +132,7 @@ func TestLookupUserConfigCase1(t *testing.T) {
 	assert.Equal(t, 4, len(cfg.globalConfig.Projects))
 }
 
-func TestLookupUserConfigCase2(t *testing.T) {
+func testLookupUserConfigCase2(t *testing.T) {
 	fs := testFileSystem{
 		saveConfigFile: func(data interface{}, fileName string) error {
 			return errors.New("Check: if saveConfigFile has been called")
@@ -148,7 +148,7 @@ func TestLookupUserConfigCase2(t *testing.T) {
 	assert.EqualError(t, err, "Check: if saveConfigFile has been called")
 }
 
-func TestLookupUserConfigCase3(t *testing.T) {
+func testLookupUserConfigCase3(t *testing.T) {
 	fs := testFileSystem{
 		readConfigFile: func(filename string, configuration interface{}) error {
 			return errors.New("some different error")
@@ -161,7 +161,7 @@ func TestLookupUserConfigCase3(t *testing.T) {
 	assert.EqualError(t, err, "some different error")
 }
 
-func TestLoadConfigCase1(t *testing.T) {
+func testLoadConfigCase1(t *testing.T) {
 	fs := testFileSystem{
 		readConfigFile: func(filename string, configuration interface{}) error {
 			return errors.New("user config error")
@@ -177,7 +177,7 @@ func TestLoadConfigCase1(t *testing.T) {
 	assert.EqualError(t, err, "user config error")
 }
 
-func TestLoadConfigCase2(t *testing.T) {
+func testLoadConfigCase2(t *testing.T) {
 	cnt := 0
 	fs := testFileSystem{
 		readConfigFile: func(filename string, configuration interface{}) error {
@@ -199,7 +199,7 @@ func TestLoadConfigCase2(t *testing.T) {
 	assert.EqualError(t, err, "lookupProjectConfig error")
 }
 
-func TestLoadConfigCase3(t *testing.T) {
+func testLoadConfigCase3(t *testing.T) {
 	cnt := 0
 	fs := testFileSystem{
 		readConfigFile: func(filename string, configuration interface{}) error {
@@ -220,7 +220,7 @@ func TestLoadConfigCase3(t *testing.T) {
 	assert.Equal(t, nil, cfg.LoadConfig(true))
 }
 
-func TestFindProjectPathInJSONCase1(t *testing.T) {
+func testFindProjectPathInJSONCase1(t *testing.T) {
 	fs := testFileSystem{
 		dirExists: func(path string) (bool, error) {
 			if path == "path2" {
@@ -257,7 +257,7 @@ func TestFindProjectPathInJSONCase1(t *testing.T) {
 	assert.Equal(t, "path2", pc.GetProjectPath())
 }
 
-func TestFindProjectPathInJSONCase2(t *testing.T) {
+func testFindProjectPathInJSONCase2(t *testing.T) {
 	fs := testFileSystem{
 		dirExists: func(path string) (bool, error) {
 			if path == "path2" {

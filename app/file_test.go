@@ -1,23 +1,23 @@
-package main
+package app
 
 import (
 	"os"
 	"strings"
 	"testing"
 
-	"github.com/asannikov/jumper/config"
+	"jumper/app/config" // github.com/asannikov/
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFileExistsCase1(t *testing.T) {
+func testFileExistsCase1(t *testing.T) {
 	fs := FileSystem{}
 	found, err := fs.DirExists("/test/folder")
 	assert.Equal(t, false, found)
 	assert.EqualError(t, err, "stat /test/folder: no such file or directory")
 }
 
-func TestFileExistsCase2(t *testing.T) {
+func testFileExistsCase2(t *testing.T) {
 	fs := FileSystem{}
 	currentDir, _ := fs.GetWd()
 	found, err := fs.DirExists(currentDir)
@@ -25,7 +25,7 @@ func TestFileExistsCase2(t *testing.T) {
 	assert.Equal(t, nil, err)
 }
 
-func TestFileExistsCase3(t *testing.T) {
+func testFileExistsCase3(t *testing.T) {
 	fs := FileSystem{}
 	currentDir, _ := fs.GetWd()
 	found, err := fs.DirExists(currentDir + string(os.PathSeparator) + "main_file_test.go")
@@ -33,14 +33,14 @@ func TestFileExistsCase3(t *testing.T) {
 	assert.True(t, strings.Contains(err.Error(), "main_file_test.go is a file"))
 }
 
-func TestReadConfigFileCase1(t *testing.T) {
+func testReadConfigFileCase1(t *testing.T) {
 	fs := FileSystem{}
 	configuration := config.ProjectConfig{}
 	err := fs.ReadConfigFile("", &configuration)
 	assert.EqualError(t, err, "Reading config error, file name is empty")
 }
 
-func TestReadConfigFile2(t *testing.T) {
+func testReadConfigFile2(t *testing.T) {
 	fs := FileSystem{}
 	currentDir, _ := fs.GetWd()
 	configuration := config.ProjectConfig{}
@@ -49,7 +49,7 @@ func TestReadConfigFile2(t *testing.T) {
 	assert.Equal(t, "main_container_name", configuration.GetMainContainer())
 }
 
-func TestGoToProjectPath1(t *testing.T) {
+func testGoToProjectPath1(t *testing.T) {
 	fs := FileSystem{}
 	currentDir, _ := fs.GetWd()
 	// currentDir := currentDir + string(os.PathSeparator) + "config" // for local testing
@@ -57,7 +57,7 @@ func TestGoToProjectPath1(t *testing.T) {
 	assert.Equal(t, nil, err)
 }
 
-func TestGoToProjectPath2(t *testing.T) {
+func testGoToProjectPath2(t *testing.T) {
 	fs := FileSystem{}
 	currentDir, _ := fs.GetWd()
 	path := currentDir + string(os.PathSeparator) + "nofolder"

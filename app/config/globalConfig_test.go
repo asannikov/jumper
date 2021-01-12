@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGlobalFindProjectPathInJSONCase1(t *testing.T) {
+func testGlobalFindProjectPathInJSONCase1(t *testing.T) {
 	gcfg := GlobalConfig{
 		Projects: []GlobalProjectConfig{
 			GlobalProjectConfig{
@@ -36,7 +36,7 @@ func TestGlobalFindProjectPathInJSONCase1(t *testing.T) {
 	assert.EqualError(t, err, "Unknown error")
 }
 
-func TestGlobalFindProjectPathInJSONCase2(t *testing.T) {
+func testGlobalFindProjectPathInJSONCase2(t *testing.T) {
 	gcfg := GlobalConfig{
 		Projects: []GlobalProjectConfig{
 			GlobalProjectConfig{
@@ -65,7 +65,7 @@ func TestGlobalFindProjectPathInJSONCase2(t *testing.T) {
 	assert.EqualError(t, err, "Unknown error")
 }
 
-func TestGlobalFindProjectPathInJSONCase3(t *testing.T) {
+func testGlobalFindProjectPathInJSONCase3(t *testing.T) {
 	gcfg := GlobalConfig{
 		Projects: []GlobalProjectConfig{
 			GlobalProjectConfig{
@@ -90,7 +90,7 @@ func TestGlobalFindProjectPathInJSONCase3(t *testing.T) {
 	assert.Equal(t, nil, gcfg.FindProjectPathInJSON(iterator))
 }
 
-func TestGetProjectNameListCase1(t *testing.T) {
+func testGetProjectNameListCase1(t *testing.T) {
 	gcfg := GlobalConfig{
 		Projects: []GlobalProjectConfig{
 			GlobalProjectConfig{

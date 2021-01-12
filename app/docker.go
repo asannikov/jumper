@@ -1,4 +1,4 @@
-package main
+package app
 
 /**
  * @todo - improve:
@@ -10,8 +10,8 @@ package main
 import (
 	"errors"
 
-	"github.com/asannikov/jumper/dialog"
-	"github.com/asannikov/jumper/docker"
+	"jumper/app/dialog" // github.com/asannikov/
+	"jumper/app/docker" // github.com/asannikov/
 
 	"github.com/docker/docker/client"
 )
