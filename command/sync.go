@@ -36,7 +36,7 @@ func getSyncArgs(cfg syncProjectConfig, direction string, syncPath string, proje
 
 	args := []string{"cp", projectRoot + syncPath, cfg.GetProjectMainContainer() + ":" + strings.TrimRight(cfg.GetProjectDockerPath(), string(os.PathSeparator)) + syncPath}
 
-	if direction == "copyto" {
+	if direction == "copyfrom" {
 		args = []string{"cp", cfg.GetProjectMainContainer() + ":" + strings.TrimRight(cfg.GetProjectDockerPath(), string(os.PathSeparator)) + syncPath, projectRoot + syncPath}
 	}
 
