@@ -72,4 +72,12 @@ rm LICENSE
 
 cd ../../
 
+brew unlink go && brew link go@1.14
+echo 'export PATH="/usr/local/opt/go@1.14/bin:$PATH"' >> ~/.zshrc
+. ~/.zshrc
+
 fgo --pkg ./pkg build --token $token $version
+
+brew unlink go && brew link go@1.15
+echo 'export PATH="/usr/local/opt/go@1.15/bin:$PATH"' >> ~/.zshrc
+. ~/.zshrc
