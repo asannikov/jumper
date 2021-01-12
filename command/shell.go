@@ -22,7 +22,7 @@ func ShellCommand(initf func(bool) string, cfg shellConfig, d shellDialog) *cli.
 		Usage:           "Change shell type for a project",
 		SkipFlagParsing: false,
 		Action: func(c *cli.Context) (err error) {
-			initf(false)
+			initf(true)
 
 			if err = defineShellType(cfg, d); err != nil {
 				return err
