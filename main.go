@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"jumper/app" // github.com/asannikov/
+	"github.com/asannikov/jumper/app"
 
 	"github.com/urfave/cli/v2"
 )

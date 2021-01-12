@@ -10,8 +10,8 @@ package app
 import (
 	"errors"
 
-	"jumper/app/dialog" // github.com/asannikov/
-	"jumper/app/docker" // github.com/asannikov/
+	"github.com/asannikov/jumper/app/dialog"
+	"github.com/asannikov/jumper/app/docker"
 
 	"github.com/docker/docker/client"
 )

@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"jumper/app/config" // github.com/asannikov/
-	"jumper/app/dialog" // github.com/asannikov/
-	"jumper/app/lib"    // github.com/asannikov/
+	"github.com/asannikov/jumper/app/lib"
+
+	"github.com/asannikov/jumper/app/config"
+	"github.com/asannikov/jumper/app/dialog"
 
 	"github.com/urfave/cli/v2"
 )

@@ -1,11 +1,12 @@
 package app
 
 import (
-	"jumper/app/bash"    // github.com/asannikov/
-	"jumper/app/command" // github.com/asannikov/
-	"jumper/app/config"  // github.com/asannikov/
-	"jumper/app/dialog"  // github.com/asannikov/
-	"jumper/app/docker"  // github.com/asannikov/
+	"github.com/asannikov/jumper/app/bash"
+	"github.com/asannikov/jumper/app/config"
+	"github.com/asannikov/jumper/app/dialog"
+	"github.com/asannikov/jumper/app/docker"
+
+	"github.com/asannikov/jumper/app/command"
 
 	"github.com/urfave/cli/v2"
 )

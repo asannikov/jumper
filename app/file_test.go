@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"jumper/app/config" // github.com/asannikov/
+	"github.com/asannikov/jumper/app/config"
 
 	"github.com/stretchr/testify/assert"
 )

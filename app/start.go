@@ -4,8 +4,8 @@ import (
 	"errors"
 	"os"
 
-	"jumper/app/config" // github.com/asannikov/
-	"jumper/app/dialog" // github.com/asannikov/
+	"github.com/asannikov/jumper/app/config"
+	"github.com/asannikov/jumper/app/dialog"
 )
 
 type projectConfig struct {

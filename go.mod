@@ -1,4 +1,4 @@
-module jumper
+module github.com/asannikov/jumper
 
 go 1.15
 
