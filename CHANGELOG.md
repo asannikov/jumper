@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 1.5.4 (12.01.2021)
+- bugfix
+    - 27 shell command now detect project path. it could not detect project and had no project dialog. fix
+
+## 1.5.3 (11.01.2021)
+- features
+    - add jumper_install script
+
 ## 1.5.2 (10.01.2021)
 - bugfix
     - add homebrew macos support (linux was not tested)
