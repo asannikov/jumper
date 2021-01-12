@@ -44,45 +44,45 @@ func TestGetSyncArgs(t *testing.T) {
 		projectMainContainer: "phpfmp",
 		projectDockerPath:    "/var/www/html/",
 	}
-	args := getSyncArgs(cfg, "copyto", getSyncPath("/vendor/path"), "/path/to/local/project/")
+	args := getSyncArgs(cfg, "copyfrom", getSyncPath("/vendor/path"), "/path/to/local/project/")
 	assert.Equal(t, "cp phpfmp:/var/www/html/vendor/path /path/to/local/project/vendor/path", strings.Join(args, " "))
-
-	args = getSyncArgs(cfg, "copyto", getSyncPath("/vendor/path/file.php"), "/path/to/local/project/")
-	assert.Equal(t, "cp phpfmp:/var/www/html/vendor/path/file.php /path/to/local/project/vendor/path/file.php", strings.Join(args, " "))
 
 	args = getSyncArgs(cfg, "copyfrom", getSyncPath("/vendor/path/file.php"), "/path/to/local/project/")
-	assert.Equal(t, "cp /path/to/local/project/vendor/path/file.php phpfmp:/var/www/html/vendor/path/file.php", strings.Join(args, " "))
-
-	args = getSyncArgs(cfg, "copyfrom", getSyncPath("/vendor/path/"), "/path/to/local/project/")
-	assert.Equal(t, "cp /path/to/local/project/vendor/path phpfmp:/var/www/html/vendor/path", strings.Join(args, " "))
-
-	args = getSyncArgs(cfg, "copyfrom", getSyncPath("/vendor/path"), "/path/to/local/project/")
-	assert.Equal(t, "cp /path/to/local/project/vendor/path phpfmp:/var/www/html/vendor/path", strings.Join(args, " "))
-
-	args = getSyncArgs(cfg, "copyfrom", getSyncPath("/vendor/path"), "/path/to/local/project")
-	assert.Equal(t, "cp /path/to/local/project/vendor/path phpfmp:/var/www/html/vendor/path", strings.Join(args, " "))
-
-	args = getSyncArgs(cfg, "copyfrom", getSyncPath("--all"), "/path/to/local/project")
-	assert.Equal(t, "cp /path/to/local/project/./ phpfmp:/var/www/html/./", strings.Join(args, " "))
-
-	args = getSyncArgs(cfg, "copyto", getSyncPath("--all"), "/path/to/local/project")
-	assert.Equal(t, "cp phpfmp:/var/www/html/./ /path/to/local/project/./", strings.Join(args, " "))
-
-	args = getSyncArgs(cfg, "copyto", getSyncPath("/vendor/path"), "/path/to/local/project/")
-	assert.Equal(t, "cp phpfmp:/var/www/html/vendor/path /path/to/local/project/vendor/path", strings.Join(args, " "))
-
-	args = getSyncArgs(cfg, "copyto", getSyncPath("vendor/path/file.php"), "/path/to/local/project/")
 	assert.Equal(t, "cp phpfmp:/var/www/html/vendor/path/file.php /path/to/local/project/vendor/path/file.php", strings.Join(args, " "))
 
-	args = getSyncArgs(cfg, "copyfrom", getSyncPath("vendor/path/file.php"), "/path/to/local/project/")
+	args = getSyncArgs(cfg, "copyto", getSyncPath("/vendor/path/file.php"), "/path/to/local/project/")
 	assert.Equal(t, "cp /path/to/local/project/vendor/path/file.php phpfmp:/var/www/html/vendor/path/file.php", strings.Join(args, " "))
 
-	args = getSyncArgs(cfg, "copyfrom", getSyncPath("vendor/path/"), "/path/to/local/project/")
+	args = getSyncArgs(cfg, "copyto", getSyncPath("/vendor/path/"), "/path/to/local/project/")
 	assert.Equal(t, "cp /path/to/local/project/vendor/path phpfmp:/var/www/html/vendor/path", strings.Join(args, " "))
+
+	args = getSyncArgs(cfg, "copyto", getSyncPath("/vendor/path"), "/path/to/local/project/")
+	assert.Equal(t, "cp /path/to/local/project/vendor/path phpfmp:/var/www/html/vendor/path", strings.Join(args, " "))
+
+	args = getSyncArgs(cfg, "copyto", getSyncPath("/vendor/path"), "/path/to/local/project")
+	assert.Equal(t, "cp /path/to/local/project/vendor/path phpfmp:/var/www/html/vendor/path", strings.Join(args, " "))
+
+	args = getSyncArgs(cfg, "copyto", getSyncPath("--all"), "/path/to/local/project")
+	assert.Equal(t, "cp /path/to/local/project/./ phpfmp:/var/www/html/./", strings.Join(args, " "))
+
+	args = getSyncArgs(cfg, "copyfrom", getSyncPath("--all"), "/path/to/local/project")
+	assert.Equal(t, "cp phpfmp:/var/www/html/./ /path/to/local/project/./", strings.Join(args, " "))
 
 	args = getSyncArgs(cfg, "copyfrom", getSyncPath("/vendor/path"), "/path/to/local/project/")
+	assert.Equal(t, "cp phpfmp:/var/www/html/vendor/path /path/to/local/project/vendor/path", strings.Join(args, " "))
+
+	args = getSyncArgs(cfg, "copyfrom", getSyncPath("vendor/path/file.php"), "/path/to/local/project/")
+	assert.Equal(t, "cp phpfmp:/var/www/html/vendor/path/file.php /path/to/local/project/vendor/path/file.php", strings.Join(args, " "))
+
+	args = getSyncArgs(cfg, "copyto", getSyncPath("vendor/path/file.php"), "/path/to/local/project/")
+	assert.Equal(t, "cp /path/to/local/project/vendor/path/file.php phpfmp:/var/www/html/vendor/path/file.php", strings.Join(args, " "))
+
+	args = getSyncArgs(cfg, "copyto", getSyncPath("vendor/path/"), "/path/to/local/project/")
 	assert.Equal(t, "cp /path/to/local/project/vendor/path phpfmp:/var/www/html/vendor/path", strings.Join(args, " "))
 
-	args = getSyncArgs(cfg, "copyfrom", getSyncPath("/vendor/path"), "/path/to/local/project")
+	args = getSyncArgs(cfg, "copyto", getSyncPath("/vendor/path"), "/path/to/local/project/")
+	assert.Equal(t, "cp /path/to/local/project/vendor/path phpfmp:/var/www/html/vendor/path", strings.Join(args, " "))
+
+	args = getSyncArgs(cfg, "copyto", getSyncPath("/vendor/path"), "/path/to/local/project")
 	assert.Equal(t, "cp /path/to/local/project/vendor/path phpfmp:/var/www/html/vendor/path", strings.Join(args, " "))
 }
