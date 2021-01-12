@@ -4,8 +4,11 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+type getProjectPathDialog interface {
+}
+
 // GetProjectPath gets absolute path to the project without doing anything with docker
-func GetProjectPath(initf func(bool) string, d dialog) *cli.Command {
+func GetProjectPath(initf func(bool) string, d getProjectPathDialog) *cli.Command {
 	return &cli.Command{
 		Name:        "path",
 		Aliases:     []string{},

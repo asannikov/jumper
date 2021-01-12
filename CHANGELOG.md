@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.5.5 (12.01.2021)
+- bugfix
+    - remove legacy interfaces
+
 ## 1.5.4 (12.01.2021)
 - bugfix
     - 27 shell command now detect project path. it could not detect project and had no project dialog. fix

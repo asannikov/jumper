@@ -9,8 +9,11 @@ type copyRightGlobalConfig interface {
 	DisableCopyright() error
 }
 
+type callCopyrightCommandDialog interface {
+}
+
 // CallCopyrightCommand runs copyright dialog
-func CallCopyrightCommand(initf func(bool) string, cfg copyRightGlobalConfig, d dialog) *cli.Command {
+func CallCopyrightCommand(initf func(bool) string, cfg copyRightGlobalConfig, d callCopyrightCommandDialog) *cli.Command {
 	return &cli.Command{
 		Name: "copyright",
 		Subcommands: []*cli.Command{

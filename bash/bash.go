@@ -10,6 +10,7 @@ import (
 )
 
 // GetCommandLocation get command locaton in docker container
+// Use it for detect commad location in related container
 func GetCommandLocation() func(string, string) (string, error) {
 	return func(containerName string, command string) (string, error) {
 		if len(containerName) == 0 {
