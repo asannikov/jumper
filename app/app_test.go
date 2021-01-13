@@ -90,6 +90,7 @@ func (tfs *testFileSystem) GetWd() (string, error) {
 	return tfs.getWd()
 }
 
+// TestDefinePaths tests definePaths
 func TestDefinePaths(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
@@ -116,6 +117,7 @@ func TestDefinePaths(t *testing.T) {
 	assert.EqualError(t, err, "Cannot read directory")
 }
 
+// TestSeekPathDefinePaths tests seekPath
 func TestSeekPathDefinePaths(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
@@ -133,6 +135,7 @@ func TestSeekPathDefinePaths(t *testing.T) {
 	assert.EqualError(t, err, "Cannot read directory")
 }
 
+// TestSeekPathLoadConfig tests seekPath
 func TestSeekPathLoadConfig(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
@@ -155,6 +158,7 @@ func TestSeekPathLoadConfig(t *testing.T) {
 	assert.EqualError(t, err, "Cannot read config file")
 }
 
+// TestSeekPathGetWd tests seekPath
 func TestSeekPathGetWd(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
@@ -180,6 +184,7 @@ func TestSeekPathGetWd(t *testing.T) {
 	assert.EqualError(t, err, "Cannot get current directory")
 }
 
+// TestSeekPathGetProjectNameList tests seekPath
 func TestSeekPathGetProjectNameList(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
@@ -217,6 +222,7 @@ func TestSeekPathGetProjectNameList(t *testing.T) {
 	assert.Equal(t, 2, len(pl))
 }
 
+// TestSeekPathrunDialogCase1 tests seekPath
 func TestSeekPathrunDialogCase1(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
@@ -255,6 +261,7 @@ func TestSeekPathrunDialogCase1(t *testing.T) {
 	assert.EqualError(t, err, "Error SelectProject dialog")
 }
 
+// TestSeekPathrunDialogCase2 tests seekPath
 func TestSeekPathrunDialogCase2(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
@@ -305,6 +312,7 @@ func TestSeekPathrunDialogCase2(t *testing.T) {
 	assert.EqualError(t, err, "Is ok")
 }
 
+// TestSeekPathrunDialogCase3 tests seekPath
 func TestSeekPathrunDialogCase3(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
@@ -358,6 +366,7 @@ func TestSeekPathrunDialogCase3(t *testing.T) {
 	assert.EqualError(t, err, "Is ok")
 }
 
+// TestSeekPathrunDialogCase4 tests seekPath
 func TestSeekPathrunDialogCase4(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
@@ -411,6 +420,7 @@ func TestSeekPathrunDialogCase4(t *testing.T) {
 	assert.EqualError(t, err, "Add project name dialog error")
 }
 
+// TestSeekPathrunDialogCase5 tests seekPath
 func TestSeekPathrunDialogCase5(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
@@ -487,7 +497,7 @@ func TestSeekPathrunDialogCase5(t *testing.T) {
 	assert.EqualError(t, err, "Cannot save project config file")
 }
 
-// The same as TestSeekPathrunDialogCase5, but checks return nil for seek function
+// TestSeekPathrunDialogCase6 tests seekPath. The same as TestSeekPathrunDialogCase5, but checks return nil for seek function
 // see saveConfigFile return change
 func TestSeekPathrunDialogCase6(t *testing.T) {
 	cfg := &config.Config{
