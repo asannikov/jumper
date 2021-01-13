@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.6.0 (14.01.2021)
+- features
+    - 13 Add scope command config. User can hide unnecessary commands in global config file (composer, xdebug). 
+
 ## 1.5.7 (13.01.2021)
 - bugfix
     - 27 Fix shell type detection outside project

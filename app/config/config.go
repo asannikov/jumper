@@ -98,6 +98,11 @@ func (c *Config) LoadConfig(seekProject bool) (err error) {
 	return err
 }
 
+// GetCommandInactveStatus gets command status
+func (c *Config) GetCommandInactveStatus(cmd string) bool {
+	return c.globalConfig.GetCommandInactveStatus(cmd)
+}
+
 // FindProjectPathInJSON check if project path in the json
 func (c *Config) FindProjectPathInJSON(pc projectSettings) {
 	c.globalConfig.FindProjectPathInJSON(func(p GlobalProjectConfig) (bool, error) {
@@ -153,7 +158,7 @@ func (c *Config) AddProjectConfigFile() (err error) {
 	}
 
 	c.globalConfig.Projects = append(c.globalConfig.Projects, fpc)
-
+	c.globalConfig.InactiveCommandTypes = []string{"composer", "php"}
 	return c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
 }
 

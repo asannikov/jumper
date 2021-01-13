@@ -25,6 +25,7 @@ type xdebugProjectConfig interface {
 	SaveDockerCliXdebugIniFilePath(string) error
 	SaveDockerFpmXdebugIniFilePath(string) error
 	SaveXDebugConifgLocaton(string) error
+	GetCommandInactveStatus(string) bool
 }
 
 type xdebugArgsProjectConfig interface {
@@ -96,6 +97,7 @@ func XDebugCommand(xdebugAction string, initf func(bool) string, dockerStatus bo
 		Usage:           x.usage[xdebugAction],
 		Description:     x.description[xdebugAction],
 		SkipFlagParsing: false,
+		Hidden:          cfg.GetCommandInactveStatus("xdebug"),
 		Action: func(c *cli.Context) (err error) {
 			currentPath := initf(true)
 
