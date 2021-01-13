@@ -6,7 +6,7 @@ I was inspired by [Mark's Shust](https://github.com/markshust/docker-magento) so
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/asannikov/jumper/blob/master/LICENSE)
 [![Build Status](https://travis-ci.com/asannikov/jumper.svg?branch=master)](https://travis-ci.com/asannikov/jumper)
-[![Release](https://img.shields.io/badge/release-1.5.3-brightgreen.svg)](https://github.com/asannikov/jumper/releases/tag/v1.5.5)
+[![Release](https://img.shields.io/badge/release-1.5.3-brightgreen.svg)](https://github.com/asannikov/jumper/releases/tag/v1.5.6)
 
 It was not tested on Windows.
 
@@ -103,7 +103,7 @@ Every stable release has attached sources for "linux/amd64", "linux/386", "darwi
 
 For example:
 ```
-https://github.com/asannikov/jumper/releases/tag/v1.5.3
+https://github.com/asannikov/jumper/releases/tag/v1.5.6
 ```
 Find related source there and download it. Now you can place use source at any place you want on your machine or make it global in a standard way.
 
