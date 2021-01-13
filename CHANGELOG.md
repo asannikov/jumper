@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.5.7 (13.01.2021)
+- bugfix
+    - 27 Fix shell type detection outside project
+
 ## 1.5.6 (13.01.2021)
 - bugfix
     - refactoring: changed files hierarchy in project
