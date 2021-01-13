@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.6.2 (13.01.2021)
+- bugfix 
+    - fix jumper.rb template, improved jumper_install.sh
+
 ## 1.6.1 (13.01.2021)
 - bugfix 
     - add readme info und version
