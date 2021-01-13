@@ -1,11 +1,11 @@
-package main
+package app
 
 import (
 	"os"
 	"strings"
 	"testing"
 
-	"github.com/asannikov/jumper/config"
+	"github.com/asannikov/jumper/app/config"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -28,9 +28,9 @@ func TestFileExistsCase2(t *testing.T) {
 func TestFileExistsCase3(t *testing.T) {
 	fs := FileSystem{}
 	currentDir, _ := fs.GetWd()
-	found, err := fs.DirExists(currentDir + string(os.PathSeparator) + "main_file_test.go")
+	found, err := fs.DirExists(currentDir + string(os.PathSeparator) + "file_test.go")
 	assert.False(t, found)
-	assert.True(t, strings.Contains(err.Error(), "main_file_test.go is a file"))
+	assert.True(t, strings.Contains(err.Error(), "file_test.go is a file"))
 }
 
 func TestReadConfigFileCase1(t *testing.T) {

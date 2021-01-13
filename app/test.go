@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"encoding/json"
@@ -7,19 +7,19 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/asannikov/jumper/config"
-	"github.com/asannikov/jumper/dialog"
+	"github.com/asannikov/jumper/app/config"
+	"github.com/asannikov/jumper/app/dialog"
 
 	"github.com/stretchr/testify/assert"
 )
 
-const TestProjectFileContent = `{
+const testProjectFileContent = `{
 	"path": "/path/to/project/",
 	"name": "project name",
 	"main_container": ""
 }`
 
-const TestUserFileContent = `{
+const testUserFileContent = `{
 	"projects": [
 		{
 			"path": "/path1/",
@@ -116,7 +116,7 @@ func TestDefinePaths(t *testing.T) {
 	assert.EqualError(t, err, "Cannot read directory")
 }
 
-func TestSeekPath_DefinePaths(t *testing.T) {
+func TestSeekPathDefinePaths(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
@@ -133,7 +133,7 @@ func TestSeekPath_DefinePaths(t *testing.T) {
 	assert.EqualError(t, err, "Cannot read directory")
 }
 
-func TestSeekPath_LoadConfig(t *testing.T) {
+func TestSeekPathLoadConfig(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
@@ -155,7 +155,7 @@ func TestSeekPath_LoadConfig(t *testing.T) {
 	assert.EqualError(t, err, "Cannot read config file")
 }
 
-func TestSeekPath_GetWd(t *testing.T) {
+func TestSeekPathGetWd(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
@@ -180,7 +180,7 @@ func TestSeekPath_GetWd(t *testing.T) {
 	assert.EqualError(t, err, "Cannot get current directory")
 }
 
-func TestSeekPath_GetProjectNameList(t *testing.T) {
+func TestSeekPathGetProjectNameList(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
@@ -199,9 +199,9 @@ func TestSeekPath_GetProjectNameList(t *testing.T) {
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
 			if filename == cfg.UserFile {
-				return json.Unmarshal([]byte(TestUserFileContent), &configuration)
+				return json.Unmarshal([]byte(testUserFileContent), &configuration)
 			} else if filename == cfg.ProjectFile {
-				return json.Unmarshal([]byte(TestProjectFileContent), &configuration)
+				return json.Unmarshal([]byte(testProjectFileContent), &configuration)
 			}
 			return errors.New("Wrong test file")
 		},
@@ -217,7 +217,7 @@ func TestSeekPath_GetProjectNameList(t *testing.T) {
 	assert.Equal(t, 2, len(pl))
 }
 
-func TestSeekPath_runDialogCase1(t *testing.T) {
+func TestSeekPathrunDialogCase1(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
@@ -236,7 +236,7 @@ func TestSeekPath_runDialogCase1(t *testing.T) {
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
 			if filename == cfg.UserFile {
-				return json.Unmarshal([]byte(TestUserFileContent), &configuration)
+				return json.Unmarshal([]byte(testUserFileContent), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
 			}
@@ -255,7 +255,7 @@ func TestSeekPath_runDialogCase1(t *testing.T) {
 	assert.EqualError(t, err, "Error SelectProject dialog")
 }
 
-func TestSeekPath_runDialogCase2(t *testing.T) {
+func TestSeekPathrunDialogCase2(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
@@ -274,7 +274,7 @@ func TestSeekPath_runDialogCase2(t *testing.T) {
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
 			if filename == cfg.UserFile {
-				return json.Unmarshal([]byte(TestUserFileContent), &configuration)
+				return json.Unmarshal([]byte(testUserFileContent), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
 			}
@@ -305,7 +305,7 @@ func TestSeekPath_runDialogCase2(t *testing.T) {
 	assert.EqualError(t, err, "Is ok")
 }
 
-func TestSeekPath_runDialogCase3(t *testing.T) {
+func TestSeekPathrunDialogCase3(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
@@ -324,7 +324,7 @@ func TestSeekPath_runDialogCase3(t *testing.T) {
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
 			if filename == cfg.UserFile {
-				return json.Unmarshal([]byte(TestUserFileContent), &configuration)
+				return json.Unmarshal([]byte(testUserFileContent), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
 			}
@@ -358,7 +358,7 @@ func TestSeekPath_runDialogCase3(t *testing.T) {
 	assert.EqualError(t, err, "Is ok")
 }
 
-func TestSeekPath_runDialogCase4(t *testing.T) {
+func TestSeekPathrunDialogCase4(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
@@ -411,7 +411,7 @@ func TestSeekPath_runDialogCase4(t *testing.T) {
 	assert.EqualError(t, err, "Add project name dialog error")
 }
 
-func TestSeekPath_runDialogCase5(t *testing.T) {
+func TestSeekPathrunDialogCase5(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}
@@ -487,9 +487,9 @@ func TestSeekPath_runDialogCase5(t *testing.T) {
 	assert.EqualError(t, err, "Cannot save project config file")
 }
 
-// The same as TestSeekPath_runDialogCase5, but checks return nil for seek function
+// The same as TestSeekPathrunDialogCase5, but checks return nil for seek function
 // see saveConfigFile return change
-func TestSeekPath_runDialogCase6(t *testing.T) {
+func TestSeekPathrunDialogCase6(t *testing.T) {
 	cfg := &config.Config{
 		ProjectFile: confgFile,
 	}

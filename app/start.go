@@ -1,11 +1,11 @@
-package main
+package app
 
 import (
 	"errors"
 	"os"
 
-	"github.com/asannikov/jumper/config"
-	"github.com/asannikov/jumper/dialog"
+	"github.com/asannikov/jumper/app/config"
+	"github.com/asannikov/jumper/app/dialog"
 )
 
 type projectConfig struct {
