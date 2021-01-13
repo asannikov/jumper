@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## 1.6.0 (14.01.2021)
+## 1.6.1 (13.01.2021)
+- bugfix 
+    - add readme info und version
+
+## 1.6.0 (13.01.2021)
 - features
     - 13 Add scope command config. User can hide unnecessary commands in global config file (composer, xdebug). 
 
