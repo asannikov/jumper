@@ -41,7 +41,7 @@ type testCli struct {
 	command map[string]string
 }
 
-func (tc *testCli) GetCommand(cmd string) string {
+func (tc *testCli) GetCommand(cmd string, cfg commandHandleProjectConfig) string {
 	return tc.command[cmd]
 }
 

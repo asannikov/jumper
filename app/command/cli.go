@@ -10,15 +10,18 @@ import (
 	"github.com/urfave/cli/v2" // imports as package "cli"
 )
 
+type commandHandler func(chc commandHandleProjectConfig) string
+
 type cliCommand struct {
 	usage   map[string]string
 	aliases map[string]string
 	args    map[string][]string
-	command map[string]string
+	command map[string]func(commandHandleProjectConfig) string
 }
 
-func (cli *cliCommand) GetCommand(cmd string) string {
-	return cli.command[cmd]
+func (cli *cliCommand) GetCommand(cmd string, cfg commandHandleProjectConfig) string {
+	command := cli.command[cmd]
+	return command(cfg)
 }
 
 func (cli *cliCommand) GetArgs() map[string][]string {
@@ -33,6 +36,10 @@ type cliCommandHandleProjectConfig interface {
 
 type callCliCommandDialog interface {
 	SetMainContaner([]string) (int, string, error)
+}
+
+type commandHandleProjectConfig interface {
+	GetShell() string
 }
 
 // CallCliCommand calls a range of differnt cli commands
@@ -59,12 +66,22 @@ func CallCliCommand(commandName string, initf func(bool) string, cfg cliCommandH
 			"clinotty":     []string{"-i"},
 			"clirootnotty": []string{"-u", "root", "-i"},
 		},
-		command: map[string]string{
-			"cli":          "",
-			"sh":           cfg.GetShell(),
-			"clinotty":     "",
-			"cliroot":      "",
-			"clirootnotty": "",
+		command: map[string]func(commandHandleProjectConfig) string{
+			"cli": func(c commandHandleProjectConfig) string {
+				return ""
+			},
+			"sh": func(c commandHandleProjectConfig) string {
+				return c.GetShell()
+			},
+			"clinotty": func(c commandHandleProjectConfig) string {
+				return ""
+			},
+			"cliroot": func(c commandHandleProjectConfig) string {
+				return ""
+			},
+			"clirootnotty": func(c commandHandleProjectConfig) string {
+				return ""
+			},
 		},
 	}
 
@@ -95,7 +112,7 @@ func CallCliCommand(commandName string, initf func(bool) string, cfg cliCommandH
 }
 
 type cliCommandInterface interface {
-	GetCommand(string) string
+	GetCommand(string, commandHandleProjectConfig) string
 	GetArgs() map[string][]string
 }
 
@@ -125,11 +142,11 @@ func cliCommandHandle(index string, cfg cliCommandHandleProjectConfig, d cliComm
 
 	initArgs = append(initArgs, cfg.GetProjectMainContainer())
 
-	if c.GetCommand(index) != "" {
-		initArgs = append(initArgs, c.GetCommand(index))
+	if c.GetCommand(index, cfg) != "" {
+		initArgs = append(initArgs, c.GetCommand(index, cfg))
 	}
 
-	if c.GetCommand(index) == "" && a.Get(0) == "" {
+	if c.GetCommand(index, cfg) == "" && a.Get(0) == "" {
 		return []string{}, errors.New("Please specify a CLI command (ex. ls)")
 	}
 
