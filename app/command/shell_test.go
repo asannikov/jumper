@@ -29,7 +29,7 @@ func (s *testShellDialog) DockerShell() (int, string, error) {
 	return 0, s.shell, s.err
 }
 
-func TestDefineShellTypeCase1(t *testing.T) {
+func testDefineShellTypeCase1(t *testing.T) {
 	cfg := &testShellConfig{}
 	d := &testShellDialog{
 		shell: "bash",
@@ -39,7 +39,7 @@ func TestDefineShellTypeCase1(t *testing.T) {
 	assert.Nil(t, defineShellType(cfg, d))
 }
 
-func TestDefineShellTypeCase2(t *testing.T) {
+func testDefineShellTypeCase2(t *testing.T) {
 	cfg := &testShellConfig{}
 	d := &testShellDialog{
 		shell: "",
@@ -49,7 +49,7 @@ func TestDefineShellTypeCase2(t *testing.T) {
 	assert.EqualError(t, defineShellType(cfg, d), "Something goes wrong. Shell was not set")
 }
 
-func TestDefineShellTypeCase3(t *testing.T) {
+func testDefineShellTypeCase3(t *testing.T) {
 	cfg := &testShellConfig{
 		save: errors.New("cannot save shell"),
 	}

@@ -30,7 +30,7 @@ func (c *testGetXdebugArgsProjectConfig) GetProjectMainContainer() string {
 	return c.projectMainContainer
 }
 
-func TestGetXdebugArgsCase1(t *testing.T) {
+func testGetXdebugArgsCase1(t *testing.T) {
 	cfg := &testGetXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
@@ -40,7 +40,7 @@ func TestGetXdebugArgsCase1(t *testing.T) {
 	assert.EqualValues(t, []string{"docker", "exec", "main_container", "sed", "-i", "-e", `s/^\;zend_extension/zend_extension/g`, "/path/to/xdebug/cli.ini"}, getXdebugArgs(cfg, "xdebug:cli:enable", "/project/path/"))
 }
 
-func TestGetXdebugArgsCase2(t *testing.T) {
+func testGetXdebugArgsCase2(t *testing.T) {
 	cfg := &testGetXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugConfigLocation: "container",
@@ -50,7 +50,7 @@ func TestGetXdebugArgsCase2(t *testing.T) {
 	assert.EqualValues(t, []string{"docker", "exec", "main_container", "sed", "-i", "-e", `s/^\;zend_extension/zend_extension/g`, "/path/to/xdebug/fpm.ini"}, getXdebugArgs(cfg, "xdebug:fpm:enable", "/project/path/"))
 }
 
-func TestGetXdebugArgsCase3(t *testing.T) {
+func testGetXdebugArgsCase3(t *testing.T) {
 	cfg := &testGetXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
@@ -60,7 +60,7 @@ func TestGetXdebugArgsCase3(t *testing.T) {
 	assert.EqualValues(t, []string{"docker", "exec", "main_container", "sed", "-i", "-e", `s/^zend_extension/\;zend_extension/g`, "/path/to/xdebug/cli.ini"}, getXdebugArgs(cfg, "xdebug:cli:disable", "/project/path/"))
 }
 
-func TestGetXdebugArgsCase4(t *testing.T) {
+func testGetXdebugArgsCase4(t *testing.T) {
 	cfg := &testGetXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
@@ -70,7 +70,7 @@ func TestGetXdebugArgsCase4(t *testing.T) {
 	assert.EqualValues(t, []string{"docker", "exec", "main_container", "sed", "-i", "-e", `s/^zend_extension/\;zend_extension/g`, "/path/to/xdebug/fpm.ini"}, getXdebugArgs(cfg, "xdebug:fpm:disable", "/project/path/"))
 }
 
-func TestGetXdebugArgsCase5(t *testing.T) {
+func testGetXdebugArgsCase5(t *testing.T) {
 	cfg := &testGetXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
@@ -80,7 +80,7 @@ func TestGetXdebugArgsCase5(t *testing.T) {
 	assert.EqualValues(t, []string{"sed", "-i", "-e", `s/^\;zend_extension/zend_extension/g`, "/project/path/path/to/xdebug/cli.ini"}, getXdebugArgs(cfg, "xdebug:cli:enable", "/project/path/"))
 }
 
-func TestGetXdebugArgsCase6(t *testing.T) {
+func testGetXdebugArgsCase6(t *testing.T) {
 	cfg := &testGetXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugConfigLocation: "local",
@@ -90,7 +90,7 @@ func TestGetXdebugArgsCase6(t *testing.T) {
 	assert.EqualValues(t, []string{"sed", "-i", "-e", `s/^\;zend_extension/zend_extension/g`, "/project/path/path/to/xdebug/fpm.ini"}, getXdebugArgs(cfg, "xdebug:fpm:enable", "/project/path"))
 }
 
-func TestGetXdebugArgsCase7(t *testing.T) {
+func testGetXdebugArgsCase7(t *testing.T) {
 	cfg := &testGetXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
@@ -100,7 +100,7 @@ func TestGetXdebugArgsCase7(t *testing.T) {
 	assert.EqualValues(t, []string{"sed", "-i", "-e", `s/^zend_extension/\;zend_extension/g`, "/project/path/path/to/xdebug/cli.ini"}, getXdebugArgs(cfg, "xdebug:cli:disable", "/project/path/"))
 }
 
-func TestGetXdebugArgsCase8(t *testing.T) {
+func testGetXdebugArgsCase8(t *testing.T) {
 	cfg := &testGetXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
@@ -132,7 +132,7 @@ func (d *testDefineCliXdebugIniFilePathDialog) DockerCliXdebugIniFilePath(s stri
 	return d.xDebugConfigLocationPath, d.xDebugConfigLocationErr
 }
 
-func TestDefineCliXdebugIniFilePathCase1(t *testing.T) {
+func testDefineCliXdebugIniFilePathCase1(t *testing.T) {
 	cfg := &testDefineCliXdebugIniFilePathProjectConfig{}
 
 	d := &testDefineCliXdebugIniFilePathDialog{
@@ -143,7 +143,7 @@ func TestDefineCliXdebugIniFilePathCase1(t *testing.T) {
 	assert.Nil(t, defineCliXdebugIniFilePath(cfg, d, "/etc/php/7.0/cli/conf.d/xdebug.ini"))
 }
 
-func TestDefineCliXdebugIniFilePathCase2(t *testing.T) {
+func testDefineCliXdebugIniFilePathCase2(t *testing.T) {
 	cfg := &testDefineCliXdebugIniFilePathProjectConfig{}
 
 	d := &testDefineCliXdebugIniFilePathDialog{
@@ -154,7 +154,7 @@ func TestDefineCliXdebugIniFilePathCase2(t *testing.T) {
 	assert.EqualError(t, defineCliXdebugIniFilePath(cfg, d, "/etc/php/7.0/cli/conf.d/xdebug.ini"), "Cli Xdebug ini file path is empty")
 }
 
-func TestDefineCliXdebugIniFilePathCase3(t *testing.T) {
+func testDefineCliXdebugIniFilePathCase3(t *testing.T) {
 	cfg := &testDefineCliXdebugIniFilePathProjectConfig{}
 
 	d := &testDefineCliXdebugIniFilePathDialog{
@@ -165,7 +165,7 @@ func TestDefineCliXdebugIniFilePathCase3(t *testing.T) {
 	assert.EqualError(t, defineCliXdebugIniFilePath(cfg, d, "/etc/php/7.0/cli/conf.d/xdebug.ini"), "Dialog problem")
 }
 
-func TestDefineCliXdebugIniFilePathCase4(t *testing.T) {
+func testDefineCliXdebugIniFilePathCase4(t *testing.T) {
 	cfg := &testDefineCliXdebugIniFilePathProjectConfig{
 		saveXDebugConifgLocaton: errors.New("Error on saving"),
 	}
@@ -178,7 +178,7 @@ func TestDefineCliXdebugIniFilePathCase4(t *testing.T) {
 	assert.EqualError(t, defineCliXdebugIniFilePath(cfg, d, "/etc/php/7.0/cli/conf.d/xdebug.ini"), "Error on saving")
 }
 
-func TestDefineCliXdebugIniFilePathCase5(t *testing.T) {
+func testDefineCliXdebugIniFilePathCase5(t *testing.T) {
 	cfg := &testDefineCliXdebugIniFilePathProjectConfig{
 		getXDebugConfigLocaton: "/path/to/cli.ini",
 	}
@@ -214,7 +214,7 @@ func (d *testDefineXdebugIniFileLocationDialog) XDebugConfigLocation() (int, str
 	return d.xDebugConfigLocationInt, d.xDebugConfigLocationPath, d.xDebugConfigLocationErr
 }
 
-func TestDefineXdebugIniFileLocationCase1(t *testing.T) {
+func testDefineXdebugIniFileLocationCase1(t *testing.T) {
 	cfg := &testDefineXdebugIniFileLocationProjectConfig{}
 
 	d := &testDefineXdebugIniFileLocationDialog{
@@ -226,7 +226,7 @@ func TestDefineXdebugIniFileLocationCase1(t *testing.T) {
 	assert.Nil(t, defineXdebugIniFileLocation(cfg, d))
 }
 
-func TestDefineXdebugIniFileLocationCase2(t *testing.T) {
+func testDefineXdebugIniFileLocationCase2(t *testing.T) {
 	cfg := &testDefineXdebugIniFileLocationProjectConfig{}
 
 	d := &testDefineXdebugIniFileLocationDialog{
@@ -238,7 +238,7 @@ func TestDefineXdebugIniFileLocationCase2(t *testing.T) {
 	assert.EqualError(t, defineXdebugIniFileLocation(cfg, d), "Xdebug config file locaton cannot be empty")
 }
 
-func TestDefineXdebugIniFileLocationCase3(t *testing.T) {
+func testDefineXdebugIniFileLocationCase3(t *testing.T) {
 	cfg := &testDefineXdebugIniFileLocationProjectConfig{}
 
 	d := &testDefineXdebugIniFileLocationDialog{
@@ -250,7 +250,7 @@ func TestDefineXdebugIniFileLocationCase3(t *testing.T) {
 	assert.EqualError(t, defineXdebugIniFileLocation(cfg, d), "Dialog problem")
 }
 
-func TestDefineXdebugIniFileLocationCase4(t *testing.T) {
+func testDefineXdebugIniFileLocationCase4(t *testing.T) {
 	cfg := &testDefineXdebugIniFileLocationProjectConfig{
 		saveXDebugConifgLocaton: errors.New("Error on saving"),
 	}
@@ -264,7 +264,7 @@ func TestDefineXdebugIniFileLocationCase4(t *testing.T) {
 	assert.EqualError(t, defineXdebugIniFileLocation(cfg, d), "Error on saving")
 }
 
-func TestDefineXdebugIniFileLocationCase5(t *testing.T) {
+func testDefineXdebugIniFileLocationCase5(t *testing.T) {
 	cfg := &testDefineXdebugIniFileLocationProjectConfig{
 		getXDebugConfigLocaton: "/path/to/fpm.ini",
 	}
@@ -302,7 +302,7 @@ func (d *testDefineFpmXdebugIniFilePathDialog) DockerFpmXdebugIniFilePath(s stri
 	return d.xDebugConfigLocationPath, d.xDebugConfigLocationErr
 }
 
-func TestDefineFpmXdebugIniFilePathCase1(t *testing.T) {
+func testDefineFpmXdebugIniFilePathCase1(t *testing.T) {
 	cfg := &testDefineFpmXdebugIniFilePathProjectConfig{}
 
 	d := &testDefineFpmXdebugIniFilePathDialog{
@@ -313,7 +313,7 @@ func TestDefineFpmXdebugIniFilePathCase1(t *testing.T) {
 	assert.Nil(t, defineFpmXdebugIniFilePath(cfg, d, "/etc/php/7.0/cli/conf.d/xdebug.ini"))
 }
 
-func TestDefineFpmXdebugIniFilePathCase2(t *testing.T) {
+func testDefineFpmXdebugIniFilePathCase2(t *testing.T) {
 	cfg := &testDefineFpmXdebugIniFilePathProjectConfig{}
 
 	d := &testDefineFpmXdebugIniFilePathDialog{
@@ -324,7 +324,7 @@ func TestDefineFpmXdebugIniFilePathCase2(t *testing.T) {
 	assert.EqualError(t, defineFpmXdebugIniFilePath(cfg, d, "/etc/php/7.0/cli/conf.d/xdebug.ini"), "Fpm Xdebug ini file path is empty")
 }
 
-func TestDefineFpmXdebugIniFilePathCase3(t *testing.T) {
+func testDefineFpmXdebugIniFilePathCase3(t *testing.T) {
 	cfg := &testDefineFpmXdebugIniFilePathProjectConfig{}
 
 	d := &testDefineFpmXdebugIniFilePathDialog{
@@ -335,7 +335,7 @@ func TestDefineFpmXdebugIniFilePathCase3(t *testing.T) {
 	assert.EqualError(t, defineFpmXdebugIniFilePath(cfg, d, "/etc/php/7.0/fpm/conf.d/xdebug.ini"), "Dialog problem")
 }
 
-func TestDefineFpmXdebugIniFilePathCase4(t *testing.T) {
+func testDefineFpmXdebugIniFilePathCase4(t *testing.T) {
 	cfg := &testDefineFpmXdebugIniFilePathProjectConfig{
 		saveXDebugConifgLocaton: errors.New("Error on saving"),
 	}
@@ -348,7 +348,7 @@ func TestDefineFpmXdebugIniFilePathCase4(t *testing.T) {
 	assert.EqualError(t, defineFpmXdebugIniFilePath(cfg, d, "/etc/php/7.0/fpm/conf.d/xdebug.ini"), "Error on saving")
 }
 
-func TestDefineFpmXdebugIniFilePathCase5(t *testing.T) {
+func testDefineFpmXdebugIniFilePathCase5(t *testing.T) {
 	cfg := &testDefineFpmXdebugIniFilePathProjectConfig{
 		getXDebugConfigLocaton: "/path/to/fpm.ini",
 	}

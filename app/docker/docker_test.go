@@ -13,7 +13,7 @@ import (
 	"github.com/docker/docker/client"
 )
 
-func TestInitClientCase1(t *testing.T) {
+func testInitClientCase1(t *testing.T) {
 	docker := GetDockerInstance()
 
 	docker.newClientWithOpts = func(opts ...client.Opt) (*client.Client, error) {
@@ -26,7 +26,7 @@ func TestInitClientCase1(t *testing.T) {
 	assert.Equal(t, &client.Client{}, docker.GetClient())
 }
 
-func TestInitClientCase2(t *testing.T) {
+func testInitClientCase2(t *testing.T) {
 	docker := GetDockerInstance()
 
 	docker.newClientWithOpts = func(opts ...client.Opt) (*client.Client, error) {
@@ -39,7 +39,7 @@ func TestInitClientCase2(t *testing.T) {
 	assert.Nil(t, docker.GetClient())
 }
 
-func TestPingCase1(t *testing.T) {
+func testPingCase1(t *testing.T) {
 	docker := GetDockerInstance()
 
 	docker.newClientWithOpts = func(opts ...client.Opt) (*client.Client, error) {
@@ -52,7 +52,7 @@ func TestPingCase1(t *testing.T) {
 	assert.Equal(t, types.Ping{}, ping)
 }
 
-func TestPingCase2(t *testing.T) {
+func testPingCase2(t *testing.T) {
 	docker := GetDockerInstance()
 
 	docker.newClientWithOpts = func(opts ...client.Opt) (*client.Client, error) {
@@ -69,7 +69,7 @@ func TestPingCase2(t *testing.T) {
 	assert.Equal(t, types.Ping{}, ping)
 }
 
-func TestPingCase3(t *testing.T) {
+func testPingCase3(t *testing.T) {
 	docker := GetDockerInstance()
 
 	docker.newClientWithOpts = func(opts ...client.Opt) (*client.Client, error) {
@@ -86,31 +86,31 @@ func TestPingCase3(t *testing.T) {
 	assert.Equal(t, types.Ping{}, ping)
 }
 
-func TestGetCommandCase1(t *testing.T) {
+func testGetCommandCase1(t *testing.T) {
 	command, args := getCommand("macos open --hide -a Docker")
 	assert.Equal(t, "macos", command)
 	assert.Equal(t, []string{"open", "--hide", "-a", "Docker"}, args)
 }
 
-func TestGetCommandCase2(t *testing.T) {
+func testGetCommandCase2(t *testing.T) {
 	command, args := getCommand("macos  open --hide -a  docker")
 	assert.Equal(t, "macos", command)
 	assert.Equal(t, []string{"open", "--hide", "-a", "docker"}, args)
 }
 
-func TestGetCommandCase3(t *testing.T) {
+func testGetCommandCase3(t *testing.T) {
 	command, args := getCommand("macos  open - -hide -a  docker")
 	assert.Equal(t, "macos", command)
 	assert.Equal(t, []string{"open", "-", "-hide", "-a", "docker"}, args)
 }
 
-func TestGetCommandCase4(t *testing.T) {
+func testGetCommandCase4(t *testing.T) {
 	command, args := getCommand("")
 	assert.Equal(t, "", command)
 	assert.Equal(t, []string{}, args)
 }
 
-func TestGetCommandCase5(t *testing.T) {
+func testGetCommandCase5(t *testing.T) {
 	command, args := getCommand(" ")
 	assert.Equal(t, "", command)
 	assert.Equal(t, []string{}, args)
@@ -130,7 +130,7 @@ func fakeExecCommand(command string, args ...string) *exec.Cmd {
 	return cmd
 }
 
-func TestHelperProcess(t *testing.T) {
+func testHelperProcess(t *testing.T) {
 	if os.Getenv("GO_WANT_HELPER_PROCESS") != "1" {
 		return
 	}
@@ -153,7 +153,7 @@ func TestHelperProcess(t *testing.T) {
 	}
 }
 
-func TestOpenDockerCase1(t *testing.T) {
+func testOpenDockerCase1(t *testing.T) {
 	testCase = "case1"
 	execCommand := fakeExecCommand
 	defer func() { execCommand = exec.Command }()
@@ -161,7 +161,7 @@ func TestOpenDockerCase1(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestRunCase1(t *testing.T) {
+func testRunCase1(t *testing.T) {
 	docker := GetDockerInstance()
 
 	docker.exec = fakeExecCommand
@@ -182,7 +182,7 @@ func TestRunCase1(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestRunCase2(t *testing.T) {
+func testRunCase2(t *testing.T) {
 	docker := GetDockerInstance()
 
 	docker.exec = fakeExecCommand

@@ -1,20 +1,20 @@
 require "rbconfig"
 class Jumper < Formula
   desc "Tool helps developers out with daily docker monotonous routine"
-  homepage "https://github.com/asannikov/jumper"
+  homepage "github.com/asannikov/https://jumper"
   version "{{.Version}}"
   license "MIT"
-  head "//github.com/asannikov/jumper.git"
+  head "github.com/asannikov///jumper.git"
 
   if Hardware::CPU.is_64_bit?
     case RbConfig::CONFIG["host_os"]
     when /mswin|msys|mingw|cygwin|bccwin|wince|emc/
       :windows
     when /darwin|mac os/
-      url "https://github.com/asannikov/jumper/releases/download/v{{.Version}}/{{.Mac64.FileName}}"
+      url "github.com/asannikov/https://jumper/releases/download/v{{.Version}}/{{.Mac64.FileName}}"
       sha256 "{{.Mac64.Hash}}"
     when /linux/
-      url "https://github.com/asannikov/jumper/releases/download/v{{.Version}}/{{.Linux64.FileName}}"
+      url "github.com/asannikov/https://jumper/releases/download/v{{.Version}}/{{.Linux64.FileName}}"
       sha256 "{{.Linux64.Hash}}"
     when /solaris|bsd/
       :unix
@@ -26,7 +26,7 @@ class Jumper < Formula
     when /mswin|msys|mingw|cygwin|bccwin|wince|emc/
       :windows
     when /linux/
-      url "https://github.com/asannikov/jumper/releases/download/v{{.Version}}/{{.Linux386.FileName}}"
+      url "github.com/asannikov/https://jumper/releases/download/v{{.Version}}/{{.Linux386.FileName}}"
       sha256 "{{.Linux386.Hash}}"
     when /solaris|bsd/
       :unix

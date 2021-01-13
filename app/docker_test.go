@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"errors"
@@ -31,7 +31,7 @@ func (d *testDockerInstance) InitClient() error {
 	return d.initClient()
 }
 
-func TestGetContainerListCase1(t *testing.T) {
+func testGetContainerListCase1(t *testing.T) {
 	cl := &dockerStartDialog{}
 	cl.stat = func(cl *dockerStartDialog) (string, error) {
 		return "1.0", errors.New("Ping error")
@@ -45,7 +45,7 @@ func TestGetContainerListCase1(t *testing.T) {
 	assert.EqualError(t, err, "Ping error")
 }
 
-func TestGetContainerListCase2(t *testing.T) {
+func testGetContainerListCase2(t *testing.T) {
 	cl := &dockerStartDialog{}
 	cl.stat = func(cl *dockerStartDialog) (string, error) {
 		return "", nil
@@ -62,7 +62,7 @@ func TestGetContainerListCase2(t *testing.T) {
 	assert.EqualError(t, err, "dialog error")
 }
 
-func TestGetContainerListCase3(t *testing.T) {
+func testGetContainerListCase3(t *testing.T) {
 	cl := &dockerStartDialog{}
 	cl.stat = func(cl *dockerStartDialog) (string, error) {
 		return "", nil
@@ -82,7 +82,7 @@ func TestGetContainerListCase3(t *testing.T) {
 	assert.EqualError(t, err, "command error")
 }
 
-func TestGetContainerListCase4(t *testing.T) {
+func testGetContainerListCase4(t *testing.T) {
 	cl := &dockerStartDialog{}
 	cl.stat = func(cl *dockerStartDialog) (string, error) {
 		return "", nil
@@ -102,7 +102,7 @@ func TestGetContainerListCase4(t *testing.T) {
 	assert.EqualError(t, err, "command error")
 }
 
-func TestGetContainerListCase5(t *testing.T) {
+func testGetContainerListCase5(t *testing.T) {
 	cl := &dockerStartDialog{}
 	cl.stat = func(cl *dockerStartDialog) (string, error) {
 		return "", nil
@@ -124,7 +124,7 @@ func TestGetContainerListCase5(t *testing.T) {
 	assert.EqualError(t, err, "init client error")
 }
 
-func TestGetContainerListCase6(t *testing.T) {
+func testGetContainerListCase6(t *testing.T) {
 	cl := &dockerStartDialog{}
 	cl.stat = func(cl *dockerStartDialog) (string, error) {
 		return "", nil
@@ -149,7 +149,7 @@ func TestGetContainerListCase6(t *testing.T) {
 	assert.EqualError(t, err, "This command requires Docker to be run. Please, start it first")
 }
 
-func TestGetContainerListCase7(t *testing.T) {
+func testGetContainerListCase7(t *testing.T) {
 	cl := &dockerStartDialog{}
 	cl.stat = func(cl *dockerStartDialog) (string, error) {
 		return "", nil
