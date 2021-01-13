@@ -6,7 +6,7 @@ I was inspired by [Mark's Shust](https://github.com/markshust/docker-magento) so
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/asannikov/jumper/blob/master/LICENSE)
 [![Build Status](https://travis-ci.com/asannikov/jumper.svg?branch=master)](https://travis-ci.com/asannikov/jumper)
-[![Release](https://img.shields.io/badge/release-1.5.3-brightgreen.svg)](https://github.com/asannikov/jumper/releases/tag/v1.5.7)
+[![Release](https://img.shields.io/badge/release-1.5.3-brightgreen.svg)](https://github.com/asannikov/jumper/releases/tag/v1.6.0)
 
 It was not tested on Windows.
 
@@ -31,7 +31,6 @@ PHP
 * Laravel artisan support
 * Docker extended managment
 * GIT routines
-* Extendable jumper config options
 * Kubernetes management
 
 I'll highly appreciate for testing and any ideas where this tool can be useful. Please, write your suggestions or your experience in the issues.
@@ -103,7 +102,7 @@ Every stable release has attached sources for "linux/amd64", "linux/386", "darwi
 
 For example:
 ```
-https://github.com/asannikov/jumper/releases/tag/v1.5.7
+https://github.com/asannikov/jumper/releases/tag/v1.6.0
 ```
 Find related source there and download it. Now you can place use source at any place you want on your machine or make it global in a standard way.
 
@@ -146,6 +145,60 @@ implemented commands:
    xdebug:cli:disable, xcd         Disable cli xdebug
    shell                           Change shell type for a project
    ```
+
+# Project config example - jumper.json
+```
+{
+ "name": "Project Name",
+ "main_container": "php_container",
+ "start_command": "docker-compose up -d",
+ "path": "/var/www/src",
+ "xdebug_location": "local",
+ "xdebug_path_cli": "/path/to/project/config/xdebug_cli.ini",
+ "xdebug_path_fpm": "/path/to/project/config/xdebug_fpm.ini",
+ "shell": "bash"
+}
+```
+
+all these options are managed using jumper command. **It's not recommended to edit manually.**
+
+# Global conifg file example - ~/.jumper.json
+```
+{
+ "projects": [
+  {
+   "path": "/path/to/project1",
+   "name": "project1"
+  },
+  {
+   "path": "/path/to/project2",
+   "name": "project2"
+  }
+ ],
+ "copyright_text": false,
+ "docker_service": "open --hide -a Docker",
+ "inactive_command_types": [
+  "compose",
+  "xdebug"
+ ]
+}
+```
+
+# Available options for global config ~/.jumper.json
+
+## Hide copyright text
+Add `"copyright_text": false,` 
+
+It can be done using jumper command though.
+
+## Permanent hiding some types of commands
+add `"inactive_command_types": ["type1","type2"],`
+
+It can be done only directly in config file.
+
+here is a list of avalable values:
+* `composer` - hides all composer commands
+* `xdebug`   - hides xdebug commands
 
 # FAQ
 ## How to change shell type:

@@ -61,6 +61,7 @@ type callComposerCommandProjectConfig interface {
 	GetProjectDockerPath() string
 	GetProjectMainContainer() string
 	SaveContainerNameToProjectConfig(string) error
+	GetCommandInactveStatus(string) bool
 }
 
 type callComposerCommandDialog interface {
@@ -108,6 +109,7 @@ func CallComposerCommand(composercommand string, initf func(bool) string, cfg ca
 		Aliases:         []string{cmp.aliases[index]},
 		Usage:           cmp.usage[index],
 		Description:     cmp.description[index],
+		Hidden:          cfg.GetCommandInactveStatus("composer"),
 		SkipFlagParsing: true,
 		Action: func(c *cli.Context) (err error) {
 			initf(true)

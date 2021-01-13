@@ -8,9 +8,10 @@ type GlobalProjectConfig struct {
 
 // GlobalConfig contains file config
 type GlobalConfig struct {
-	Projects      []GlobalProjectConfig `json:"projects"`
-	Copyright     bool                  `json:"copyright_text"`
-	DockerCommand string                `json:"docker_service"`
+	Projects             []GlobalProjectConfig `json:"projects"`
+	Copyright            bool                  `json:"copyright_text"`
+	DockerCommand        string                `json:"docker_service"`
+	InactiveCommandTypes []string              `json:"inactive_command_types"`
 }
 
 // SetDockerCommand define docker command
@@ -54,6 +55,16 @@ func (g *GlobalConfig) GetProjectNameList() []string {
 	}
 
 	return pl
+}
+
+// GetCommandStatus checks command visibility
+func (g *GlobalConfig) GetCommandInactveStatus(cmd string) bool {
+	for _, a := range g.InactiveCommandTypes {
+		if a == cmd {
+			return true
+		}
+	}
+	return false
 }
 
 // FindProjectPathInJSON find project path in json
