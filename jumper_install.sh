@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+brew uninstall jumper
+
 wget https://raw.githubusercontent.com/asannikov/jumper/master/homebrew/jumper.rb
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
