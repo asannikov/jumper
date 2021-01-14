@@ -144,6 +144,7 @@ implemented commands:
    xdebug:cli:enable, xce          Enable cli xdebug
    xdebug:cli:disable, xcd         Disable cli xdebug
    shell                           Change shell type for a project
+   magento, m                      Call magento command bin/magento or magerun. This command has subcommands. Call jumper magento for more details.
    ```
 
 # Project config example - jumper.json
