@@ -1,12 +1,12 @@
 # JUMPER
 
-This tool has been created for helping developers out with daily docker routines. Once you configured the jumper file for a project, you can call easily run basic docker commands for any registered project and jump into main docker container using just `jumper b`.
+This tool has been created for helping developers out with daily docker routines. Once you configured the jumper file for a project, you can call easily run basic docker commands for any registered project and jump into main docker container using just `jumper sh`.
 
 I was inspired by [Mark's Shust](https://github.com/markshust/docker-magento) solutution for M2. Many thanks to Mark from my side for his ideas.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/asannikov/jumper/blob/master/LICENSE)
 [![Build Status](https://travis-ci.com/asannikov/jumper.svg?branch=master)](https://travis-ci.com/asannikov/jumper)
-[![Release](https://img.shields.io/badge/release-1.6.3-brightgreen.svg)](https://github.com/asannikov/jumper/releases/tag/v1.6.3)
+[![Release](https://img.shields.io/badge/release-1.6.3-brightgreen.svg)](https://github.com/asannikov/jumper/releases/tag/v1.7.0)
 
 It was not tested on Windows.
 
@@ -102,7 +102,7 @@ Every stable release has attached sources for "linux/amd64", "linux/386", "darwi
 
 For example:
 ```
-https://github.com/asannikov/jumper/releases/tag/v1.6.3
+https://github.com/asannikov/jumper/releases/tag/v1.7.0
 ```
 Find related source there and download it. Now you can place use source at any place you want on your machine or make it global in a standard way.
 
@@ -149,14 +149,14 @@ implemented commands:
 # Project config example - jumper.json
 ```
 {
- "name": "Project Name",
- "main_container": "php_container",
- "start_command": "docker-compose up -d",
- "path": "/var/www/src",
- "xdebug_location": "local",
- "xdebug_path_cli": "/path/to/project/config/xdebug_cli.ini",
- "xdebug_path_fpm": "/path/to/project/config/xdebug_fpm.ini",
- "shell": "bash"
+ "name": "Project Name",                  
+ "main_container": "php_container",       // container, where mostly you are working
+ "start_command": "docker-compose up -d", // standard project run
+ "path": "/var/www/src",                  // path to mounted project
+ "xdebug_location": "local",              // Possible values: local and docker. Jumper will look for the xdebug file locally if was set "local"
+ "xdebug_path_cli": "/path/to/project/config/xdebug_cli.ini", // absolute path to xdebug config locally or in docker
+ "xdebug_path_fpm": "/path/to/project/config/xdebug_fpm.ini", // absolute path to xdebug config locally or in docker
+ "shell": "bash"                          // shell by default
 }
 ```
 

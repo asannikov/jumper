@@ -13,7 +13,9 @@ import (
 
 func commandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []*cli.Command {
 
-	getCommandLocationF := bash.GetCommandLocation()
+	b := bash.Bash{}
+
+	getCommandLocationF := b.GetCommandLocation()
 
 	dck := docker.GetDockerInstance()
 
@@ -83,5 +85,6 @@ func commandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []
 		command.ShellCommand(initf, c, d),
 
 		// docker pull https://docs.docker.com/engine/api/sdk/examples/
+		command.CallMagentoCommand(initf, c, d, dockerDialog, b),
 	}
 }

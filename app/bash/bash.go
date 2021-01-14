@@ -9,9 +9,13 @@ import (
 	"strings"
 )
 
+// Bash is an object for working with Cli
+type Bash struct {
+}
+
 // GetCommandLocation get command locaton in docker container
 // Use it for detect commad location in related container
-func GetCommandLocation() func(string, string) (string, error) {
+func (b Bash) GetCommandLocation() func(string, string) (string, error) {
 	return func(containerName string, command string) (string, error) {
 		if len(containerName) == 0 {
 			return "", errors.New("Container is not defined")
