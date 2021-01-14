@@ -33,10 +33,12 @@ func CallMagentoCommand(initf func(bool) string, cfg magentoGlobalConfig, d mage
 	return &cli.Command{
 		Name:    "magento",
 		Aliases: []string{"m"},
+		Usage:   "Call magento command bin/magento or magerun. This command has subcommands. Call jumper magento for more details.",
 		Subcommands: []*cli.Command{
 			{
 				Name:    "bin/magento",
 				Aliases: []string{"bm"},
+				Usage:   "It looks for bin/magento command and call it",
 				Action: func(c *cli.Context) error {
 					initf(true)
 
@@ -100,6 +102,7 @@ func CallMagentoCommand(initf func(bool) string, cfg magentoGlobalConfig, d mage
 			{
 				Name:    "magerun",
 				Aliases: []string{"mr"},
+				Usage:   "It looks for magerun2 command and call it",
 				Action: func(c *cli.Context) error {
 					initf(true)
 
