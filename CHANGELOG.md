@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.7.0 (14.01.2021)
+- features
+    - add magento command (bin/magento)
+    - add magerun2 command
+
 ## 1.6.3 (13.01.2021)
 - bugfix 
     - remove jumper before install it
