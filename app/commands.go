@@ -80,8 +80,8 @@ func commandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []
 		command.CallCopyrightCommand(initf, c, d),
 
 		// Sync Paths
-		command.SyncCommand("copyto", initf, dockerStatus, c, d, dockerDialog),
-		command.SyncCommand("copyfrom", initf, dockerStatus, c, d, dockerDialog),
+		command.SyncCommand("copyto", c, d, opt),
+		command.SyncCommand("copyfrom", c, d, opt),
 
 		// Xdebug
 		command.XDebugCommand("xdebug:fpm:enable", c, d, opt),
