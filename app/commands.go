@@ -31,6 +31,14 @@ func commandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []
 		dck.InitClient()
 	}
 
+	opt := &commandOptions{}
+	opt.setInitFuntion(initf)
+	opt.setCommandLocation(getCommandLocationF)
+	opt.setDockerStatus(dockerStatus)
+	opt.setStopContainers(dck.StopContainers())
+	opt.setExecCommand(execCommand)
+	opt.setDockerDialog(dockerDialog)
+
 	return []*cli.Command{
 		// cli commands
 		command.CallCliCommand("cli", initf, c, d, dockerDialog),
@@ -85,6 +93,6 @@ func commandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []
 		command.ShellCommand(initf, c, d),
 
 		// docker pull https://docs.docker.com/engine/api/sdk/examples/
-		command.CallMagentoCommand(initf, c, d, dockerDialog, b),
+		command.CallMagentoCommand(c, d, opt),
 	}
 }

@@ -3,6 +3,8 @@ package app
 import (
 	"fmt"
 	"log"
+	"os/exec"
+	"strings"
 
 	"github.com/asannikov/jumper/app/lib"
 
@@ -55,4 +57,16 @@ func InitApp(cli *cli.App) {
 
 	cli.Copyright = lib.GetCopyrightText(cfg)
 	cli.Commands = commandList(cfg, &DLG, initf)
+}
+
+func execCommand(command string, args []string, app *cli.App) error {
+	cmd := exec.Command(command, args...)
+
+	cmd.Stdin = app.Reader
+	cmd.Stdout = app.Writer
+	cmd.Stderr = app.ErrWriter
+
+	fmt.Printf("\ncommand: %s\n\n", command+" "+strings.Join(args, " "))
+
+	return cmd.Run()
 }

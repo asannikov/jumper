@@ -67,6 +67,11 @@ type xDebugCommandDialog interface {
 	XDebugConfigLocation() (int, string, error)
 }
 
+type xDebugOptions interface {
+	GetExecCommand() func(string, []string, *cli.App) error
+	GetCommandLocation() func(string, string) (string, error)
+}
+
 //XDebugCommand enable/disable xDebug
 func XDebugCommand(xdebugAction string, initf func(bool) string, dockerStatus bool, cfg xdebugProjectConfig, d xDebugCommandDialog, clist containerlist) *cli.Command {
 
