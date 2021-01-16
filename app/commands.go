@@ -84,10 +84,10 @@ func commandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []
 		command.SyncCommand("copyfrom", initf, dockerStatus, c, d, dockerDialog),
 
 		// Xdebug
-		command.XDebugCommand("xdebug:fpm:enable", initf, dockerStatus, c, d, dockerDialog),
-		command.XDebugCommand("xdebug:fpm:disable", initf, dockerStatus, c, d, dockerDialog),
-		command.XDebugCommand("xdebug:cli:enable", initf, dockerStatus, c, d, dockerDialog),
-		command.XDebugCommand("xdebug:cli:disable", initf, dockerStatus, c, d, dockerDialog),
+		command.XDebugCommand("xdebug:fpm:enable", c, d, opt),
+		command.XDebugCommand("xdebug:fpm:disable", c, d, opt),
+		command.XDebugCommand("xdebug:cli:enable", c, d, opt),
+		command.XDebugCommand("xdebug:cli:disable", c, d, opt),
 
 		// Shell
 		command.ShellCommand(initf, c, d),
