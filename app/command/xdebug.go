@@ -146,7 +146,7 @@ func XDebugCommand(xdebugAction string, cfg xdebugProjectConfig, d xDebugCommand
 				fmt.Printf("Fpm Xdebug disabled \n")
 			}
 
-			return restartMainContainer(cfg)
+			return restartMainContainer(cfg, options, c.App)
 		},
 	}
 }

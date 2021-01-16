@@ -2,10 +2,6 @@ package command
 
 import (
 	"errors"
-	"fmt"
-	"log"
-	"os"
-	"os/exec"
 	"strings"
 
 	"github.com/urfave/cli/v2"
@@ -42,8 +38,13 @@ type runStartProjectProjectConfig interface {
 	GetStartCommand() string
 }
 
-func runStartProject(c *cli.Context, cfg runStartProjectProjectConfig, args []string) error {
+type runStartProjectOptions interface {
+	GetExecCommand() func(string, []string, *cli.App) error
+}
+
+func runStartProject(c *cli.Context, cfg runStartProjectProjectConfig, args []string, options runStartProjectOptions) error {
 	commandSlice := strings.Split(cfg.GetStartCommand(), " ")
+	execCommand := options.GetExecCommand()
 
 	var binary = commandSlice[0]
 	var initArgs = commandSlice[1:]
@@ -53,15 +54,7 @@ func runStartProject(c *cli.Context, cfg runStartProjectProjectConfig, args []st
 	args = append(initArgs, args...)
 	args = append(args, extraInitArgs...)
 
-	log.Printf("Called: %s %s", binary, strings.Join(args, " "))
-
-	cmd := exec.Command(binary, args...)
-
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	return cmd.Run()
+	return execCommand(binary, args, c.App)
 }
 
 type callStartProjectBasicProjectConfig interface {
@@ -76,8 +69,16 @@ type callStartProjectBasicDialog interface {
 	StartCommand() (string, error)
 }
 
+type startProjectOptions interface {
+	GetInitFuntion() func(bool) string
+	GetContainerList() ([]string, error)
+	GetExecCommand() func(string, []string, *cli.App) error
+}
+
 // CallStartProjectBasic runs docker project
-func CallStartProjectBasic(initf func(bool) string, cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, clist containerlist) *cli.Command {
+func CallStartProjectBasic(cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, options startProjectOptions) *cli.Command {
+	initf := options.GetInitFuntion()
+
 	cmd := cli.Command{
 		Name:            "start",
 		Aliases:         []string{"st"},
@@ -89,7 +90,7 @@ func CallStartProjectBasic(initf func(bool) string, cfg callStartProjectBasicPro
 
 			var cl []string
 
-			if cl, err = clist.GetContainerList(); err != nil {
+			if cl, err = options.GetContainerList(); err != nil {
 				return err
 			}
 
@@ -101,7 +102,7 @@ func CallStartProjectBasic(initf func(bool) string, cfg callStartProjectBasicPro
 				return err
 			}
 
-			return runStartProject(c, cfg, []string{})
+			return runStartProject(c, cfg, []string{}, options)
 		},
 	}
 
@@ -109,7 +110,9 @@ func CallStartProjectBasic(initf func(bool) string, cfg callStartProjectBasicPro
 }
 
 // CallStartProjectForceRecreate runs docker project
-func CallStartProjectForceRecreate(initf func(bool) string, cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, clist containerlist) *cli.Command {
+func CallStartProjectForceRecreate(cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, options startProjectOptions) *cli.Command {
+	initf := options.GetInitFuntion()
+
 	cmd := cli.Command{
 		Name:    "start:force",
 		Aliases: []string{"s:f"},
@@ -123,7 +126,7 @@ func CallStartProjectForceRecreate(initf func(bool) string, cfg callStartProject
 
 			var cl []string
 
-			if cl, err = clist.GetContainerList(); err != nil {
+			if cl, err = options.GetContainerList(); err != nil {
 				return err
 			}
 
@@ -135,7 +138,7 @@ func CallStartProjectForceRecreate(initf func(bool) string, cfg callStartProject
 				return err
 			}
 
-			return runStartProject(c, cfg, []string{"--force-recreate"})
+			return runStartProject(c, cfg, []string{"--force-recreate"}, options)
 		},
 	}
 
@@ -143,7 +146,9 @@ func CallStartProjectForceRecreate(initf func(bool) string, cfg callStartProject
 }
 
 // CallStartProjectOrphans runs docker project
-func CallStartProjectOrphans(initf func(bool) string, cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, clist containerlist) *cli.Command {
+func CallStartProjectOrphans(cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, options startProjectOptions) *cli.Command {
+	initf := options.GetInitFuntion()
+
 	cmd := cli.Command{
 		Name:    "start:orphans",
 		Aliases: []string{"s:o"},
@@ -157,7 +162,7 @@ func CallStartProjectOrphans(initf func(bool) string, cfg callStartProjectBasicP
 
 			var cl []string
 
-			if cl, err = clist.GetContainerList(); err != nil {
+			if cl, err = options.GetContainerList(); err != nil {
 				return err
 			}
 
@@ -169,7 +174,7 @@ func CallStartProjectOrphans(initf func(bool) string, cfg callStartProjectBasicP
 				return err
 			}
 
-			return runStartProject(c, cfg, []string{"--remove-orphans"})
+			return runStartProject(c, cfg, []string{"--remove-orphans"}, options)
 		},
 	}
 
@@ -177,7 +182,9 @@ func CallStartProjectOrphans(initf func(bool) string, cfg callStartProjectBasicP
 }
 
 // CallStartProjectForceOrphans runs docker project
-func CallStartProjectForceOrphans(initf func(bool) string, cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, clist containerlist) *cli.Command {
+func CallStartProjectForceOrphans(cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, options startProjectOptions) *cli.Command {
+	initf := options.GetInitFuntion()
+
 	cmd := cli.Command{
 		Name:    "start:force-orphans",
 		Aliases: []string{"s:fo"},
@@ -192,7 +199,7 @@ func CallStartProjectForceOrphans(initf func(bool) string, cfg callStartProjectB
 
 			var cl []string
 
-			if cl, err = clist.GetContainerList(); err != nil {
+			if cl, err = options.GetContainerList(); err != nil {
 				return err
 			}
 
@@ -204,7 +211,7 @@ func CallStartProjectForceOrphans(initf func(bool) string, cfg callStartProjectB
 				return err
 			}
 
-			return runStartProject(c, cfg, []string{"--force-recreate", "--remove-orphans"})
+			return runStartProject(c, cfg, []string{"--force-recreate", "--remove-orphans"}, options)
 		},
 	}
 
@@ -217,7 +224,10 @@ type callStartMainContainerProjectConfig interface {
 }
 
 // CallStartMainContainer runs docker main container
-func CallStartMainContainer(initf func(bool) string, cfg callStartMainContainerProjectConfig, d callStartProjectBasicDialog, clist containerlist) *cli.Command {
+func CallStartMainContainer(cfg callStartMainContainerProjectConfig, d callStartProjectBasicDialog, options startProjectOptions) *cli.Command {
+	initf := options.GetInitFuntion()
+	execCommand := options.GetExecCommand()
+
 	cmd := cli.Command{
 		Name:    "start:maincontainer",
 		Aliases: []string{"startmc"},
@@ -227,7 +237,7 @@ func CallStartMainContainer(initf func(bool) string, cfg callStartMainContainerP
 
 			var cl []string
 
-			if cl, err = clist.GetContainerList(); err != nil {
+			if cl, err = options.GetContainerList(); err != nil {
 				return err
 			}
 
@@ -236,13 +246,8 @@ func CallStartMainContainer(initf func(bool) string, cfg callStartMainContainerP
 			}
 
 			args := []string{"start", cfg.GetProjectMainContainer()}
-			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-			cmd := exec.Command("docker", args...)
 
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			return cmd.Run()
+			return execCommand("docker", args, c.App)
 		},
 	}
 
@@ -253,30 +258,35 @@ type restartMainContainerProjectConfig interface {
 	GetProjectMainContainer() string
 }
 
-func restartMainContainer(cfg restartMainContainerProjectConfig) error {
-	args := []string{"stop", cfg.GetProjectMainContainer()}
-	fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-	cmd := exec.Command("docker", args...)
+type restartMainContainerOptions interface {
+	GetExecCommand() func(string, []string, *cli.App) error
+}
 
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
+func restartMainContainer(cfg restartMainContainerProjectConfig, options restartMainContainerOptions, a *cli.App) error {
+	execCommand := options.GetExecCommand()
+
+	args := []string{"stop", cfg.GetProjectMainContainer()}
+
+	if err := execCommand("docker", args, a); err != nil {
 		return err
 	}
 
 	args = []string{"start", cfg.GetProjectMainContainer()}
-	fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-	cmd = exec.Command("docker", args...)
+	return execCommand("docker", args, a)
+}
 
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+type restartProjectOptions interface {
+	GetInitFuntion() func(bool) string
+	GetContainerList() ([]string, error)
+	GetExecCommand() func(string, []string, *cli.App) error
+	GetDockerStatus() bool
 }
 
 // CallRestartMainContainer restarts docker main container
-func CallRestartMainContainer(initf func(bool) string, dockerStatus bool, cfg callStartMainContainerProjectConfig, d callStartProjectBasicDialog, clist containerlist) *cli.Command {
+func CallRestartMainContainer(cfg callStartMainContainerProjectConfig, d callStartProjectBasicDialog, options restartProjectOptions) *cli.Command {
+	initf := options.GetInitFuntion()
+	dockerStatus := options.GetDockerStatus()
+
 	cmd := cli.Command{
 		Name:    "restart:maincontainer",
 		Aliases: []string{"rmc"},
@@ -290,7 +300,7 @@ func CallRestartMainContainer(initf func(bool) string, dockerStatus bool, cfg ca
 
 			var cl []string
 
-			if cl, err = clist.GetContainerList(); err != nil {
+			if cl, err = options.GetContainerList(); err != nil {
 				return err
 			}
 
@@ -298,15 +308,23 @@ func CallRestartMainContainer(initf func(bool) string, dockerStatus bool, cfg ca
 				return err
 			}
 
-			return restartMainContainer(cfg)
+			return restartMainContainer(cfg, options, c.App)
 		},
 	}
 
 	return &cmd
 }
 
+type callStartContainersOptions interface {
+	GetExecCommand() func(string, []string, *cli.App) error
+	GetInitFuntion() func(bool) string
+}
+
 // CallStartContainers runs docker custom container
-func CallStartContainers(initf func(bool) string) *cli.Command {
+func CallStartContainers(options callStartContainersOptions) *cli.Command {
+	initf := options.GetInitFuntion()
+	execCommand := options.GetExecCommand()
+
 	cmd := cli.Command{
 		Name:    "start:containers",
 		Aliases: []string{"startc"},
@@ -316,21 +334,25 @@ func CallStartContainers(initf func(bool) string) *cli.Command {
 
 			args := []string{"start"}
 			args = append(args, c.Args().Slice()...)
-			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-			cmd := exec.Command("docker", args...)
-
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			return cmd.Run()
+			return execCommand("docker", args, c.App)
 		},
 	}
 
 	return &cmd
 }
 
+type callRestartContainersOptions interface {
+	GetExecCommand() func(string, []string, *cli.App) error
+	GetInitFuntion() func(bool) string
+	GetDockerStatus() bool
+}
+
 // CallRestartContainers restart docker custom containers
-func CallRestartContainers(initf func(bool) string, dockerStatus bool) *cli.Command {
+func CallRestartContainers(options callRestartContainersOptions) *cli.Command {
+	initf := options.GetInitFuntion()
+	dockerStatus := options.GetDockerStatus()
+	execCommand := options.GetExecCommand()
+
 	cmd := cli.Command{
 		Name:    "restart:containers",
 		Aliases: []string{"rc"},
@@ -344,26 +366,14 @@ func CallRestartContainers(initf func(bool) string, dockerStatus bool) *cli.Comm
 
 			args := []string{"stop"}
 			args = append(args, c.Args().Slice()...)
-			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-			cmd := exec.Command("docker", args...)
 
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-
-			if err := cmd.Run(); err != nil {
+			if err := execCommand("docker", args, c.App); err != nil {
 				return err
 			}
 
 			args = []string{"start"}
 			args = append(args, c.Args().Slice()...)
-			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-			cmd = exec.Command("docker", args...)
-
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			return cmd.Run()
+			return execCommand("docker", args, c.App)
 		},
 	}
 

@@ -2,10 +2,6 @@ package command
 
 import (
 	"errors"
-	"fmt"
-	"os"
-	"os/exec"
-	"strings"
 
 	"github.com/urfave/cli/v2" // imports as package "cli"
 )
@@ -42,8 +38,17 @@ type commandHandleProjectConfig interface {
 	GetShell() string
 }
 
+type callCliCommandOptions interface {
+	GetInitFuntion() func(bool) string
+	GetContainerList() ([]string, error)
+	GetExecCommand() func(string, []string, *cli.App) error
+}
+
 // CallCliCommand calls a range of differnt cli commands
-func CallCliCommand(commandName string, initf func(bool) string, cfg cliCommandHandleProjectConfig, d callCliCommandDialog, cl containerlist) *cli.Command {
+func CallCliCommand(commandName string, cfg cliCommandHandleProjectConfig, d callCliCommandDialog, options callCliCommandOptions) *cli.Command {
+	initf := options.GetInitFuntion()
+	execCommand := options.GetExecCommand()
+
 	clic := &cliCommand{
 		usage: map[string]string{
 			"cli":          "Runs cli command in conatiner: {docker exec main_conatain} [command] [custom parameters]",
@@ -95,18 +100,11 @@ func CallCliCommand(commandName string, initf func(bool) string, cfg cliCommandH
 
 			var args []string
 
-			if args, err = cliCommandHandle(commandName, cfg, d, clic, cl, c.Args()); err != nil {
+			if args, err = cliCommandHandle(commandName, cfg, d, clic, options, c.Args()); err != nil {
 				return err
 			}
 
-			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-
-			cmd := exec.Command("docker", args...)
-
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			return cmd.Run()
+			return execCommand("docker", args, c.App)
 		},
 	}
 }
@@ -120,11 +118,11 @@ type cliCommandHandleDialog interface {
 	SetMainContaner([]string) (int, string, error)
 }
 
-func cliCommandHandle(index string, cfg cliCommandHandleProjectConfig, d cliCommandHandleDialog, c cliCommandInterface, clist containerlist, a cli.Args) ([]string, error) {
+func cliCommandHandle(index string, cfg cliCommandHandleProjectConfig, d cliCommandHandleDialog, c cliCommandInterface, options containerlist, a cli.Args) ([]string, error) {
 	var err error
 	var cl []string
 
-	if cl, err = clist.GetContainerList(); err != nil {
+	if cl, err = options.GetContainerList(); err != nil {
 		return []string{}, err
 	}
 
