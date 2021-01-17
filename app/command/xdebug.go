@@ -77,6 +77,8 @@ func XDebugCommand(xdebugAction string, cfg xdebugProjectConfig, d xDebugCommand
 	execCommand := options.GetExecCommand()
 	initf := options.GetInitFuntion()
 
+	descripton := `Set relative path from project root by asking path in local scope. Set absolute path for docker scope. Use local scope for mounted configs.`
+
 	x := &xdebug{
 		usage: map[string]string{
 			"xdebug:fpm:enable":  "Enable fpm xdebug",
@@ -91,10 +93,10 @@ func XDebugCommand(xdebugAction string, cfg xdebugProjectConfig, d xDebugCommand
 			"xdebug:cli:disable": "xcd",
 		},
 		description: map[string]string{
-			"xdebug:fpm:enable":  "",
-			"xdebug:fpm:disable": "",
-			"xdebug:cli:enable":  "",
-			"xdebug:cli:disable": "",
+			"xdebug:fpm:enable":  descripton,
+			"xdebug:fpm:disable": descripton,
+			"xdebug:cli:enable":  descripton,
+			"xdebug:cli:disable": descripton,
 		},
 	}
 
