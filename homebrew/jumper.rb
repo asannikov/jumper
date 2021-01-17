@@ -12,10 +12,10 @@ class Jumper < Formula
       :windows
     when /darwin|mac os/
       url "https://github.com/asannikov/jumper/releases/download/v1.7.1/jumper-darwin-amd64.zip"
-      sha256 "aea48d672bfe8b51352d14256c80cdba49855ec018e72094656dc1f228fdd1df"
+      sha256 "4949c8465e7c9b7f107c225ef3c0a0bf92a02ca3b87eeabbe97ce9f011a3039f"
     when /linux/
       url "https://github.com/asannikov/jumper/releases/download/v1.7.1/jumper-linux-amd64.tar.gz"
-      sha256 "11a541cfd1c4284b9d5c60ad81d50155120db8f566e6aab23b127018ec80d85f"
+      sha256 "f47c521f9842729336a8e7fb5610e8fb3dd8f2f0b2af1d2873f09b788f2161c0"
     when /solaris|bsd/
       :unix
     else
@@ -27,7 +27,7 @@ class Jumper < Formula
       :windows
     when /linux/
       url "https://github.com/asannikov/jumper/releases/download/v1.7.1/jumper-linux-386.tar.gz"
-      sha256 "f6e1ef07d2af0fdc68b72ca380782d3a190b8d013c03fdb8205d6c249a669702"
+      sha256 "c01a6ae6299b5199080938d9a1bd1804c9dc0b5197ac786e5ffd4f173711883f"
     when /solaris|bsd/
       :unix
     else

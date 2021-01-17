@@ -4,13 +4,22 @@ import (
 	"errors"
 	"fmt"
 	"github.com/urfave/cli/v2" // imports as package "cli"
-	"os"
-	"os/exec"
-	"strings"
 )
 
+type stopContainerOptions interface {
+	GetInitFuntion() func(bool) string
+	GetContainerList() ([]string, error)
+	GetDockerStatus() bool
+	GetStopContainers() func([]string) error
+	GetExecCommand() func(string, []string, *cli.App) error
+}
+
 // CallStopAllContainersCommand stops all docker containers
-func CallStopAllContainersCommand(initf func(bool) string, dockerStatus bool, stopFuncton func([]string) error) *cli.Command {
+func CallStopAllContainersCommand(options stopContainerOptions) *cli.Command {
+	initf := options.GetInitFuntion()
+	dockerStatus := options.GetDockerStatus()
+	stopContainers := options.GetStopContainers()
+
 	return &cli.Command{
 		Name:    "stopallcontainers",
 		Aliases: []string{"sac"},
@@ -18,7 +27,7 @@ func CallStopAllContainersCommand(initf func(bool) string, dockerStatus bool, st
 		Action: func(c *cli.Context) (err error) {
 			initf(false)
 			if dockerStatus {
-				return stopFuncton([]string{})
+				return stopContainers([]string{})
 			}
 
 			return errors.New("Docker is not running")
@@ -36,7 +45,11 @@ type callStopMainContainerCommandDialog interface {
 }
 
 // CallStopMainContainerCommand stops main container
-func CallStopMainContainerCommand(initf func(bool) string, dockerStatus bool, stopFuncton func([]string) error, cfg callStopMainContainerCommandProjectConfig, d callStopMainContainerCommandDialog, clist containerlist) *cli.Command {
+func CallStopMainContainerCommand(cfg callStopMainContainerCommandProjectConfig, d callStopMainContainerCommandDialog, options stopContainerOptions) *cli.Command {
+	initf := options.GetInitFuntion()
+	dockerStatus := options.GetDockerStatus()
+	stopContainers := options.GetStopContainers()
+
 	return &cli.Command{
 		Name:    "stop:maincontainer",
 		Aliases: []string{"smc"},
@@ -50,7 +63,7 @@ func CallStopMainContainerCommand(initf func(bool) string, dockerStatus bool, st
 
 			var cl []string
 
-			if cl, err = clist.GetContainerList(); err != nil {
+			if cl, err = options.GetContainerList(); err != nil {
 				return err
 			}
 
@@ -59,13 +72,17 @@ func CallStopMainContainerCommand(initf func(bool) string, dockerStatus bool, st
 			}
 
 			fmt.Printf("Searching for main container %s", cfg.GetProjectMainContainer())
-			return stopFuncton([]string{cfg.GetProjectMainContainer()})
+			return stopContainers([]string{cfg.GetProjectMainContainer()})
 		},
 	}
 }
 
 // CallStopSelectedContainersCommand stops selected docker containers
-func CallStopSelectedContainersCommand(initf func(bool) string, dockerStatus bool, stopFuncton func([]string) error) *cli.Command {
+func CallStopSelectedContainersCommand(options stopContainerOptions) *cli.Command {
+	initf := options.GetInitFuntion()
+	dockerStatus := options.GetDockerStatus()
+	execCommand := options.GetExecCommand()
+
 	return &cli.Command{
 		Name:    "stop:containers",
 		Aliases: []string{"scs"},
@@ -81,21 +98,18 @@ func CallStopSelectedContainersCommand(initf func(bool) string, dockerStatus boo
 
 			args = append(args, c.Args().Slice()...)
 
-			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-
-			cmd := exec.Command("docker", args...)
-
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			return cmd.Run()
+			return execCommand("docker", args, c.App)
 		},
 	}
 }
 
 // CallStopOneContainerCommand stops selected docker containers
 // @todo
-func CallStopOneContainerCommand(initf func(bool) string, dockerStatus bool, stopFuncton func([]string) error) *cli.Command {
+func CallStopOneContainerCommand(options stopContainerOptions) *cli.Command {
+	initf := options.GetInitFuntion()
+	dockerStatus := options.GetDockerStatus()
+	execCommand := options.GetExecCommand()
+
 	return &cli.Command{
 		Name:    "stop:container",
 		Aliases: []string{"stopc"},
@@ -110,12 +124,7 @@ func CallStopOneContainerCommand(initf func(bool) string, dockerStatus bool, sto
 			args := []string{"stop"}
 
 			args = append(args, c.Args().Slice()...)
-			cmd := exec.Command("docker", args...)
-
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			return cmd.Run()
+			return execCommand("docker", args, c.App)
 		},
 	}
 }

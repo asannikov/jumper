@@ -1,9 +1,6 @@
 package command
 
 import (
-	"fmt"
-	"os"
-	"os/exec"
 	"strings"
 
 	"github.com/urfave/cli/v2" // imports as package "cli"
@@ -68,11 +65,21 @@ type callComposerCommandDialog interface {
 	SetMainContaner([]string) (int, string, error)
 }
 
+type callComposerCommandOptions interface {
+	GetInitFuntion() func(bool) string
+	GetContainerList() ([]string, error)
+	GetExecCommand() func(string, []string, *cli.App) error
+	GetCommandLocation() func(string, string) (string, error)
+}
+
 // CallComposerCommand generates composer commands
 // https://medium.com/@ssttehrani/containers-from-scratch-with-golang-5276576f9909
 // https://phase2.github.io/devtools/common-tasks/ssh-into-a-container/
-func CallComposerCommand(composercommand string, initf func(bool) string, cfg callComposerCommandProjectConfig, d callComposerCommandDialog, cl containerlist, getCommandLocation func(string, string) (string, error)) *cli.Command {
+func CallComposerCommand(composercommand string, cfg callComposerCommandProjectConfig, d callComposerCommandDialog, options callComposerCommandOptions) *cli.Command {
 	index, calltype, dockercmd := parseCommand(composercommand)
+
+	initf := options.GetInitFuntion()
+	execCommand := options.GetExecCommand()
 
 	cmp := &composer{
 		usage: map[string]string{
@@ -99,7 +106,7 @@ func CallComposerCommand(composercommand string, initf func(bool) string, cfg ca
 			"update":          "phpContainer is taken from project config file",
 			"update:memory":   "phpContainer is taken from project config file, php and composer commands will be found automatically",
 		},
-		locaton: getCommandLocation,
+		locaton: options.GetCommandLocation(),
 		ctype:   calltype,
 		command: dockercmd,
 	}
@@ -116,19 +123,11 @@ func CallComposerCommand(composercommand string, initf func(bool) string, cfg ca
 
 			var args []string
 
-			if args, err = composerHandle(cfg, d, cmp, cl, c.Args()); err != nil {
+			if args, err = composerHandle(cfg, d, cmp, options, c.Args()); err != nil {
 				return err
 			}
 
-			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-
-			cmd := exec.Command("docker", args...)
-
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-
-			return cmd.Run()
+			return execCommand("docker", args, c.App)
 		},
 	}
 }
@@ -148,11 +147,11 @@ type composerHandleDialog interface {
 	SetMainContaner([]string) (int, string, error)
 }
 
-func composerHandle(cfg composerHandleProjectConfig, d composerHandleDialog, c composerInterface, clist containerlist, a cli.Args) ([]string, error) {
+func composerHandle(cfg composerHandleProjectConfig, d composerHandleDialog, c composerInterface, options containerlist, a cli.Args) ([]string, error) {
 	var err error
 	var cl []string
 
-	if cl, err = clist.GetContainerList(); err != nil {
+	if cl, err = options.GetContainerList(); err != nil {
 		return []string{}, err
 	}
 

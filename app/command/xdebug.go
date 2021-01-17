@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
 
 	"github.com/urfave/cli/v2"
@@ -67,8 +66,16 @@ type xDebugCommandDialog interface {
 	XDebugConfigLocation() (int, string, error)
 }
 
+type xDebugOptions interface {
+	GetExecCommand() func(string, []string, *cli.App) error
+	GetInitFuntion() func(bool) string
+	GetContainerList() ([]string, error)
+}
+
 //XDebugCommand enable/disable xDebug
-func XDebugCommand(xdebugAction string, initf func(bool) string, dockerStatus bool, cfg xdebugProjectConfig, d xDebugCommandDialog, clist containerlist) *cli.Command {
+func XDebugCommand(xdebugAction string, cfg xdebugProjectConfig, d xDebugCommandDialog, options xDebugOptions) *cli.Command {
+	execCommand := options.GetExecCommand()
+	initf := options.GetInitFuntion()
 
 	x := &xdebug{
 		usage: map[string]string{
@@ -103,7 +110,7 @@ func XDebugCommand(xdebugAction string, initf func(bool) string, dockerStatus bo
 
 			var cl []string
 
-			if cl, err = clist.GetContainerList(); err != nil {
+			if cl, err = options.GetContainerList(); err != nil {
 				return err
 			}
 
@@ -125,15 +132,7 @@ func XDebugCommand(xdebugAction string, initf func(bool) string, dockerStatus bo
 
 			args := getXdebugArgs(cfg, xdebugAction, currentPath)
 
-			cmd := exec.Command(args[0], args[1:]...)
-
-			fmt.Printf("\ncommand: %s\n\n", args[0]+" "+strings.Join(args[1:], " "))
-
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-
-			if err = cmd.Run(); err != nil {
+			if err = execCommand(args[0], args[1:], c.App); err != nil {
 				return err
 			}
 
@@ -147,7 +146,7 @@ func XDebugCommand(xdebugAction string, initf func(bool) string, dockerStatus bo
 				fmt.Printf("Fpm Xdebug disabled \n")
 			}
 
-			return restartMainContainer(cfg)
+			return restartMainContainer(cfg, options, c.App)
 		},
 	}
 }

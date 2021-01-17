@@ -24,12 +24,19 @@ type magentoDialog interface {
 	DockerProjectPath(string) (string, error)
 }
 
-type magentoBash interface {
+type magentoOptions interface {
+	GetExecCommand() func(string, []string, *cli.App) error
 	GetCommandLocation() func(string, string) (string, error)
+	GetInitFuntion() func(bool) string
+	GetContainerList() ([]string, error)
 }
 
 // CallMagentoCommand runs copyright dialog
-func CallMagentoCommand(initf func(bool) string, cfg magentoGlobalConfig, d magentoDialog, clist containerlist, bash magentoBash) *cli.Command {
+func CallMagentoCommand(cfg magentoGlobalConfig, d magentoDialog, options magentoOptions) *cli.Command {
+	execCommand := options.GetExecCommand()
+	commandLocation := options.GetCommandLocation()
+	initf := options.GetInitFuntion()
+
 	return &cli.Command{
 		Name:    "magento",
 		Aliases: []string{"m"},
@@ -45,7 +52,7 @@ func CallMagentoCommand(initf func(bool) string, cfg magentoGlobalConfig, d mage
 					var err error
 					var cl []string
 
-					if cl, err = clist.GetContainerList(); err != nil {
+					if cl, err = options.GetContainerList(); err != nil {
 						return err
 					}
 
@@ -88,15 +95,7 @@ func CallMagentoCommand(initf func(bool) string, cfg magentoGlobalConfig, d mage
 					args = append(args, []string{"exec", "-it", cfg.GetProjectMainContainer(), magentoBinSource}...)
 					args = append(args, c.Args().Slice()...)
 
-					cmd := exec.Command("docker", args...)
-
-					cmd.Stdin = os.Stdin
-					cmd.Stdout = os.Stdout
-					cmd.Stderr = os.Stderr
-
-					fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-
-					return cmd.Run()
+					return execCommand("docker", args, c.App)
 				},
 			},
 			{
@@ -109,7 +108,7 @@ func CallMagentoCommand(initf func(bool) string, cfg magentoGlobalConfig, d mage
 					var err error
 					var cl []string
 
-					if cl, err = clist.GetContainerList(); err != nil {
+					if cl, err = options.GetContainerList(); err != nil {
 						return err
 					}
 
@@ -117,11 +116,9 @@ func CallMagentoCommand(initf func(bool) string, cfg magentoGlobalConfig, d mage
 						return err
 					}
 
-					b := bash.GetCommandLocation()
-
 					var mrPath string
 
-					if mrPath, err = b(cfg.GetProjectMainContainer(), "n98-magerun2.phar"); err != nil {
+					if mrPath, err = commandLocation(cfg.GetProjectMainContainer(), "n98-magerun2.phar"); err != nil {
 						return err
 					}
 
@@ -130,15 +127,7 @@ func CallMagentoCommand(initf func(bool) string, cfg magentoGlobalConfig, d mage
 					args = append(args, []string{"exec", "-it", cfg.GetProjectMainContainer(), mrPath}...)
 					args = append(args, c.Args().Slice()...)
 
-					cmd := exec.Command("docker", args...)
-
-					cmd.Stdin = os.Stdin
-					cmd.Stdout = os.Stdout
-					cmd.Stderr = os.Stderr
-
-					fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-
-					return cmd.Run()
+					return execCommand("docker", args, c.App)
 				},
 			},
 		},

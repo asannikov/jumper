@@ -31,60 +31,68 @@ func commandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []
 		dck.InitClient()
 	}
 
+	opt := &commandOptions{}
+	opt.setInitFuntion(initf)
+	opt.setCommandLocation(getCommandLocationF)
+	opt.setDockerStatus(dockerStatus)
+	opt.setStopContainers(dck.StopContainers())
+	opt.setExecCommand(execCommand)
+	opt.setDockerDialog(dockerDialog)
+
 	return []*cli.Command{
 		// cli commands
-		command.CallCliCommand("cli", initf, c, d, dockerDialog),
-		command.CallCliCommand("sh", initf, c, d, dockerDialog),
-		command.CallCliCommand("clinotty", initf, c, d, dockerDialog),
-		command.CallCliCommand("cliroot", initf, c, d, dockerDialog),
-		command.CallCliCommand("clirootnotty", initf, c, d, dockerDialog),
+		command.CallCliCommand("cli", c, d, opt),
+		command.CallCliCommand("sh", c, d, opt),
+		command.CallCliCommand("clinotty", c, d, opt),
+		command.CallCliCommand("cliroot", c, d, opt),
+		command.CallCliCommand("clirootnotty", c, d, opt),
 
 		// composer commands
-		command.CallComposerCommand("composer", initf, c, d, dockerDialog, getCommandLocationF),
-		command.CallComposerCommand("composer:memory", initf, c, d, dockerDialog, getCommandLocationF),
-		command.CallComposerCommand("composer:install", initf, c, d, dockerDialog, getCommandLocationF),
-		command.CallComposerCommand("composer:install:memory", initf, c, d, dockerDialog, getCommandLocationF),
-		command.CallComposerCommand("composer:update", initf, c, d, dockerDialog, getCommandLocationF),
-		command.CallComposerCommand("composer:update:memory", initf, c, d, dockerDialog, getCommandLocationF),
+		command.CallComposerCommand("composer", c, d, opt),
+		command.CallComposerCommand("composer:memory", c, d, opt),
+		command.CallComposerCommand("composer:install", c, d, opt),
+		command.CallComposerCommand("composer:install:memory", c, d, opt),
+		command.CallComposerCommand("composer:update", c, d, opt),
+		command.CallComposerCommand("composer:update:memory", c, d, opt),
 
 		// Docker start
-		command.CallStartProjectBasic(initf, c, d, dockerDialog),
-		command.CallStartProjectForceRecreate(initf, c, d, dockerDialog),
-		command.CallStartProjectOrphans(initf, c, d, dockerDialog),
-		command.CallStartProjectForceOrphans(initf, c, d, dockerDialog),
-		command.CallStartMainContainer(initf, c, d, dockerDialog),
-		command.CallStartContainers(initf),
+		command.CallStartProjectBasic(c, d, opt),
+		command.CallStartProjectForceRecreate(c, d, opt),
+		command.CallStartProjectOrphans(c, d, opt),
+		command.CallStartProjectForceOrphans(c, d, opt),
+		command.CallStartMainContainer(c, d, opt),
+		command.CallStartContainers(opt),
 
 		// Docker restart
-		command.CallRestartMainContainer(initf, dockerStatus, c, d, dockerDialog),
-		command.CallRestartContainers(initf, dockerStatus),
+		command.CallRestartMainContainer(c, d, opt),
+		command.CallRestartContainers(opt),
 
 		// Stop all docker containers
-		command.CallStopAllContainersCommand(initf, dockerStatus, dck.StopContainers()),
-		command.CallStopSelectedContainersCommand(initf, dockerStatus, dck.StopContainers()),
-		command.CallStopMainContainerCommand(initf, dockerStatus, dck.StopContainers(), c, d, dockerDialog),
-		command.CallStopOneContainerCommand(initf, dockerStatus, dck.StopContainers()),
+		command.CallStopAllContainersCommand(opt),
+		command.CallStopSelectedContainersCommand(opt),
+		command.CallStopMainContainerCommand(c, d, opt),
+		command.CallStopOneContainerCommand(opt),
 
 		// Get Project Path
-		command.GetProjectPath(initf, d),
+		command.GetProjectPath(d, opt),
 
 		// Copyright
-		command.CallCopyrightCommand(initf, c, d),
+		command.CallCopyrightCommand(c, opt),
 
 		// Sync Paths
-		command.SyncCommand("copyto", initf, dockerStatus, c, d, dockerDialog),
-		command.SyncCommand("copyfrom", initf, dockerStatus, c, d, dockerDialog),
+		command.SyncCommand("copyto", c, d, opt),
+		command.SyncCommand("copyfrom", c, d, opt),
 
 		// Xdebug
-		command.XDebugCommand("xdebug:fpm:enable", initf, dockerStatus, c, d, dockerDialog),
-		command.XDebugCommand("xdebug:fpm:disable", initf, dockerStatus, c, d, dockerDialog),
-		command.XDebugCommand("xdebug:cli:enable", initf, dockerStatus, c, d, dockerDialog),
-		command.XDebugCommand("xdebug:cli:disable", initf, dockerStatus, c, d, dockerDialog),
+		command.XDebugCommand("xdebug:fpm:enable", c, d, opt),
+		command.XDebugCommand("xdebug:fpm:disable", c, d, opt),
+		command.XDebugCommand("xdebug:cli:enable", c, d, opt),
+		command.XDebugCommand("xdebug:cli:disable", c, d, opt),
 
 		// Shell
 		command.ShellCommand(initf, c, d),
 
 		// docker pull https://docs.docker.com/engine/api/sdk/examples/
-		command.CallMagentoCommand(initf, c, d, dockerDialog, b),
+		command.CallMagentoCommand(c, d, opt),
 	}
 }

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
 
 	"github.com/urfave/cli/v2"
@@ -48,8 +47,16 @@ type syncCommandDialog interface {
 	DockerProjectPath(string) (string, error)
 }
 
+type syncOptions interface {
+	GetExecCommand() func(string, []string, *cli.App) error
+	GetInitFuntion() func(bool) string
+	GetContainerList() ([]string, error)
+}
+
 //SyncCommand does the syncronization between container and project
-func SyncCommand(direction string, initf func(bool) string, dockerStatus bool, cfg syncProjectConfig, d syncCommandDialog, clist containerlist) *cli.Command {
+func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, options syncOptions) *cli.Command {
+	execCommand := options.GetExecCommand()
+	initf := options.GetInitFuntion()
 
 	s := &sync{
 		usage: map[string]string{
@@ -84,7 +91,7 @@ func SyncCommand(direction string, initf func(bool) string, dockerStatus bool, c
 
 			var cl []string
 
-			if cl, err = clist.GetContainerList(); err != nil {
+			if cl, err = options.GetContainerList(); err != nil {
 				return err
 			}
 
@@ -98,15 +105,7 @@ func SyncCommand(direction string, initf func(bool) string, dockerStatus bool, c
 
 			args := getSyncArgs(cfg, direction, syncPath, currentPath)
 
-			cmd := exec.Command("docker", args...)
-
-			fmt.Printf("\ncommand: %s\n\n", "docker "+strings.Join(args, " "))
-
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-
-			if err = cmd.Run(); err != nil {
+			if err = execCommand("docker", args, c.App); err != nil {
 				return err
 			}
 
