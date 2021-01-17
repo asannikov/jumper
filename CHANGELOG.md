@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.7.2 (17.01.2021)
+- bugfix
+    - refactoring for commands, added general type that contains all func parameters
+    - added xdebug description
+
 ## 1.7.0 (14.01.2021)
 - features
     - add magento command (bin/magento)
