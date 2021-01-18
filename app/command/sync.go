@@ -79,12 +79,23 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 		},
 	}
 
+	flags := []cli.Flag{}
+
+	if direction == syncCopyFrom {
+		flags = append(flags, &cli.BoolFlag{
+			Name:    "force",
+			Aliases: []string{"f"},
+			Usage:   "Force create directory for file if it does not exist",
+		})
+	}
+
 	return &cli.Command{
 		Name:            direction,
 		Aliases:         []string{s.aliases[direction]},
 		Usage:           s.usage[direction],
 		Description:     s.description[direction],
-		SkipFlagParsing: true,
+		SkipFlagParsing: false,
+		Flags:           flags,
 		Action: func(c *cli.Context) (err error) {
 			syncPath := c.Args().First()
 
@@ -110,6 +121,15 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 			}
 
 			args := getSyncArgs(cfg, direction, syncPath, currentPath)
+
+			if direction == syncCopyFrom && c.Bool("f") == true {
+				fmt.Printf("Path %s was created", args[2]+filepath.Base(syncPath))
+				err = os.MkdirAll(args[2]+filepath.Base(syncPath), os.ModePerm)
+			}
+
+			if err != nil {
+				return err
+			}
 
 			if err = execCommand("docker", args, c.App); err != nil {
 				return err
