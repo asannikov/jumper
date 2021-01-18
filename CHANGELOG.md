@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 1.7.3 (19.01.2021)
+- bugfix
+    - fix sync destination option
+
+- features
+    - add force flag for copyfrom
+
 ## 1.7.2 (17.01.2021)
 - bugfix
     - refactoring for commands, added general type that contains all func parameters
