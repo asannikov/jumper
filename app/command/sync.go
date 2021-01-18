@@ -4,10 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/urfave/cli/v2"
 )
+
+const syncCopyFrom = "copyfrom"
+const syncCopyTo = "copyto"
 
 type sync struct {
 	usage       map[string]string
@@ -33,10 +37,12 @@ type syncProjectConfig interface {
 func getSyncArgs(cfg syncProjectConfig, direction string, syncPath string, projectRoot string) []string {
 	projectRoot = strings.TrimRight(projectRoot, string(os.PathSeparator))
 
-	args := []string{"cp", projectRoot + syncPath, cfg.GetProjectMainContainer() + ":" + strings.TrimRight(cfg.GetProjectDockerPath(), string(os.PathSeparator)) + syncPath}
+	targetPath := filepath.Dir(syncPath)
 
-	if direction == "copyfrom" {
-		args = []string{"cp", cfg.GetProjectMainContainer() + ":" + strings.TrimRight(cfg.GetProjectDockerPath(), string(os.PathSeparator)) + syncPath, projectRoot + syncPath}
+	args := []string{"cp", projectRoot + syncPath, cfg.GetProjectMainContainer() + ":" + strings.TrimRight(cfg.GetProjectDockerPath(), string(os.PathSeparator)) + targetPath}
+
+	if direction == syncCopyFrom {
+		args = []string{"cp", cfg.GetProjectMainContainer() + ":" + strings.TrimRight(cfg.GetProjectDockerPath(), string(os.PathSeparator)) + syncPath, projectRoot + targetPath}
 	}
 
 	return args
@@ -60,16 +66,16 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 
 	s := &sync{
 		usage: map[string]string{
-			"copyto":   "Sync local -> docker container, set related path, ie `vendor/folder/` for syncing as a parameter, or use --all to sync all project",
-			"copyfrom": "Sync docker container -> local, set related path, ie `vendor/folder/` for syncing as a parameter, or use --all to sync all project",
+			syncCopyTo:   "Sync local -> docker container, set related path, ie `vendor/folder/` for syncing as a parameter, or use --all to sync all project",
+			syncCopyFrom: "Sync docker container -> local, set related path, ie `vendor/folder/` for syncing as a parameter, or use --all to sync all project",
 		},
 		aliases: map[string]string{
-			"copyto":   "cpt",
-			"copyfrom": "cpf",
+			syncCopyTo:   "cpt",
+			syncCopyFrom: "cpf",
 		},
 		description: map[string]string{
-			"copyto":   "phpContainer is taken from project config file",
-			"copyfrom": "phpContainer is taken from project config file, php and composer commands will be found automatically",
+			syncCopyTo:   "phpContainer is taken from project config file",
+			syncCopyFrom: "phpContainer is taken from project config file, php and composer commands will be found automatically",
 		},
 	}
 
@@ -109,7 +115,7 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 				return err
 			}
 
-			if direction == "copyto" {
+			if direction == syncCopyTo {
 				fmt.Printf("Completed copying %s files from host to container %s \n", syncPath, cfg.GetProjectMainContainer())
 			} else {
 				fmt.Printf("Completed copying %s from container %s to host\n", syncPath, cfg.GetProjectMainContainer())
