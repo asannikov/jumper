@@ -38,6 +38,12 @@ func commandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []
 	opt.setStopContainers(dck.StopContainers())
 	opt.setExecCommand(execCommand)
 	opt.setDockerDialog(dockerDialog)
+	opt.setCopyTo(func(container string, sourcePath string, dstPath string) error {
+		return dck.CopyTo(container, sourcePath, dstPath)
+	})
+	opt.setNativeExec(func(container string, commands []string) (err error) {
+		return dck.Exec(container, commands)
+	})
 
 	return []*cli.Command{
 		// cli commands

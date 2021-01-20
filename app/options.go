@@ -7,8 +7,10 @@ type commandOptions struct {
 	commandLocation func(string, string) (string, error)
 	stopContainers  func([]string) error
 	execCommand     func(string, []string, *cli.App) error
+	copyTo          func(string, string, string) error
 	dockerStatus    bool
 	dockerDialog    *dockerStartDialog
+	nativeExec      func(string, []string) (err error)
 }
 
 func (co *commandOptions) setInitFuntion(f func(bool) string) {
@@ -35,6 +37,14 @@ func (co *commandOptions) setDockerDialog(dd *dockerStartDialog) {
 	co.dockerDialog = dd
 }
 
+func (co *commandOptions) setCopyTo(ct func(string, string, string) error) {
+	co.copyTo = ct
+}
+
+func (co *commandOptions) setNativeExec(ne func(container string, commands []string) (err error)) {
+	co.nativeExec = ne
+}
+
 func (co *commandOptions) GetInitFuntion() func(bool) string {
 	return co.initf
 }
@@ -57,4 +67,12 @@ func (co *commandOptions) GetDockerStatus() bool {
 
 func (co *commandOptions) GetContainerList() ([]string, error) {
 	return co.dockerDialog.GetContainerList()
+}
+
+func (co *commandOptions) GetCopyTo(container string, sourcePath string, dstPath string) error {
+	return co.copyTo(container, sourcePath, dstPath)
+}
+
+func (co *commandOptions) RunNativeExec(container string, commands []string) error {
+	return co.nativeExec(container, commands)
 }
