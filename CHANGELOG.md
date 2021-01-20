@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.8.0 (20.01.2021)
+- features
+    - add force flag for copyto
+
 ## 1.7.3 (19.01.2021)
 - bugfix
     - fix sync destination option
