@@ -6,7 +6,7 @@ I was inspired by [Mark's Shust](https://github.com/markshust/docker-magento) so
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/asannikov/jumper/blob/master/LICENSE)
 [![Build Status](https://travis-ci.com/asannikov/jumper.svg?branch=master)](https://travis-ci.com/asannikov/jumper)
-[![Release](https://img.shields.io/badge/release-1.7.3-brightgreen.svg)](https://github.com/asannikov/jumper/releases/tag/v1.7.3)
+[![Release](https://img.shields.io/badge/release-1.8.0-brightgreen.svg)](https://github.com/asannikov/jumper/releases/tag/v1.8.0)
 
 It was not tested on Windows.
 
@@ -102,7 +102,7 @@ Every stable release has attached sources for "linux/amd64", "linux/386", "darwi
 
 For example:
 ```
-https://github.com/asannikov/jumper/releases/tag/v1.7.3
+https://github.com/asannikov/jumper/releases/tag/v1.8.0
 ```
 Find related source there and download it. Now you can place use source at any place you want on your machine or make it global in a standard way.
 
@@ -202,6 +202,11 @@ here is a list of avalable values:
 * `xdebug`   - hides xdebug commands
 
 # FAQ
+## How to force create path on sync:
+`jumper copyto -f src/vendor/module/name`
+assume that src/vendor does not exist in container. By this command it will be created recursively. 
+The same you can do on host: `jumper copyfrom -f src/vendor/module/name`.
+
 ## How to change shell type:
 Container might use only sh shell type and no bash. By default jumper uses `sh`. But you can use `bash` or even 	`csh`, `ksh` or `zsh`. Call `jumper shell` with no option and select shell type. It will be saved into project config `jumper.json` in `shell` node.
 
