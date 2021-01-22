@@ -77,18 +77,18 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 			syncCopyFrom: "cpf",
 		},
 		description: map[string]string{
-			syncCopyTo:   "phpContainer is taken from project config file",
-			syncCopyFrom: "phpContainer is taken from project config file, php and composer commands will be found automatically",
+			syncCopyTo:   "Works only for defined main container. Keep in mind that `docker cp` create only the top folder of the path if all nodes of the path do not exist. For such case use -f flag. It creates all folders recursively.",
+			syncCopyFrom: "phpContainer is taken from project config file",
 		},
 	}
 
-	flags := []cli.Flag{}
-
-	flags = append(flags, &cli.BoolFlag{
-		Name:    "force",
-		Aliases: []string{"f"},
-		Usage:   "Force create directory for file if it does not exist",
-	})
+	flags := []cli.Flag{
+		&cli.BoolFlag{
+			Name:    "force",
+			Aliases: []string{"f"},
+			Usage:   "Force create directory for file if it does not exist",
+		},
+	}
 
 	return &cli.Command{
 		Name:            direction,
@@ -129,8 +129,8 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 			}
 
 			if direction == syncCopyTo && c.Bool("f") == true {
-				fmt.Printf("Path %s was created", args[2]+string(os.PathSeparator)+filepath.Base(syncPath))
-				err = options.RunNativeExec(cfg.GetProjectMainContainer(), []string{"mkdir", "-p", cfg.GetProjectDockerPath() + string(os.PathSeparator) + filepath.Base(syncPath)})
+				//fmt.Printf("Path %s was created", args[2]+string(os.PathSeparator)+filepath.Base(syncPath))
+				err = options.RunNativeExec(cfg.GetProjectMainContainer(), []string{"mkdir", cfg.GetProjectDockerPath() + strings.TrimLeft(syncPath, string(os.PathSeparator))})
 			}
 
 			return err

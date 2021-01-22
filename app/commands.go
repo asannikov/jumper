@@ -1,6 +1,8 @@
 package app
 
 import (
+	"log"
+
 	"github.com/asannikov/jumper/app/bash"
 	"github.com/asannikov/jumper/app/config"
 	"github.com/asannikov/jumper/app/dialog"
@@ -42,7 +44,10 @@ func commandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []
 		return dck.CopyTo(container, sourcePath, dstPath)
 	})
 	opt.setNativeExec(func(container string, commands []string) (err error) {
-		return dck.Exec(container, commands)
+		code, err := dck.Exec(container, commands)
+
+		log.Println(code, err)
+		return
 	})
 
 	return []*cli.Command{
