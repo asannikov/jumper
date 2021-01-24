@@ -25,7 +25,7 @@ type magentoDialog interface {
 }
 
 type magentoOptions interface {
-	GetExecCommand() func(string, []string, *cli.App) error
+	GetExecCommand() func(ExecOptions, *cli.App) error
 	GetCommandLocation() func(string, string) (string, error)
 	GetInitFuntion() func(bool) string
 	GetContainerList() ([]string, error)
@@ -95,7 +95,14 @@ func CallMagentoCommand(cfg magentoGlobalConfig, d magentoDialog, options magent
 					args = append(args, []string{"exec", "-it", cfg.GetProjectMainContainer(), magentoBinSource}...)
 					args = append(args, c.Args().Slice()...)
 
-					return execCommand("docker", args, c.App)
+					eo := ExecOptions{
+						command: "docker",
+						args:    args,
+						tty:     true,
+						detach:  true,
+					}
+
+					return execCommand(eo, c.App)
 				},
 			},
 			{
@@ -127,7 +134,14 @@ func CallMagentoCommand(cfg magentoGlobalConfig, d magentoDialog, options magent
 					args = append(args, []string{"exec", "-it", cfg.GetProjectMainContainer(), mrPath}...)
 					args = append(args, c.Args().Slice()...)
 
-					return execCommand("docker", args, c.App)
+					eo := ExecOptions{
+						command: "docker",
+						args:    args,
+						tty:     true,
+						detach:  true,
+					}
+
+					return execCommand(eo, c.App)
 				},
 			},
 		},

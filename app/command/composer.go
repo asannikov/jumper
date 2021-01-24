@@ -68,7 +68,7 @@ type callComposerCommandDialog interface {
 type callComposerCommandOptions interface {
 	GetInitFuntion() func(bool) string
 	GetContainerList() ([]string, error)
-	GetExecCommand() func(string, []string, *cli.App) error
+	GetExecCommand() func(ExecOptions, *cli.App) error
 	GetCommandLocation() func(string, string) (string, error)
 }
 
@@ -127,7 +127,14 @@ func CallComposerCommand(composercommand string, cfg callComposerCommandProjectC
 				return err
 			}
 
-			return execCommand("docker", args, c.App)
+			eo := ExecOptions{
+				command: "docker",
+				args:    args,
+				tty:     true,
+				detach:  true,
+			}
+
+			return execCommand(eo, c.App)
 		},
 	}
 }

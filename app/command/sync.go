@@ -54,12 +54,15 @@ type syncCommandDialog interface {
 }
 
 type syncOptions interface {
-	GetExecCommand() func(string, []string, *cli.App) error
+	GetExecCommand() func(ExecOptions, *cli.App) error
 	GetInitFuntion() func(bool) string
 	GetContainerList() ([]string, error)
+	GetCopyTo(container string, sourcePath string, dstPath string) error
+	RunNativeExec(ExecOptions, *cli.App) error
 }
 
-//SyncCommand does the syncronization between container and project
+// SyncCommand does the syncronization between container and project
+// @todo alternative way to copy options.GetCopyTo(cfg.GetProjectMainContainer(), "/local/path/", "/var/www/docker/")
 func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, options syncOptions) *cli.Command {
 	execCommand := options.GetExecCommand()
 	initf := options.GetInitFuntion()
@@ -75,7 +78,7 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 		},
 		description: map[string]string{
 			syncCopyTo:   "Works only for defined main container. Keep in mind that `docker cp` create only the top folder of the path if all nodes of the path do not exist. For such case use -f flag. It creates all folders recursively.",
-			syncCopyFrom: "phpContainer is taken from project config file",
+			syncCopyFrom: "Works only for defined main container. Keep in mind that `docker cp` create only the top folder of the path if all nodes of the path do not exist. For such case use -f flag. It creates all folders recursively.",
 		},
 	}
 
@@ -121,21 +124,45 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 			args := getSyncArgs(cfg, direction, syncPath, currentPath)
 
 			if direction == syncCopyFrom && c.Bool("f") == true {
-				fmt.Printf("Path %s was created", args[2]+filepath.Base(syncPath))
-				err = os.MkdirAll(args[2]+filepath.Base(syncPath), os.ModePerm)
+				if err = os.MkdirAll(args[2]+filepath.Base(syncPath), os.ModePerm); err == nil {
+					fmt.Printf("Path %s was created", args[2]+filepath.Base(syncPath))
+				}
 			}
 
 			if direction == syncCopyTo && c.Bool("f") == true {
-				fmt.Printf("Path %s was created", cfg.GetProjectDockerPath()+syncPath)
-				// @todo - use go client logic, branch 32-add-force-copy-flag
-				err = execCommand("docker", []string{"exec", cfg.GetProjectMainContainer(), "mkdir", "-p", cfg.GetProjectDockerPath() + syncPath}, c.App)
+				eo := ExecOptions{
+					command: "mkdir",
+					args:    []string{"-p", cfg.GetProjectDockerPath() + strings.TrimLeft(syncPath, string(os.PathSeparator))},
+					tty:     true,
+					detach:  true,
+					user:    "root",
+				}
+
+				status := false
+
+				status, err = dirExists(args[1])
+				if err != nil || status == false {
+					fmt.Printf("Source directory %s does not exist\n", args[1])
+					return err
+				}
+
+				if err = options.RunNativeExec(eo, c.App); err == nil {
+					fmt.Printf("Path %s was created", args[2]+string(os.PathSeparator)+filepath.Base(syncPath))
+				}
 			}
 
 			if err != nil {
 				return err
 			}
 
-			if err = execCommand("docker", args, c.App); err != nil {
+			eo := ExecOptions{
+				command: "docker",
+				args:    args,
+				tty:     true,
+				detach:  true,
+			}
+
+			if err = execCommand(eo, c.App); err != nil {
 				return err
 			}
 

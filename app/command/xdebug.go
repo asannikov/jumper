@@ -67,7 +67,7 @@ type xDebugCommandDialog interface {
 }
 
 type xDebugOptions interface {
-	GetExecCommand() func(string, []string, *cli.App) error
+	GetExecCommand() func(ExecOptions, *cli.App) error
 	GetInitFuntion() func(bool) string
 	GetContainerList() ([]string, error)
 }
@@ -134,7 +134,14 @@ func XDebugCommand(xdebugAction string, cfg xdebugProjectConfig, d xDebugCommand
 
 			args := getXdebugArgs(cfg, xdebugAction, currentPath)
 
-			if err = execCommand(args[0], args[1:], c.App); err != nil {
+			eo := ExecOptions{
+				command: args[0],
+				args:    args[1:],
+				tty:     true,
+				detach:  true,
+			}
+
+			if err = execCommand(eo, c.App); err != nil {
 				return err
 			}
 

@@ -2,7 +2,7 @@ require "rbconfig"
 class Jumper < Formula
   desc "Tool helps developers out with daily docker monotonous routine"
   homepage "https://github.com/asannikov/jumper"
-  version "1.7.1"
+  version "1.8.0"
   license "MIT"
   head "github.com/asannikov///jumper.git"
 
@@ -11,11 +11,11 @@ class Jumper < Formula
     when /mswin|msys|mingw|cygwin|bccwin|wince|emc/
       :windows
     when /darwin|mac os/
-      url "https://github.com/asannikov/jumper/releases/download/v1.7.1/jumper-darwin-amd64.zip"
-      sha256 "4949c8465e7c9b7f107c225ef3c0a0bf92a02ca3b87eeabbe97ce9f011a3039f"
+      url "https://github.com/asannikov/jumper/releases/download/v1.8.0/jumper-darwin-amd64.zip"
+      sha256 "a5db4a2d1e7f5f0351fc4901f3e95883034767f5bfc5d7c770257eee925376ef"
     when /linux/
-      url "https://github.com/asannikov/jumper/releases/download/v1.7.1/jumper-linux-amd64.tar.gz"
-      sha256 "f47c521f9842729336a8e7fb5610e8fb3dd8f2f0b2af1d2873f09b788f2161c0"
+      url "https://github.com/asannikov/jumper/releases/download/v1.8.0/jumper-linux-amd64.tar.gz"
+      sha256 "3d300cee3e7196a2650a810963bb9de6ea220c03779bd74507d5f726d7b66f2f"
     when /solaris|bsd/
       :unix
     else
@@ -26,8 +26,8 @@ class Jumper < Formula
     when /mswin|msys|mingw|cygwin|bccwin|wince|emc/
       :windows
     when /linux/
-      url "https://github.com/asannikov/jumper/releases/download/v1.7.1/jumper-linux-386.tar.gz"
-      sha256 "c01a6ae6299b5199080938d9a1bd1804c9dc0b5197ac786e5ffd4f173711883f"
+      url "https://github.com/asannikov/jumper/releases/download/v1.8.0/jumper-linux-386.tar.gz"
+      sha256 "864305084ee831732626903daf17dea263c5d46116f9c815de349e1237cc5fa5"
     when /solaris|bsd/
       :unix
     else

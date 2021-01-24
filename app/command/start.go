@@ -39,7 +39,7 @@ type runStartProjectProjectConfig interface {
 }
 
 type runStartProjectOptions interface {
-	GetExecCommand() func(string, []string, *cli.App) error
+	GetExecCommand() func(ExecOptions, *cli.App) error
 }
 
 func runStartProject(c *cli.Context, cfg runStartProjectProjectConfig, args []string, options runStartProjectOptions) error {
@@ -54,7 +54,14 @@ func runStartProject(c *cli.Context, cfg runStartProjectProjectConfig, args []st
 	args = append(initArgs, args...)
 	args = append(args, extraInitArgs...)
 
-	return execCommand(binary, args, c.App)
+	eo := ExecOptions{
+		command: binary,
+		args:    args,
+		tty:     true,
+		detach:  true,
+	}
+
+	return execCommand(eo, c.App)
 }
 
 type callStartProjectBasicProjectConfig interface {
@@ -72,7 +79,7 @@ type callStartProjectBasicDialog interface {
 type startProjectOptions interface {
 	GetInitFuntion() func(bool) string
 	GetContainerList() ([]string, error)
-	GetExecCommand() func(string, []string, *cli.App) error
+	GetExecCommand() func(ExecOptions, *cli.App) error
 }
 
 // CallStartProjectBasic runs docker project
@@ -247,7 +254,14 @@ func CallStartMainContainer(cfg callStartMainContainerProjectConfig, d callStart
 
 			args := []string{"start", cfg.GetProjectMainContainer()}
 
-			return execCommand("docker", args, c.App)
+			eo := ExecOptions{
+				command: "docker",
+				args:    args,
+				tty:     true,
+				detach:  true,
+			}
+
+			return execCommand(eo, c.App)
 		},
 	}
 
@@ -259,7 +273,7 @@ type restartMainContainerProjectConfig interface {
 }
 
 type restartMainContainerOptions interface {
-	GetExecCommand() func(string, []string, *cli.App) error
+	GetExecCommand() func(ExecOptions, *cli.App) error
 }
 
 func restartMainContainer(cfg restartMainContainerProjectConfig, options restartMainContainerOptions, a *cli.App) error {
@@ -267,18 +281,31 @@ func restartMainContainer(cfg restartMainContainerProjectConfig, options restart
 
 	args := []string{"stop", cfg.GetProjectMainContainer()}
 
-	if err := execCommand("docker", args, a); err != nil {
+	eo := ExecOptions{
+		command: "docker",
+		args:    args,
+		tty:     true,
+		detach:  true,
+	}
+
+	if err := execCommand(eo, a); err != nil {
 		return err
 	}
 
-	args = []string{"start", cfg.GetProjectMainContainer()}
-	return execCommand("docker", args, a)
+	eo = ExecOptions{
+		command: "docker",
+		args:    []string{"start", cfg.GetProjectMainContainer()},
+		tty:     true,
+		detach:  true,
+	}
+
+	return execCommand(eo, a)
 }
 
 type restartProjectOptions interface {
 	GetInitFuntion() func(bool) string
 	GetContainerList() ([]string, error)
-	GetExecCommand() func(string, []string, *cli.App) error
+	GetExecCommand() func(ExecOptions, *cli.App) error
 	GetDockerStatus() bool
 }
 
@@ -316,7 +343,7 @@ func CallRestartMainContainer(cfg callStartMainContainerProjectConfig, d callSta
 }
 
 type callStartContainersOptions interface {
-	GetExecCommand() func(string, []string, *cli.App) error
+	GetExecCommand() func(ExecOptions, *cli.App) error
 	GetInitFuntion() func(bool) string
 }
 
@@ -332,9 +359,14 @@ func CallStartContainers(options callStartContainersOptions) *cli.Command {
 		Action: func(c *cli.Context) (err error) {
 			initf(true)
 
-			args := []string{"start"}
-			args = append(args, c.Args().Slice()...)
-			return execCommand("docker", args, c.App)
+			eo := ExecOptions{
+				command: "docker",
+				args:    append([]string{"start"}, c.Args().Slice()...),
+				tty:     true,
+				detach:  true,
+			}
+
+			return execCommand(eo, c.App)
 		},
 	}
 
@@ -342,7 +374,7 @@ func CallStartContainers(options callStartContainersOptions) *cli.Command {
 }
 
 type callRestartContainersOptions interface {
-	GetExecCommand() func(string, []string, *cli.App) error
+	GetExecCommand() func(ExecOptions, *cli.App) error
 	GetInitFuntion() func(bool) string
 	GetDockerStatus() bool
 }
@@ -364,16 +396,24 @@ func CallRestartContainers(options callRestartContainersOptions) *cli.Command {
 
 			initf(true)
 
-			args := []string{"stop"}
-			args = append(args, c.Args().Slice()...)
+			eo := ExecOptions{
+				command: "docker",
+				args:    append([]string{"stop"}, c.Args().Slice()...),
+				tty:     true,
+				detach:  true,
+			}
 
-			if err := execCommand("docker", args, c.App); err != nil {
+			if err := execCommand(eo, c.App); err != nil {
 				return err
 			}
 
-			args = []string{"start"}
-			args = append(args, c.Args().Slice()...)
-			return execCommand("docker", args, c.App)
+			eo = ExecOptions{
+				command: "docker",
+				args:    append([]string{"start"}, c.Args().Slice()...),
+				tty:     true,
+				detach:  true,
+			}
+			return execCommand(eo, c.App)
 		},
 	}
 

@@ -2,7 +2,49 @@ package command
 
 import (
 	"errors"
+	"fmt"
+	"os"
 )
+
+// ExecOptions defines exec options
+type ExecOptions struct {
+	command    string
+	args       []string
+	user       string
+	tty        bool
+	detach     bool
+	workingDir string
+}
+
+// GetCommand gets main command, ie docker
+func (eo *ExecOptions) GetCommand() string {
+	return eo.command
+}
+
+// GetArgs gets arguments for the command
+func (eo *ExecOptions) GetArgs() []string {
+	return eo.args
+}
+
+// GetUser gets user to use in docker container
+func (eo *ExecOptions) GetUser() string {
+	return eo.user
+}
+
+// GetTty returns tty mode status
+func (eo *ExecOptions) GetTty() bool {
+	return eo.tty
+}
+
+// GetDetach returns detach mode status
+func (eo *ExecOptions) GetDetach() bool {
+	return eo.detach
+}
+
+// GetWorkingDir returns working directory
+func (eo *ExecOptions) GetWorkingDir() string {
+	return eo.workingDir
+}
 
 type containerlist interface {
 	GetContainerList() ([]string, error)
@@ -59,4 +101,21 @@ func defineProjectDockerPath(cfg dockerPathProjectConfig, d defineProjectDockerP
 	}
 
 	return nil
+}
+
+// dirExists checks if directory exists
+func dirExists(path string) (bool, error) {
+	if info, err := os.Stat(path); err == nil {
+		if info.IsDir() {
+			return true, nil
+		}
+		return false, fmt.Errorf("Path %s is a file ", path)
+	} else if os.IsNotExist(err) {
+		// path does *not* exist
+		return false, err
+	} else {
+		// Schrodinger: file may or may not exist. See err for details.
+		// Therefore, do *NOT* use !os.IsNotExist(err) to test for file existence
+		return false, err
+	}
 }
