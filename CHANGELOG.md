@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 1.8.1 (24.01.2021)
+- features
+    - add check path existence on copyto
+    - add suport for docker native exec function (call shell command inside docker container)
+    - add ExecOptions type for shell exec and docker exec command (easier for unittests now)
+- bugfix
+    - improve log handling
+
 ## 1.8.0 (20.01.2021)
 - features
     - add force flag for copyto
