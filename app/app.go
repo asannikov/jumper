@@ -3,7 +3,7 @@ package app
 import (
 	"fmt"
 	"io"
-	"log"
+	"os"
 
 	"github.com/asannikov/jumper/app/lib"
 
@@ -42,7 +42,8 @@ func InitApp(cli *cli.App) {
 
 	initf := func(seekProject bool) string {
 		if err := seekPath(cfg, &DLG, fs, seekProject); err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		if seekProject == true {

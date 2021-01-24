@@ -78,7 +78,7 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 		},
 		description: map[string]string{
 			syncCopyTo:   "Works only for defined main container. Keep in mind that `docker cp` create only the top folder of the path if all nodes of the path do not exist. For such case use -f flag. It creates all folders recursively.",
-			syncCopyFrom: "phpContainer is taken from project config file",
+			syncCopyFrom: "Works only for defined main container. Keep in mind that `docker cp` create only the top folder of the path if all nodes of the path do not exist. For such case use -f flag. It creates all folders recursively.",
 		},
 	}
 
@@ -136,6 +136,14 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 					tty:     true,
 					detach:  true,
 					user:    "root",
+				}
+
+				status := false
+
+				status, err = dirExists(args[1])
+				if err != nil || status == false {
+					fmt.Printf("Source directory %s does not exist\n", args[1])
+					return err
 				}
 
 				if err = options.RunNativeExec(eo, c.App); err == nil {
