@@ -2,9 +2,8 @@ package app
 
 import (
 	"fmt"
+	"io"
 	"log"
-	"os/exec"
-	"strings"
 
 	"github.com/asannikov/jumper/app/lib"
 
@@ -59,14 +58,20 @@ func InitApp(cli *cli.App) {
 	cli.Commands = commandList(cfg, &DLG, initf)
 }
 
-func execCommand(command string, args []string, app *cli.App) error {
-	cmd := exec.Command(command, args...)
+type ioCli struct {
+	reader    io.Reader
+	writer    io.Writer
+	errWriter io.Writer
+}
 
-	cmd.Stdin = app.Reader
-	cmd.Stdout = app.Writer
-	cmd.Stderr = app.ErrWriter
+func (ic *ioCli) GetReader() io.Reader {
+	return ic.reader
+}
 
-	fmt.Printf("\ncommand: %s\n\n", command+" "+strings.Join(args, " "))
+func (ic *ioCli) GetWriter() io.Writer {
+	return ic.writer
+}
 
-	return cmd.Run()
+func (ic *ioCli) GetErrWriter() io.Writer {
+	return ic.errWriter
 }

@@ -41,7 +41,7 @@ type commandHandleProjectConfig interface {
 type callCliCommandOptions interface {
 	GetInitFuntion() func(bool) string
 	GetContainerList() ([]string, error)
-	GetExecCommand() func(string, []string, *cli.App) error
+	GetExecCommand() func(ExecOptions, *cli.App) error
 }
 
 // CallCliCommand calls a range of differnt cli commands
@@ -104,7 +104,13 @@ func CallCliCommand(commandName string, cfg cliCommandHandleProjectConfig, d cal
 				return err
 			}
 
-			return execCommand("docker", args, c.App)
+			eo := ExecOptions{
+				command: "docker",
+				args:    args,
+				tty:     true,
+				detach:  true,
+			}
+			return execCommand(eo, c.App)
 		},
 	}
 }

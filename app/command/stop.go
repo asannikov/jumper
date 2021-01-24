@@ -11,7 +11,7 @@ type stopContainerOptions interface {
 	GetContainerList() ([]string, error)
 	GetDockerStatus() bool
 	GetStopContainers() func([]string) error
-	GetExecCommand() func(string, []string, *cli.App) error
+	GetExecCommand() func(ExecOptions, *cli.App) error
 }
 
 // CallStopAllContainersCommand stops all docker containers
@@ -94,11 +94,14 @@ func CallStopSelectedContainersCommand(options stopContainerOptions) *cli.Comman
 				return errors.New("Docker is not running")
 			}
 
-			args := []string{"stop"}
+			eo := ExecOptions{
+				command: "docker",
+				args:    append([]string{"stop"}, c.Args().Slice()...),
+				tty:     true,
+				detach:  true,
+			}
 
-			args = append(args, c.Args().Slice()...)
-
-			return execCommand("docker", args, c.App)
+			return execCommand(eo, c.App)
 		},
 	}
 }
@@ -121,10 +124,14 @@ func CallStopOneContainerCommand(options stopContainerOptions) *cli.Command {
 				return errors.New("Docker is not running")
 			}
 
-			args := []string{"stop"}
+			eo := ExecOptions{
+				command: "docker",
+				args:    append([]string{"stop"}, c.Args().Slice()...),
+				tty:     true,
+				detach:  true,
+			}
 
-			args = append(args, c.Args().Slice()...)
-			return execCommand("docker", args, c.App)
+			return execCommand(eo, c.App)
 		},
 	}
 }

@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
-	"os"
 	"strings"
 	"time"
 
@@ -13,72 +11,52 @@ import (
 	"github.com/docker/docker/pkg/stdcopy"
 )
 
-// Exec run command using docker api
-func (d *Docker) Exec(container string, commands []string) (status int, err error) {
+type cliApp interface {
+	GetReader() io.Reader
+	GetWriter() io.Writer
+	GetErrWriter() io.Writer
+}
 
+// Exec run command using docker api
+func (d *Docker) Exec(container string, cnf *types.ExecConfig, ca cliApp) (status int, err error) {
 	status = 1
 
-	fmt.Println(strings.Join(commands, " "))
+	fmt.Printf("\ncommand: %s\n\n", strings.Join(cnf.Cmd, " "))
 
-	//defer d.GetClient().Close()
 	ctx := context.Background()
-	r, err := d.GetClient().ContainerExecCreate(ctx, container, types.ExecConfig{
-		User:         "limesoda",
-		Tty:          false,
-		AttachStderr: true,
-		AttachStdout: true,
-		AttachStdin:  true,
-		Detach:       true,
-		Cmd:          commands,
-		WorkingDir:   "/var/www",
-	})
+	r, err := d.GetClient().ContainerExecCreate(ctx, container, *cnf)
 
 	if err != nil {
-		return 0, err
+		return 1, err
 	}
 
 	stream, err := d.GetClient().ContainerExecAttach(ctx, r.ID, types.ExecStartCheck{})
 
 	if err != nil {
-		return 0, err
+		return 1, err
 	}
 
 	outputErr := make(chan error)
 
 	go func() {
 		var err error
-		if false { // tty
-			_, err = io.Copy(os.Stdout, stream.Reader)
+		if cnf.Tty {
+			_, err = io.Copy(ca.GetWriter(), stream.Reader)
 		} else {
-			_, err = stdcopy.StdCopy(os.Stdout, os.Stderr, stream.Reader)
+			_, err = stdcopy.StdCopy(ca.GetWriter(), ca.GetErrWriter(), stream.Reader)
 		}
 		outputErr <- err
 	}()
 
 	go func() {
 		defer stream.CloseWrite()
-		io.Copy(stream.Conn, os.Stdout)
+		io.Copy(ca.GetWriter(), stream.Conn)
 	}()
 
-	/*if cfg.Tty {
-		_, winCh, _ := sess.Pty()
-		go func() {
-			for win := range winCh {
-				err := docker.ContainerExecResize(ctx, eresp.ID, types.ResizeOptions{
-					Height: uint(win.Height),
-					Width:  uint(win.Width),
-				})
-				if err != nil {
-					log.Println(err)
-					break
-				}
-			}
-		}()
-	}*/
 	for {
 		inspect, err := d.GetClient().ContainerExecInspect(ctx, r.ID)
 		if err != nil {
-			log.Println(err)
+			return 0, err
 		}
 		if !inspect.Running {
 			status = inspect.ExitCode
@@ -87,24 +65,6 @@ func (d *Docker) Exec(container string, commands []string) (status int, err erro
 		time.Sleep(time.Second)
 	}
 
+	err = <-outputErr
 	return
-	//err = <-outputErr
-	//data, err := ioutil.ReadAll(stream.Reader)
-	//fmt.Println(string(data))
-
-	/*
-		err = d.GetClient().ContainerExecStart(ctx, r.ID, types.ExecStartCheck{
-			Detach: false,
-			Tty:    false,
-		})
-
-		if err != nil {
-			return err
-		}
-
-		go io.Copy(os.Stdout, attach.Reader)
-
-		<-make(chan struct{})
-		//log.Println(attach.Reader.)
-		return err */
 }

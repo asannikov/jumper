@@ -1,12 +1,16 @@
 package app
 
 import (
-	"log"
+	"errors"
+	"fmt"
+	"os/exec"
+	"strings"
 
 	"github.com/asannikov/jumper/app/bash"
 	"github.com/asannikov/jumper/app/config"
 	"github.com/asannikov/jumper/app/dialog"
 	"github.com/asannikov/jumper/app/docker"
+	"github.com/docker/docker/api/types"
 
 	"github.com/asannikov/jumper/app/command"
 
@@ -38,16 +42,50 @@ func commandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []
 	opt.setCommandLocation(getCommandLocationF)
 	opt.setDockerStatus(dockerStatus)
 	opt.setStopContainers(dck.StopContainers())
-	opt.setExecCommand(execCommand)
+	opt.setExecCommand(func(eo command.ExecOptions, app *cli.App) error {
+
+		cmd := exec.Command(eo.GetCommand(), eo.GetArgs()...)
+
+		cmd.Stdin = app.Reader
+		cmd.Stdout = app.Writer
+		cmd.Stderr = app.ErrWriter
+
+		fmt.Printf("\ncommand: %s\n\n", eo.GetCommand()+" "+strings.Join(eo.GetArgs(), " "))
+
+		return cmd.Run()
+	})
 	opt.setDockerDialog(dockerDialog)
 	opt.setCopyTo(func(container string, sourcePath string, dstPath string) error {
 		return dck.CopyTo(container, sourcePath, dstPath)
 	})
-	opt.setNativeExec(func(container string, commands []string) (err error) {
-		code, err := dck.Exec(container, commands)
+	opt.setNativeExec(func(eo command.ExecOptions, app *cli.App) (err error) {
+		ic := &ioCli{
+			reader:    app.Reader,
+			writer:    app.Writer,
+			errWriter: app.ErrWriter,
+		}
 
-		log.Println(code, err)
-		return
+		cnf := types.ExecConfig{
+			AttachStderr: true,
+			AttachStdin:  true,
+			AttachStdout: true,
+			User:         eo.GetUser(),
+			Tty:          eo.GetTty(),
+			Cmd:          append([]string{eo.GetCommand()}, eo.GetArgs()...),
+			WorkingDir:   eo.GetWorkingDir(),
+		}
+
+		status, err := dck.Exec(c.GetProjectMainContainer(), &cnf, ic)
+
+		if err != nil {
+			return err
+		}
+
+		if status > 0 {
+			return errors.New("Error is occurred on exec function")
+		}
+
+		return nil
 	})
 
 	return []*cli.Command{

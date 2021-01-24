@@ -54,17 +54,17 @@ type syncCommandDialog interface {
 }
 
 type syncOptions interface {
-	GetExecCommand() func(string, []string, *cli.App) error
+	GetExecCommand() func(ExecOptions, *cli.App) error
 	GetInitFuntion() func(bool) string
 	GetContainerList() ([]string, error)
 	GetCopyTo(container string, sourcePath string, dstPath string) error
-	RunNativeExec(container string, commands []string) error
+	RunNativeExec(ExecOptions, *cli.App) error
 }
 
 // SyncCommand does the syncronization between container and project
 // @todo alternative way to copy options.GetCopyTo(cfg.GetProjectMainContainer(), "/local/path/", "/var/www/docker/")
 func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, options syncOptions) *cli.Command {
-	//execCommand := options.GetExecCommand()
+	execCommand := options.GetExecCommand()
 	initf := options.GetInitFuntion()
 
 	s := &sync{
@@ -129,27 +129,41 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 			}
 
 			if direction == syncCopyTo && c.Bool("f") == true {
-				//fmt.Printf("Path %s was created", args[2]+string(os.PathSeparator)+filepath.Base(syncPath))
-				err = options.RunNativeExec(cfg.GetProjectMainContainer(), []string{"mkdir", cfg.GetProjectDockerPath() + strings.TrimLeft(syncPath, string(os.PathSeparator))})
+				eo := ExecOptions{
+					command: "mkdir",
+					args:    []string{"-p", cfg.GetProjectDockerPath() + strings.TrimLeft(syncPath, string(os.PathSeparator))},
+					tty:     true,
+					detach:  true,
+					user:    "root",
+				}
+
+				if err = options.RunNativeExec(eo, c.App); err == nil {
+					fmt.Printf("Path %s was created", args[2]+string(os.PathSeparator)+filepath.Base(syncPath))
+				}
 			}
 
-			return err
-			/*
-				if err != nil {
-					return err
-				}
+			if err != nil {
+				return err
+			}
 
-				if err = execCommand("docker", args, c.App); err != nil {
-					return err
-				}
+			eo := ExecOptions{
+				command: "docker",
+				args:    args,
+				tty:     true,
+				detach:  true,
+			}
 
-				if direction == syncCopyTo {
-					fmt.Printf("Completed copying %s files from host to container %s \n", syncPath, cfg.GetProjectMainContainer())
-				} else {
-					fmt.Printf("Completed copying %s from container %s to host\n", syncPath, cfg.GetProjectMainContainer())
-				}
+			if err = execCommand(eo, c.App); err != nil {
+				return err
+			}
 
-				return nil*/
+			if direction == syncCopyTo {
+				fmt.Printf("Completed copying %s files from host to container %s \n", syncPath, cfg.GetProjectMainContainer())
+			} else {
+				fmt.Printf("Completed copying %s from container %s to host\n", syncPath, cfg.GetProjectMainContainer())
+			}
+
+			return nil
 		},
 	}
 }
