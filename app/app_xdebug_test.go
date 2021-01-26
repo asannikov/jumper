@@ -8,11 +8,12 @@ import (
 )
 
 func TestXDebug(t *testing.T) {
-	os.Args = []string{"xdebug:fpm:enable"}
+	os.Args = []string{"jumper", "xdebug:fpm:enable"}
 
 	c := &cli.App{}
 
-	JumperAppTest(c)
+	jcfg := &jumperAppTest{}
+	JumperAppTest(c, jcfg)
 
 	c.Run(os.Args)
 }

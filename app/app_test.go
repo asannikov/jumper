@@ -62,43 +62,27 @@ type jumperAppTest struct {
 	fs  *FileSystem
 }
 
-func JumperAppTest(cli *cli.App) {
-	jat := jumperAppTest{}
-
-	// Dialogs
-	DLG := dialog.InitDialogFunctions()
-
-	jat.dlg = &DLG
-
-	cfg := &config.Config{
-		ProjectFile: confgFile,
-	}
-
-	jat.cfg = cfg
-
-	cfg.Init()
-
-	fs := &FileSystem{}
-	cfg.SetFileSystem(fs)
-	jat.fs = fs
+func JumperAppTest(cli *cli.App, jat *jumperAppTest) {
+	jat.cfg.Init()
+	jat.cfg.SetFileSystem(jat.fs)
 
 	// Loading only global config
-	loadGlobalConfig(cfg, &DLG, fs)
+	loadGlobalConfig(jat.cfg, jat.dlg, jat.fs)
 
 	// Loading project config if exists
-	loadProjectConfig(cfg, fs)
+	loadProjectConfig(jat.cfg, jat.fs)
 
 	// Define docker command
-	defineDockerCommand(cfg, &DLG)
+	defineDockerCommand(jat.cfg, jat.dlg)
 
 	initf := func(seekProject bool) string {
-		if err := seekPath(cfg, &DLG, fs, seekProject); err != nil {
+		if err := seekPath(jat.cfg, jat.dlg, jat.fs, seekProject); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
 		if seekProject == true {
-			currentDir, _ := fs.GetWd()
+			currentDir, _ := jat.fs.GetWd()
 			fmt.Printf("\nchanged user location to directory: %s\n\n", currentDir)
 			return currentDir
 		}
@@ -106,8 +90,8 @@ func JumperAppTest(cli *cli.App) {
 		return ""
 	}
 
-	cli.Copyright = lib.GetCopyrightText(cfg)
-	cli.Commands = commandList(cfg, &DLG, initf)
+	cli.Copyright = lib.GetCopyrightText(jat.cfg)
+	cli.Commands = commandList(jat.cfg, jat.dlg, initf)
 }
 
 type testFileSystem struct {
