@@ -27,7 +27,7 @@ func main() {
 		},
 	}
 
-	app.InitApp(c)
+	app.JumperApp(c)
 
 	err := c.Run(os.Args)
 

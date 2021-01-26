@@ -18,8 +18,8 @@ const confgFile = "jumper.json"
 // CommandList defines type for command list in main
 type CommandList = func(*config.Config, *dialog.Dialog, bool, func(string, string) (string, error), func(bool) string) []*cli.Command
 
-// InitApp initializate app
-func InitApp(cli *cli.App) {
+// JumperApp initializate app
+func JumperApp(cli *cli.App) {
 	// Dialogs
 	DLG := dialog.InitDialogFunctions()
 

@@ -3,12 +3,15 @@ package app
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"reflect"
 	"testing"
 
 	"github.com/asannikov/jumper/app/config"
 	"github.com/asannikov/jumper/app/dialog"
+	"github.com/asannikov/jumper/app/lib"
+	"github.com/urfave/cli/v2"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -52,6 +55,60 @@ const testUserFileContent = `{
 		}
 	]
 }`
+
+type jumperAppTest struct {
+	dlg *dialog.Dialog
+	cfg *config.Config
+	fs  *FileSystem
+}
+
+func JumperAppTest(cli *cli.App) {
+	jat := jumperAppTest{}
+
+	// Dialogs
+	DLG := dialog.InitDialogFunctions()
+
+	jat.dlg = &DLG
+
+	cfg := &config.Config{
+		ProjectFile: confgFile,
+	}
+
+	jat.cfg = cfg
+
+	cfg.Init()
+
+	fs := &FileSystem{}
+	cfg.SetFileSystem(fs)
+	jat.fs = fs
+
+	// Loading only global config
+	loadGlobalConfig(cfg, &DLG, fs)
+
+	// Loading project config if exists
+	loadProjectConfig(cfg, fs)
+
+	// Define docker command
+	defineDockerCommand(cfg, &DLG)
+
+	initf := func(seekProject bool) string {
+		if err := seekPath(cfg, &DLG, fs, seekProject); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		if seekProject == true {
+			currentDir, _ := fs.GetWd()
+			fmt.Printf("\nchanged user location to directory: %s\n\n", currentDir)
+			return currentDir
+		}
+
+		return ""
+	}
+
+	cli.Copyright = lib.GetCopyrightText(cfg)
+	cli.Commands = commandList(cfg, &DLG, initf)
+}
 
 type testFileSystem struct {
 	fileExists       func(string) (bool, error)
