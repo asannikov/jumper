@@ -23,6 +23,16 @@ type Config struct {
 	hasProjectFile bool
 }
 
+// GetUserFile gets user config file
+func (c *Config) GetUserFile() string {
+	return c.UserFile
+}
+
+// SetUserFile sets user config file
+func (c *Config) SetUserFile(file string) {
+	c.UserFile = file
+}
+
 // projectSettings is not the same as ProjectConfig, but the similar one.
 // it helps to call FindProjectPathInJSON from the outside (ie main function), where
 // projectSettings is used as projectConfig, see main_start.go
@@ -55,12 +65,12 @@ func (c *Config) lookupProjectConfig() (err error) {
 
 // LookupUserConfig seeks for a user config
 func (c *Config) lookupUserConfig() (err error) {
-	if err = c.fileSystem.ReadConfigFile(c.UserFile, c.globalConfig); err == nil {
+	if err = c.fileSystem.ReadConfigFile(c.GetUserFile(), c.globalConfig); err == nil {
 		return nil
 	}
 
 	if err != nil && strings.Contains(err.Error(), "no such file or directory") == true {
-		err = c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
+		err = c.fileSystem.SaveConfigFile(c.globalConfig, c.GetUserFile())
 	}
 
 	return err
@@ -159,7 +169,7 @@ func (c *Config) AddProjectConfigFile() (err error) {
 
 	c.globalConfig.Projects = append(c.globalConfig.Projects, fpc)
 	c.globalConfig.InactiveCommandTypes = []string{"composer", "php"}
-	return c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
+	return c.fileSystem.SaveConfigFile(c.globalConfig, c.GetUserFile())
 }
 
 // GetFile gets project file

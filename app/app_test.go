@@ -67,7 +67,7 @@ func JumperAppTest(cli *cli.App, jat *jumperAppTest) {
 	jat.cfg.SetFileSystem(jat.fs)
 
 	// Loading only global config
-	loadGlobalConfig(jat.cfg, jat.dlg, jat.fs)
+	loadGlobalConfig(jat.cfg, jat.fs)
 
 	// Loading project config if exists
 	loadProjectConfig(jat.cfg, jat.fs)
@@ -146,7 +146,7 @@ func TestDefinePaths(t *testing.T) {
 	err := definePaths(cfg, tfs)
 
 	assert.Equal(t, nil, err)
-	assert.Equal(t, "/user/path/"+string(os.PathSeparator)+".jumper.json", cfg.UserFile)
+	assert.Equal(t, "/user/path/"+string(os.PathSeparator)+".jumper.json", cfg.GetUserFile())
 
 	tfs = &testFileSystem{
 		getUserDirectory: func() (string, error) {
@@ -244,7 +244,7 @@ func TestSeekPathGetProjectNameList(t *testing.T) {
 			return "/current/path/", errors.New("stop execution")
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte(testUserFileContent), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return json.Unmarshal([]byte(testProjectFileContent), &configuration)
@@ -282,7 +282,7 @@ func TestSeekPathrunDialogCase1(t *testing.T) {
 			return "/current/path/", nil
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte(testUserFileContent), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
@@ -321,7 +321,7 @@ func TestSeekPathrunDialogCase2(t *testing.T) {
 			return "/current/path/", nil
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte(testUserFileContent), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
@@ -372,7 +372,7 @@ func TestSeekPathrunDialogCase3(t *testing.T) {
 			return "/current/path/", nil
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte(testUserFileContent), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
@@ -426,7 +426,7 @@ func TestSeekPathrunDialogCase4(t *testing.T) {
 			return "", nil
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte("{}"), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
@@ -499,7 +499,7 @@ func TestSeekPathrunDialogCase5(t *testing.T) {
 			return "", nil
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte("{}"), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
@@ -575,7 +575,7 @@ func TestSeekPathrunDialogCase6(t *testing.T) {
 			return "", nil
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte("{}"), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")

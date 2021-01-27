@@ -32,7 +32,7 @@ func JumperApp(cli *cli.App) {
 	cfg.SetFileSystem(fs)
 
 	// Loading only global config
-	loadGlobalConfig(cfg, &DLG, fs)
+	loadGlobalConfig(cfg, fs)
 
 	// Loading project config if exists
 	loadProjectConfig(cfg, fs)

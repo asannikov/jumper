@@ -18,7 +18,7 @@ func (c *Config) SaveDockerProjectPath(path string) (err error) {
 // SetDockerCommand define docker command
 func (c *Config) SetDockerCommand(command string) error {
 	c.globalConfig.SetDockerCommand(command)
-	return c.fileSystem.SaveConfigFile(c.globalConfig, c.UserFile)
+	return c.fileSystem.SaveConfigFile(c.globalConfig, c.GetUserFile())
 }
 
 // GetDockerCommand gets the docker command
