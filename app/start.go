@@ -44,8 +44,9 @@ func definePaths(cfg loadGlobalCfg, fs definePathsFileSystem) (err error) {
 	return err
 }
 
-type runDialogFileSystem interface {
-	GoToProjectPath(string) error
+type runDialogConfig interface {
+	FindProjectPathInJSON(config.ProjectSettings)
+	ProjectConfgFileFound() bool
 }
 
 type runDialogDialog interface {
@@ -53,7 +54,7 @@ type runDialogDialog interface {
 	CallAddProjectDialog(dialog.ProjectConfig) error
 }
 
-func runDialog(pc *projectConfig, cfg *config.Config, DLG runDialogDialog, fs runDialogFileSystem, pl []string, currentDir string) (err error) {
+func runDialog(pc *projectConfig, cfg runDialogConfig, DLG runDialogDialog, pl []string, currentDir string) (err error) {
 	if cfg.ProjectConfgFileFound() == false && len(pl) > 0 {
 		var index int
 		var projectName string
@@ -187,7 +188,7 @@ func seekPath(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem, see
 		projectname: cfg.GetProjectName(),
 	}
 
-	if err = runDialog(pc, cfg, DLG, fs, pl, currentDir); err != nil {
+	if err = runDialog(pc, cfg, DLG, pl, currentDir); err != nil {
 		return err
 	}
 

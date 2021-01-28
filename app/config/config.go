@@ -33,22 +33,22 @@ func (c *Config) SetUserFile(file string) {
 	c.UserFile = file
 }
 
-// projectSettings is not the same as ProjectConfig, but the similar one.
+// ProjectSettings is not the same as ProjectConfig, but the similar one.
 // it helps to call FindProjectPathInJSON from the outside (ie main function), where
-// projectSettings is used as projectConfig, see main_start.go
-type projectSettings interface {
+// ProjectSettings is used as projectConfig, see main_start.go
+type ProjectSettings interface {
 	GetProjectName() string
 	GetProjectPath() string
 	SetProjectName(string)
 	SetProjectPath(string)
 }
 
-// SetProjectPath set project path for config, it's not the same as projectSettings
+// SetProjectPath set project path for config
 func (c *Config) SetProjectPath(path string) {
 	c.projectConfig.Path = path
 }
 
-// SetProjectName set project path for config, it's not the same as projectSettings
+// SetProjectName set project path for config
 func (c *Config) SetProjectName(name string) {
 	c.projectConfig.Name = name
 }
@@ -114,7 +114,7 @@ func (c *Config) GetCommandInactveStatus(cmd string) bool {
 }
 
 // FindProjectPathInJSON check if project path in the json
-func (c *Config) FindProjectPathInJSON(pc projectSettings) {
+func (c *Config) FindProjectPathInJSON(pc ProjectSettings) {
 	c.globalConfig.FindProjectPathInJSON(func(p GlobalProjectConfig) (bool, error) {
 		if p.Name == pc.GetProjectName() {
 			if t, err := c.fileSystem.DirExists(p.Path); err == nil && t == true {
