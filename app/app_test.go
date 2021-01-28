@@ -59,7 +59,7 @@ const testUserFileContent = `{
 type jumperAppTest struct {
 	dlg *dialog.Dialog
 	cfg *config.Config
-	fs  *FileSystem
+	fs  *testFileSystem
 }
 
 func JumperAppTest(cli *cli.App, jat *jumperAppTest) {
