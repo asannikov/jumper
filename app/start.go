@@ -48,7 +48,12 @@ type runDialogFileSystem interface {
 	GoToProjectPath(string) error
 }
 
-func runDialog(pc *projectConfig, cfg *config.Config, DLG *dialog.Dialog, fs runDialogFileSystem, pl []string, currentDir string) (err error) {
+type runDialogDialog interface {
+	SelectProject([]string) (int, string, error)
+	CallAddProjectDialog(dialog.ProjectConfig) error
+}
+
+func runDialog(pc *projectConfig, cfg *config.Config, DLG runDialogDialog, fs runDialogFileSystem, pl []string, currentDir string) (err error) {
 	if cfg.ProjectConfgFileFound() == false && len(pl) > 0 {
 		var index int
 		var projectName string

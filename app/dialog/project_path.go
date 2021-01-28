@@ -7,7 +7,7 @@ import (
 )
 
 // CallAddProjectDialog calls project manager
-func (d *Dialog) CallAddProjectDialog(pc projectConfig) error {
+func (d *Dialog) CallAddProjectDialog(pc ProjectConfig) error {
 	if pc.GetProjectName() == "" {
 		pn, err := d.AddProjectName() // add project name
 		if err != nil {
@@ -24,6 +24,16 @@ func (d *Dialog) CallAddProjectDialog(pc projectConfig) error {
 	pc.SetProjectPath(pp)
 
 	return nil
+}
+
+// AddProjectPath sets project path
+func (d *Dialog) AddProjectPath(path string) (string, error) {
+	return d.setAddProjectPath(path)
+}
+
+// AddProjectName sets project name
+func (d *Dialog) AddProjectName() (string, error) {
+	return d.setAddProjectName()
 }
 
 func addProjectPath(path string) (string, error) {
