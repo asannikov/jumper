@@ -16,6 +16,7 @@ func TestXDebug(t *testing.T) {
 
 	c := &cli.App{}
 
+	// @todo create mock object for dialog like testFileSystem
 	DLG := dialog.InitDialogFunctions()
 	DLG.SetSelectProjectTest(func(projects []string) (int, string, error) {
 		return 0, "Project Name", nil
@@ -38,7 +39,6 @@ func TestXDebug(t *testing.T) {
 	}
 
 	jcfg.fs.fileExists = func(file string) (bool, error) {
-		log.Println(file)
 		return true, nil
 	}
 
