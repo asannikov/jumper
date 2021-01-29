@@ -57,7 +57,7 @@ const testUserFileContent = `{
 }`
 
 type jumperAppTest struct {
-	dlg *dialog.Dialog
+	dlg *testDialog
 	cfg *config.Config
 	fs  *testFileSystem
 }
@@ -254,9 +254,7 @@ func TestSeekPathDefinePaths(t *testing.T) {
 		},
 	}
 
-	dialog := &dialog.Dialog{}
-
-	err := seekPath(cfg, dialog, tfs, true)
+	err := seekPath(cfg, &testDialog{}, tfs, true)
 	assert.EqualError(t, err, "Cannot read directory")
 }
 
@@ -277,9 +275,7 @@ func TestSeekPathLoadConfig(t *testing.T) {
 
 	cfg.SetFileSystem(tfs)
 
-	dialog := &dialog.Dialog{}
-
-	err := seekPath(cfg, dialog, tfs, true)
+	err := seekPath(cfg, &testDialog{}, tfs, true)
 	assert.EqualError(t, err, "Cannot read config file")
 }
 
@@ -303,9 +299,7 @@ func TestSeekPathGetWd(t *testing.T) {
 
 	cfg.SetFileSystem(tfs)
 
-	dialog := &dialog.Dialog{}
-
-	err := seekPath(cfg, dialog, tfs, true)
+	err := seekPath(cfg, &testDialog{}, tfs, true)
 	assert.EqualError(t, err, "Cannot get current directory")
 }
 
@@ -338,9 +332,8 @@ func TestSeekPathGetProjectNameList(t *testing.T) {
 	}
 
 	cfg.SetFileSystem(tfs)
-	dialog := &dialog.Dialog{}
 
-	err := seekPath(cfg, dialog, tfs, true)
+	err := seekPath(cfg, &testDialog{}, tfs, true)
 	assert.EqualError(t, err, "stop execution")
 
 	pl := cfg.GetProjectNameList()
@@ -376,10 +369,11 @@ func TestSeekPathrunDialogCase1(t *testing.T) {
 	}
 
 	cfg.SetFileSystem(tfs)
-	dialog := &dialog.Dialog{}
-	dialog.SetSelectProjectTest(func(projects []string) (int, string, error) {
-		return 0, "", errors.New("Error SelectProject dialog")
-	})
+	dialog := &testDialog{
+		setSelectProject: func(projects []string) (int, string, error) {
+			return 0, "", errors.New("Error SelectProject dialog")
+		},
+	}
 
 	err := seekPath(cfg, dialog, tfs, true)
 	assert.EqualError(t, err, "Error SelectProject dialog")
@@ -417,19 +411,20 @@ func TestSeekPathrunDialogCase2(t *testing.T) {
 	}
 
 	cfg.SetFileSystem(tfs)
-	dialog := &dialog.Dialog{}
-	dialog.SetSelectProjectTest(func(projects []string) (int, string, error) {
-		return -1, "New Project Name", nil
-	})
-	dialog.SetAddProjectNameTest(func() (string, error) {
-		return "", errors.New("Should not be called as the project name has been typed")
-	})
-	dialog.SetAddProjectPathTest(func(path string) (string, error) {
-		if path == "/current/path/" {
-			return path, errors.New("Is ok")
-		}
-		return "", errors.New("Current path was not set")
-	})
+	dialog := &testDialog{
+		setSelectProject: func(projects []string) (int, string, error) {
+			return -1, "New Project Name", nil
+		},
+		setAddProjectName: func() (string, error) {
+			return "", errors.New("Should not be called as the project name has been typed")
+		},
+		setAddProjectPath: func(path string) (string, error) {
+			if path == "/current/path/" {
+				return path, errors.New("Is ok")
+			}
+			return "", errors.New("Current path was not set")
+		},
+	}
 
 	err := seekPath(cfg, dialog, tfs, true)
 	assert.EqualError(t, err, "Is ok")
@@ -473,16 +468,17 @@ func TestSeekPathrunDialogCase3(t *testing.T) {
 	}
 
 	cfg.SetFileSystem(tfs)
-	dialog := &dialog.Dialog{}
-	dialog.SetSelectProjectTest(func(projects []string) (int, string, error) {
-		return 0, "project2", nil
-	})
-	dialog.SetAddProjectNameTest(func() (string, error) {
-		return "", errors.New("Should not be called as the project name has been typed")
-	})
-	dialog.SetAddProjectPathTest(func(path string) (string, error) {
-		return path, errors.New("Should not be called as the project has been selected")
-	})
+	dialog := &testDialog{
+		setSelectProject: func(projects []string) (int, string, error) {
+			return 0, "project2", nil
+		},
+		setAddProjectName: func() (string, error) {
+			return "", errors.New("Should not be called as the project name has been typed")
+		},
+		setAddProjectPath: func(path string) (string, error) {
+			return path, errors.New("Should not be called as the project has been selected")
+		},
+	}
 
 	err := seekPath(cfg, dialog, tfs, true)
 	assert.EqualError(t, err, "Is ok")
@@ -526,16 +522,17 @@ func TestSeekPathrunDialogCase4(t *testing.T) {
 	}
 
 	cfg.SetFileSystem(tfs)
-	dialog := &dialog.Dialog{}
-	dialog.SetSelectProjectTest(func(projects []string) (int, string, error) {
-		return -1, "", nil
-	})
-	dialog.SetAddProjectNameTest(func() (string, error) {
-		return "", errors.New("Add project name dialog error")
-	})
-	dialog.SetAddProjectPathTest(func(path string) (string, error) {
-		return path, errors.New("Should not be called as the project has been selected")
-	})
+	dialog := &testDialog{
+		setSelectProject: func(projects []string) (int, string, error) {
+			return -1, "", nil
+		},
+		setAddProjectName: func() (string, error) {
+			return "", errors.New("Add project name dialog error")
+		},
+		setAddProjectPath: func(path string) (string, error) {
+			return path, errors.New("Should not be called as the project has been selected")
+		},
+	}
 
 	err := seekPath(cfg, dialog, tfs, true)
 	assert.EqualError(t, err, "Add project name dialog error")
@@ -598,16 +595,17 @@ func TestSeekPathrunDialogCase5(t *testing.T) {
 	}
 
 	cfg.SetFileSystem(tfs)
-	dialog := &dialog.Dialog{}
-	dialog.SetSelectProjectTest(func(projects []string) (int, string, error) {
-		return -1, "", nil
-	})
-	dialog.SetAddProjectNameTest(func() (string, error) {
-		return "added project name", nil
-	})
-	dialog.SetAddProjectPathTest(func(path string) (string, error) {
-		return "/added/path/to/project", nil
-	})
+	dialog := &testDialog{
+		setSelectProject: func(projects []string) (int, string, error) {
+			return -1, "", nil
+		},
+		setAddProjectName: func() (string, error) {
+			return "added project name", nil
+		},
+		setAddProjectPath: func(path string) (string, error) {
+			return "/added/path/to/project", nil
+		},
+	}
 
 	err := seekPath(cfg, dialog, tfs, true)
 
@@ -674,16 +672,17 @@ func TestSeekPathrunDialogCase6(t *testing.T) {
 
 	cfg.SetFileSystem(tfs)
 
-	dialog := &dialog.Dialog{}
-	dialog.SetSelectProjectTest(func(projects []string) (int, string, error) {
-		return -1, "", nil
-	})
-	dialog.SetAddProjectNameTest(func() (string, error) {
-		return "added project name", nil
-	})
-	dialog.SetAddProjectPathTest(func(path string) (string, error) {
-		return "/added/path/to/project", nil
-	})
+	dialog := &testDialog{
+		setSelectProject: func(projects []string) (int, string, error) {
+			return -1, "", nil
+		},
+		setAddProjectName: func() (string, error) {
+			return "added project name", nil
+		},
+		setAddProjectPath: func(path string) (string, error) {
+			return "/added/path/to/project", nil
+		},
+	}
 
 	err := seekPath(cfg, dialog, tfs, true)
 

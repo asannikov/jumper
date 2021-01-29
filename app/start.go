@@ -165,7 +165,12 @@ func loadProjectConfig(cfg loadProjectCfg, fs loadProjectFs) (err error) {
 	return nil
 }
 
-func seekPath(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem, seekProject bool) error {
+type seekPathDialog interface {
+	CallAddProjectDialog(dialog.ProjectConfig) error
+	SelectProject([]string) (int, string, error)
+}
+
+func seekPath(cfg *config.Config, DLG seekPathDialog, fs seekPathFileSystem, seekProject bool) error {
 	var currentDir string
 	var err error
 

@@ -17,7 +17,23 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func commandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []*cli.Command {
+type commandListDialog interface {
+	DockerService() (string, error)
+	StartDocker() (string, error)
+	StartCommand() (string, error)
+	SetMainContaner([]string) (int, string, error)
+	DockerProjectPath(string) (string, error)
+	CallAddProjectDialog(dialog.ProjectConfig) error
+	AddProjectPath(string) (string, error)
+	AddProjectName() (string, error)
+	SelectProject([]string) (int, string, error)
+	DockerShell() (int, string, error)
+	DockerCliXdebugIniFilePath(string) (string, error)
+	DockerFpmXdebugIniFilePath(string) (string, error)
+	XDebugConfigLocation() (int, string, error)
+}
+
+func commandList(c *config.Config, d commandListDialog, initf func(bool) string) []*cli.Command {
 
 	b := bash.Bash{}
 
