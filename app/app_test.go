@@ -75,7 +75,8 @@ func JumperAppTest(cli *cli.App, jat *jumperAppTest) {
 	// Define docker command
 	defineDockerCommand(jat.cfg, jat.dlg)
 
-	initf := func(seekProject bool) string {
+	opt := getOptions(jat.cfg, jat.dlg)
+	opt.setInitFuntion(func(seekProject bool) string {
 		if err := seekPath(jat.cfg, jat.dlg, jat.fs, seekProject); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -88,10 +89,10 @@ func JumperAppTest(cli *cli.App, jat *jumperAppTest) {
 		}
 
 		return ""
-	}
+	})
 
 	cli.Copyright = lib.GetCopyrightText(jat.cfg)
-	cli.Commands = commandList(jat.cfg, jat.dlg, initf)
+	cli.Commands = commandList(jat.cfg, jat.dlg, opt)
 }
 
 type testDialog struct {

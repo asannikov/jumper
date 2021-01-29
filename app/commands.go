@@ -25,11 +25,18 @@ type commandListDialog interface {
 	XDebugConfigLocation() (int, string, error)
 }
 
-func commandList(c *config.Config, d commandListDialog, initf func(bool) string) []*cli.Command {
+type commandListOptions interface {
+	GetInitFuntion() func(bool) string
+	GetCommandLocation() func(string, string) (string, error)
+	GetStopContainers() func([]string) error
+	GetExecCommand() func(command.ExecOptions, *cli.App) error
+	GetDockerStatus() bool
+	GetContainerList() ([]string, error)
+	GetCopyTo(container string, sourcePath string, dstPath string) error
+	RunNativeExec(eo command.ExecOptions, ca *cli.App) error
+}
 
-	opt := getOptions(c, d)
-	opt.setInitFuntion(initf)
-
+func commandList(c *config.Config, d commandListDialog, opt commandListOptions) []*cli.Command {
 	return []*cli.Command{
 		// cli commands
 		command.CallCliCommand("cli", c, d, opt),
@@ -81,7 +88,7 @@ func commandList(c *config.Config, d commandListDialog, initf func(bool) string)
 		command.XDebugCommand("xdebug:cli:disable", c, d, opt),
 
 		// Shell
-		command.ShellCommand(initf, c, d),
+		command.ShellCommand(c, d, opt),
 
 		// docker pull https://docs.docker.com/engine/api/sdk/examples/
 		command.CallMagentoCommand(c, d, opt),

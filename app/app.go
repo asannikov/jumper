@@ -22,9 +22,6 @@ import (
 
 const confgFile = "jumper.json"
 
-// CommandList defines type for command list in main
-type CommandList = func(*config.Config, *dialog.Dialog, bool, func(string, string) (string, error), func(bool) string) []*cli.Command
-
 // JumperApp initializate app
 func JumperApp(cli *cli.App) {
 	// Dialogs
@@ -47,7 +44,8 @@ func JumperApp(cli *cli.App) {
 	// Define docker command
 	defineDockerCommand(cfg, &DLG)
 
-	initf := func(seekProject bool) string {
+	opt := getOptions(cfg, &DLG)
+	opt.setInitFuntion(func(seekProject bool) string {
 		if err := seekPath(cfg, &DLG, fs, seekProject); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -60,10 +58,10 @@ func JumperApp(cli *cli.App) {
 		}
 
 		return ""
-	}
+	})
 
 	cli.Copyright = lib.GetCopyrightText(cfg)
-	cli.Commands = commandList(cfg, &DLG, initf)
+	cli.Commands = commandList(cfg, &DLG, opt)
 }
 
 type ioCli struct {
