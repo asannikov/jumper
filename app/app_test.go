@@ -94,6 +94,90 @@ func JumperAppTest(cli *cli.App, jat *jumperAppTest) {
 	cli.Commands = commandList(jat.cfg, jat.dlg, initf)
 }
 
+type testDialog struct {
+	setMainContaner               func([]string) (int, string, error)
+	setStartCommand               func() (string, error)
+	setStartDocker                func() (string, error)
+	setDockerService              func() (string, error)
+	setDockerProjectPath          func(string) (string, error)
+	setDockerCliXdebugIniFilePath func(string) (string, error)
+	setDockerFmpXdebugIniFilePath func(string) (string, error)
+	setXdebugFileConfigLocation   func() (int, string, error)
+	setDockerShell                func() (int, string, error)
+
+	// Project management
+	setSelectProject  func([]string) (int, string, error)
+	setAddProjectPath func(string) (string, error)
+	setAddProjectName func() (string, error)
+}
+
+func (d *testDialog) DockerService() (string, error) {
+	return d.setDockerService()
+}
+
+func (d *testDialog) StartDocker() (string, error) {
+	return d.setStartDocker()
+}
+
+func (d *testDialog) StartCommand() (string, error) {
+	return d.setStartCommand()
+}
+
+func (d *testDialog) SetMainContaner(cl []string) (int, string, error) {
+	return d.setMainContaner(cl)
+}
+
+func (d *testDialog) DockerProjectPath(defaulPath string) (string, error) {
+	return d.setDockerProjectPath(defaulPath)
+}
+
+func (d *testDialog) CallAddProjectDialog(pc dialog.ProjectConfig) error {
+	if pc.GetProjectName() == "" {
+		pn, err := d.AddProjectName() // add project name
+		if err != nil {
+			return err
+		}
+		pc.SetProjectName(pn)
+	}
+
+	pp, err := d.AddProjectPath(pc.GetProjectPath()) // add project path
+	if err != nil {
+		return err
+	}
+
+	pc.SetProjectPath(pp)
+
+	return nil
+}
+
+func (d *testDialog) AddProjectPath(path string) (string, error) {
+	return d.setAddProjectPath(path)
+}
+
+func (d *testDialog) AddProjectName() (string, error) {
+	return d.setAddProjectName()
+}
+
+func (d *testDialog) SelectProject(list []string) (int, string, error) {
+	return d.setSelectProject(list)
+}
+
+func (d *testDialog) DockerShell() (int, string, error) {
+	return d.setDockerShell()
+}
+
+func (d *testDialog) DockerCliXdebugIniFilePath(defaulPath string) (string, error) {
+	return d.setDockerCliXdebugIniFilePath(defaulPath)
+}
+
+func (d *testDialog) DockerFpmXdebugIniFilePath(defaulPath string) (string, error) {
+	return d.setDockerFmpXdebugIniFilePath(defaulPath)
+}
+
+func (d *testDialog) XDebugConfigLocation() (int, string, error) {
+	return d.setXdebugFileConfigLocation()
+}
+
 type testFileSystem struct {
 	fileExists       func(string) (bool, error)
 	dirExists        func(string) (bool, error)
