@@ -10,9 +10,6 @@ package app
 import (
 	"errors"
 
-	"github.com/asannikov/jumper/app/dialog"
-	"github.com/asannikov/jumper/app/docker"
-
 	"github.com/docker/docker/client"
 )
 
@@ -21,11 +18,12 @@ type dockerInstance interface {
 	GetContanerList() ([]string, error)
 	Stat() (string, error)
 	InitClient() error
+	GetClient() *client.Client
 }
 
 type dockerStartDialog struct {
-	dialog            *dialog.Dialog
-	docker            *docker.Docker
+	dialog            dialogCommand
+	docker            dockerInstance
 	dockerService     string
 	stat              func(*dockerStartDialog) (string, error)
 	initClient        func(*dockerStartDialog) error
@@ -35,7 +33,9 @@ type dockerStartDialog struct {
 	containerList     func(*dockerStartDialog) ([]string, error)
 }
 
-type dialogCommand interface{}
+type dialogCommand interface {
+	StartDocker() (string, error)
+}
 
 func getDockerStartDialog() *dockerStartDialog {
 	cl := &dockerStartDialog{}
@@ -101,7 +101,7 @@ func (dsd *dockerStartDialog) GetContainerList() ([]string, error) {
 }
 
 func (dsd *dockerStartDialog) setDialog(d dialogCommand) {
-	dsd.dialog = d.(*dialog.Dialog)
+	dsd.dialog = d
 }
 
 func (dsd *dockerStartDialog) setDockerService(c string) {
@@ -109,5 +109,5 @@ func (dsd *dockerStartDialog) setDockerService(c string) {
 }
 
 func (dsd *dockerStartDialog) setDocker(d dockerInstance) {
-	dsd.docker = d.(*docker.Docker)
+	dsd.docker = d
 }

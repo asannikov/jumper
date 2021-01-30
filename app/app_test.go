@@ -10,6 +10,7 @@ import (
 
 	"github.com/asannikov/jumper/app/config"
 	"github.com/asannikov/jumper/app/dialog"
+	"github.com/asannikov/jumper/app/docker"
 	"github.com/asannikov/jumper/app/lib"
 	"github.com/urfave/cli/v2"
 
@@ -91,6 +92,19 @@ func JumperAppTest(cli *cli.App, jat *jumperAppTest) {
 		return ""
 	})
 
+	dck := docker.GetDockerInstance()
+	dockerDialog := getDockerStartDialog()
+	dockerDialog.setDialog(jat.dlg)
+	dockerDialog.setDocker(dck)
+	dockerDialog.setDockerService(jat.cfg.GetDockerCommand())
+	dockerDialog.startDockerDialog = func(cl *dockerStartDialog) (string, error) {
+		return "", nil
+	}
+	dockerDialog.containerList = func(cl *dockerStartDialog) ([]string, error) {
+		return []string{}, nil
+	}
+	opt.setDockerDialog(dockerDialog)
+	
 	cli.Copyright = lib.GetCopyrightText(jat.cfg)
 	cli.Commands = commandList(jat.cfg, jat.dlg, opt)
 }
