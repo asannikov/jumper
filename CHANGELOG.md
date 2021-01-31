@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 1.8.2 (31.01.2021)
+- improvment
+    - xdebug test covered
+    - add unittests for main command App 
+    - add ExecOptions type for shell exec and docker exec command (easier for unittests now)
+    - improved type abstraction for commandList and for main app
+- bugfix
+    - fix typo in getInitFunction name
+
 ## 1.8.1 (24.01.2021)
 - features
     - add check path existence on copyto
