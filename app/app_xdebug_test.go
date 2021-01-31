@@ -2,11 +2,11 @@ package app
 
 import (
 	"encoding/json"
-	"log"
 	"os"
 	"testing"
 
 	"github.com/asannikov/jumper/app/config"
+	"github.com/stretchr/testify/assert"
 	"github.com/urfave/cli/v2"
 )
 
@@ -28,6 +28,18 @@ func TestXDebug(t *testing.T) {
 	}
 	DLG.setDockerService = func() (string, error) {
 		return "start docker", nil
+	}
+	DLG.setMainContaner = func(cl []string) (int, string, error) {
+		return 0, "container_name", nil
+	}
+	DLG.setDockerCliXdebugIniFilePath = func(p string) (string, error) {
+		return "/path/to/cli/xdebug/ini", nil
+	}
+	DLG.setDockerFmpXdebugIniFilePath = func(p string) (string, error) {
+		return "/path/to/Fmp/xdebug/ini", nil
+	}
+	DLG.setXdebugFileConfigLocation = func() (int, string, error) {
+		return 0, "local", nil
 	}
 
 	cfg := &config.Config{
@@ -68,6 +80,5 @@ func TestXDebug(t *testing.T) {
 
 	err := c.Run(os.Args)
 
-	log.Println(err)
-	//assert.Nil(t, err)
+	assert.Nil(t, err)
 }

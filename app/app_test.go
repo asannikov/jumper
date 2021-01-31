@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 
+	"github.com/asannikov/jumper/app/command"
 	"github.com/asannikov/jumper/app/config"
 	"github.com/asannikov/jumper/app/dialog"
-	"github.com/asannikov/jumper/app/docker"
 	"github.com/asannikov/jumper/app/lib"
+	"github.com/docker/docker/client"
 	"github.com/urfave/cli/v2"
 
 	"github.com/stretchr/testify/assert"
@@ -63,7 +65,7 @@ type jumperAppTest struct {
 	fs  *testFileSystem
 }
 
-func JumperAppTest(cli *cli.App, jat *jumperAppTest) {
+func JumperAppTest(cliApp *cli.App, jat *jumperAppTest) {
 	jat.cfg.Init()
 	jat.cfg.SetFileSystem(jat.fs)
 
@@ -91,8 +93,25 @@ func JumperAppTest(cli *cli.App, jat *jumperAppTest) {
 
 		return ""
 	})
+	opt.execCommand = func(eo command.ExecOptions, c *cli.App) error {
+		fmt.Printf("\ncommand: %s\n\n", eo.GetCommand()+" "+strings.Join(eo.GetArgs(), " "))
+		return nil
+	}
 
-	dck := docker.GetDockerInstance()
+	dck := &testDockerInstance{}
+	dck.stat = func() (string, error) {
+		return "", nil
+	}
+	dck.initClient = func() error {
+		return nil
+	}
+	dck.getContainerList = func() ([]string, error) {
+		return []string{}, nil
+	}
+	dck.getClient = func() *client.Client {
+		return &client.Client{}
+	}
+
 	dockerDialog := getDockerStartDialog()
 	dockerDialog.setDialog(jat.dlg)
 	dockerDialog.setDocker(dck)
@@ -104,9 +123,9 @@ func JumperAppTest(cli *cli.App, jat *jumperAppTest) {
 		return []string{}, nil
 	}
 	opt.setDockerDialog(dockerDialog)
-	
-	cli.Copyright = lib.GetCopyrightText(jat.cfg)
-	cli.Commands = commandList(jat.cfg, jat.dlg, opt)
+
+	cliApp.Copyright = lib.GetCopyrightText(jat.cfg)
+	cliApp.Commands = commandList(jat.cfg, jat.dlg, opt)
 }
 
 type testDialog struct {
