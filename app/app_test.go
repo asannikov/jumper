@@ -3,18 +3,12 @@ package app
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"os"
 	"reflect"
-	"strings"
 	"testing"
 
-	"github.com/asannikov/jumper/app/command"
 	"github.com/asannikov/jumper/app/config"
 	"github.com/asannikov/jumper/app/dialog"
-	"github.com/asannikov/jumper/app/lib"
-	"github.com/docker/docker/client"
-	"github.com/urfave/cli/v2"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -58,75 +52,6 @@ const testUserFileContent = `{
 		}
 	]
 }`
-
-type jumperAppTest struct {
-	dlg *testDialog
-	cfg *config.Config
-	fs  *testFileSystem
-}
-
-func JumperAppTest(cliApp *cli.App, jat *jumperAppTest) {
-	jat.cfg.Init()
-	jat.cfg.SetFileSystem(jat.fs)
-
-	// Loading only global config
-	loadGlobalConfig(jat.cfg, jat.fs)
-
-	// Loading project config if exists
-	loadProjectConfig(jat.cfg, jat.fs)
-
-	// Define docker command
-	defineDockerCommand(jat.cfg, jat.dlg)
-
-	opt := getOptions(jat.cfg, jat.dlg)
-	opt.setInitFuntion(func(seekProject bool) string {
-		if err := seekPath(jat.cfg, jat.dlg, jat.fs, seekProject); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		if seekProject == true {
-			currentDir, _ := jat.fs.GetWd()
-			fmt.Printf("\nchanged user location to directory: %s\n\n", currentDir)
-			return currentDir
-		}
-
-		return ""
-	})
-	opt.execCommand = func(eo command.ExecOptions, c *cli.App) error {
-		fmt.Printf("\ncommand: %s\n\n", eo.GetCommand()+" "+strings.Join(eo.GetArgs(), " "))
-		return nil
-	}
-
-	dck := &testDockerInstance{}
-	dck.stat = func() (string, error) {
-		return "", nil
-	}
-	dck.initClient = func() error {
-		return nil
-	}
-	dck.getContainerList = func() ([]string, error) {
-		return []string{}, nil
-	}
-	dck.getClient = func() *client.Client {
-		return &client.Client{}
-	}
-
-	dockerDialog := getDockerStartDialog()
-	dockerDialog.setDialog(jat.dlg)
-	dockerDialog.setDocker(dck)
-	dockerDialog.setDockerService(jat.cfg.GetDockerCommand())
-	dockerDialog.startDockerDialog = func(cl *dockerStartDialog) (string, error) {
-		return "", nil
-	}
-	dockerDialog.containerList = func(cl *dockerStartDialog) ([]string, error) {
-		return []string{}, nil
-	}
-	opt.setDockerDialog(dockerDialog)
-
-	cliApp.Copyright = lib.GetCopyrightText(jat.cfg)
-	cliApp.Commands = commandList(jat.cfg, jat.dlg, opt)
-}
 
 type testDialog struct {
 	setMainContaner               func([]string) (int, string, error)
