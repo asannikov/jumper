@@ -26,7 +26,7 @@ type commandListDialog interface {
 }
 
 type commandListOptions interface {
-	GetInitFuntion() func(bool) string
+	GetInitFunction() func(bool) string
 	GetCommandLocation() func(string, string) (string, error)
 	GetStopContainers() func([]string) error
 	GetExecCommand() func(command.ExecOptions, *cli.App) error

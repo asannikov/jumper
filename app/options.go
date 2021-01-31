@@ -52,7 +52,7 @@ func (co *commandOptions) setNativeExec(ne func(command.ExecOptions, *cli.App) (
 	co.nativeExec = ne
 }
 
-func (co *commandOptions) GetInitFuntion() func(bool) string {
+func (co *commandOptions) GetInitFunction() func(bool) string {
 	return co.initf
 }
 

@@ -16,12 +16,12 @@ type shellDialog interface {
 }
 
 type shellOptions interface {
-	GetInitFuntion() func(bool) string
+	GetInitFunction() func(bool) string
 }
 
 // ShellCommand changes shell type
 func ShellCommand(cfg shellConfig, d shellDialog, options shellOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 	return &cli.Command{
 		Name:            "shell",
 		Usage:           "Change shell type for a project",

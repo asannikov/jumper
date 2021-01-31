@@ -8,12 +8,12 @@ type getProjectPathDialog interface {
 }
 
 type pathOptions interface {
-	GetInitFuntion() func(bool) string
+	GetInitFunction() func(bool) string
 }
 
 // GetProjectPath gets absolute path to the project without doing anything with docker
 func GetProjectPath(d getProjectPathDialog, options pathOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 
 	return &cli.Command{
 		Name:        "path",

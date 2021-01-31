@@ -77,14 +77,14 @@ type callStartProjectBasicDialog interface {
 }
 
 type startProjectOptions interface {
-	GetInitFuntion() func(bool) string
+	GetInitFunction() func(bool) string
 	GetContainerList() ([]string, error)
 	GetExecCommand() func(ExecOptions, *cli.App) error
 }
 
 // CallStartProjectBasic runs docker project
 func CallStartProjectBasic(cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, options startProjectOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 
 	cmd := cli.Command{
 		Name:            "start",
@@ -118,7 +118,7 @@ func CallStartProjectBasic(cfg callStartProjectBasicProjectConfig, d callStartPr
 
 // CallStartProjectForceRecreate runs docker project
 func CallStartProjectForceRecreate(cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, options startProjectOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 
 	cmd := cli.Command{
 		Name:    "start:force",
@@ -154,7 +154,7 @@ func CallStartProjectForceRecreate(cfg callStartProjectBasicProjectConfig, d cal
 
 // CallStartProjectOrphans runs docker project
 func CallStartProjectOrphans(cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, options startProjectOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 
 	cmd := cli.Command{
 		Name:    "start:orphans",
@@ -190,7 +190,7 @@ func CallStartProjectOrphans(cfg callStartProjectBasicProjectConfig, d callStart
 
 // CallStartProjectForceOrphans runs docker project
 func CallStartProjectForceOrphans(cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, options startProjectOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 
 	cmd := cli.Command{
 		Name:    "start:force-orphans",
@@ -232,7 +232,7 @@ type callStartMainContainerProjectConfig interface {
 
 // CallStartMainContainer runs docker main container
 func CallStartMainContainer(cfg callStartMainContainerProjectConfig, d callStartProjectBasicDialog, options startProjectOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 	execCommand := options.GetExecCommand()
 
 	cmd := cli.Command{
@@ -303,7 +303,7 @@ func restartMainContainer(cfg restartMainContainerProjectConfig, options restart
 }
 
 type restartProjectOptions interface {
-	GetInitFuntion() func(bool) string
+	GetInitFunction() func(bool) string
 	GetContainerList() ([]string, error)
 	GetExecCommand() func(ExecOptions, *cli.App) error
 	GetDockerStatus() bool
@@ -311,7 +311,7 @@ type restartProjectOptions interface {
 
 // CallRestartMainContainer restarts docker main container
 func CallRestartMainContainer(cfg callStartMainContainerProjectConfig, d callStartProjectBasicDialog, options restartProjectOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 	dockerStatus := options.GetDockerStatus()
 
 	cmd := cli.Command{
@@ -344,12 +344,12 @@ func CallRestartMainContainer(cfg callStartMainContainerProjectConfig, d callSta
 
 type callStartContainersOptions interface {
 	GetExecCommand() func(ExecOptions, *cli.App) error
-	GetInitFuntion() func(bool) string
+	GetInitFunction() func(bool) string
 }
 
 // CallStartContainers runs docker custom container
 func CallStartContainers(options callStartContainersOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 	execCommand := options.GetExecCommand()
 
 	cmd := cli.Command{
@@ -375,13 +375,13 @@ func CallStartContainers(options callStartContainersOptions) *cli.Command {
 
 type callRestartContainersOptions interface {
 	GetExecCommand() func(ExecOptions, *cli.App) error
-	GetInitFuntion() func(bool) string
+	GetInitFunction() func(bool) string
 	GetDockerStatus() bool
 }
 
 // CallRestartContainers restart docker custom containers
 func CallRestartContainers(options callRestartContainersOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 	dockerStatus := options.GetDockerStatus()
 	execCommand := options.GetExecCommand()
 

@@ -27,7 +27,7 @@ type magentoDialog interface {
 type magentoOptions interface {
 	GetExecCommand() func(ExecOptions, *cli.App) error
 	GetCommandLocation() func(string, string) (string, error)
-	GetInitFuntion() func(bool) string
+	GetInitFunction() func(bool) string
 	GetContainerList() ([]string, error)
 }
 
@@ -35,7 +35,7 @@ type magentoOptions interface {
 func CallMagentoCommand(cfg magentoGlobalConfig, d magentoDialog, options magentoOptions) *cli.Command {
 	execCommand := options.GetExecCommand()
 	commandLocation := options.GetCommandLocation()
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 
 	return &cli.Command{
 		Name:    "magento",

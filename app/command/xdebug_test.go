@@ -5,33 +5,88 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/urfave/cli/v2"
 )
 
-type testGetXdebugArgsProjectConfig struct {
+type testXdebugArgsProjectConfig struct {
 	xDebugFpmIniPath     string
 	xDebugCliIniPath     string
 	xDebugConfigLocation string
 	projectMainContainer string
+
+	saveContainerNameToProjectConfig error
+	saveDockerCliXdebugIniFilePath   error
+	saveDockerFpmXdebugIniFilePath   error
+	saveXDebugConifgLocaton          error
+	getCommandInactveStatus          bool
 }
 
-func (c *testGetXdebugArgsProjectConfig) GetXDebugFpmIniPath() string {
+func (c *testXdebugArgsProjectConfig) GetXDebugFpmIniPath() string {
 	return c.xDebugFpmIniPath
 }
-
-func (c *testGetXdebugArgsProjectConfig) GetXDebugCliIniPath() string {
+func (c *testXdebugArgsProjectConfig) GetXDebugCliIniPath() string {
 	return c.xDebugCliIniPath
 }
-
-func (c *testGetXdebugArgsProjectConfig) GetXDebugConfigLocaton() string {
+func (c *testXdebugArgsProjectConfig) GetXDebugConfigLocaton() string {
 	return c.xDebugConfigLocation
 }
-
-func (c *testGetXdebugArgsProjectConfig) GetProjectMainContainer() string {
+func (c *testXdebugArgsProjectConfig) GetProjectMainContainer() string {
 	return c.projectMainContainer
+}
+func (c *testXdebugArgsProjectConfig) SaveContainerNameToProjectConfig(v string) error {
+	return c.saveContainerNameToProjectConfig
+}
+func (c *testXdebugArgsProjectConfig) SaveDockerCliXdebugIniFilePath(v string) error {
+	return c.saveDockerCliXdebugIniFilePath
+}
+func (c *testXdebugArgsProjectConfig) SaveDockerFpmXdebugIniFilePath(v string) error {
+	return c.saveDockerFpmXdebugIniFilePath
+}
+func (c *testXdebugArgsProjectConfig) SaveXDebugConifgLocaton(v string) error {
+	return c.saveXDebugConifgLocaton
+}
+func (c *testXdebugArgsProjectConfig) GetCommandInactveStatus(v string) bool {
+	return c.getCommandInactveStatus
+}
+
+type testXDebugCommandDialog struct {
+	setMainContaner            func([]string) (int, string, error)
+	dockerCliXdebugIniFilePath func(string) (string, error)
+	dockerFpmXdebugIniFilePath func(string) (string, error)
+	xDebugConfigLocation       func() (int, string, error)
+}
+
+func (x *testXDebugCommandDialog) SetMainContaner(list []string) (int, string, error) {
+	return x.setMainContaner(list)
+}
+func (x *testXDebugCommandDialog) DockerCliXdebugIniFilePath(v string) (string, error) {
+	return x.dockerCliXdebugIniFilePath(v)
+}
+func (x *testXDebugCommandDialog) DockerFpmXdebugIniFilePath(v string) (string, error) {
+	return x.dockerFpmXdebugIniFilePath(v)
+}
+func (x *testXDebugCommandDialog) XDebugConfigLocation() (int, string, error) {
+	return x.xDebugConfigLocation()
+}
+
+type testXDebugOptions struct {
+	getExecCommand   func(ExecOptions, *cli.App) error
+	getInitFunction  func(bool) string
+	getContainerList func() ([]string, error)
+}
+
+func (x *testXDebugOptions) GetExecCommand() func(ExecOptions, *cli.App) error {
+	return x.getExecCommand
+}
+func (x *testXDebugOptions) GetInitFunction() func(bool) string {
+	return x.getInitFunction
+}
+func (x *testXDebugOptions) GetContainerList() ([]string, error) {
+	return x.getContainerList()
 }
 
 func TestGetXdebugArgsCase1(t *testing.T) {
-	cfg := &testGetXdebugArgsProjectConfig{
+	cfg := &testXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
 		xDebugConfigLocation: "container",
@@ -41,7 +96,7 @@ func TestGetXdebugArgsCase1(t *testing.T) {
 }
 
 func TestGetXdebugArgsCase2(t *testing.T) {
-	cfg := &testGetXdebugArgsProjectConfig{
+	cfg := &testXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugConfigLocation: "container",
 		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
@@ -51,7 +106,7 @@ func TestGetXdebugArgsCase2(t *testing.T) {
 }
 
 func TestGetXdebugArgsCase3(t *testing.T) {
-	cfg := &testGetXdebugArgsProjectConfig{
+	cfg := &testXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
 		xDebugConfigLocation: "container",
@@ -61,7 +116,7 @@ func TestGetXdebugArgsCase3(t *testing.T) {
 }
 
 func TestGetXdebugArgsCase4(t *testing.T) {
-	cfg := &testGetXdebugArgsProjectConfig{
+	cfg := &testXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
 		xDebugConfigLocation: "container",
@@ -71,7 +126,7 @@ func TestGetXdebugArgsCase4(t *testing.T) {
 }
 
 func TestGetXdebugArgsCase5(t *testing.T) {
-	cfg := &testGetXdebugArgsProjectConfig{
+	cfg := &testXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
 		xDebugConfigLocation: "local",
@@ -81,7 +136,7 @@ func TestGetXdebugArgsCase5(t *testing.T) {
 }
 
 func TestGetXdebugArgsCase6(t *testing.T) {
-	cfg := &testGetXdebugArgsProjectConfig{
+	cfg := &testXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugConfigLocation: "local",
 		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
@@ -91,7 +146,7 @@ func TestGetXdebugArgsCase6(t *testing.T) {
 }
 
 func TestGetXdebugArgsCase7(t *testing.T) {
-	cfg := &testGetXdebugArgsProjectConfig{
+	cfg := &testXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
 		xDebugConfigLocation: "local",
@@ -101,7 +156,7 @@ func TestGetXdebugArgsCase7(t *testing.T) {
 }
 
 func TestGetXdebugArgsCase8(t *testing.T) {
-	cfg := &testGetXdebugArgsProjectConfig{
+	cfg := &testXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
 		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
 		xDebugConfigLocation: "local",
@@ -361,38 +416,249 @@ func TestDefineFpmXdebugIniFilePathCase5(t *testing.T) {
 	assert.Nil(t, defineFpmXdebugIniFilePath(cfg, d, "/etc/php/7.0/fpm/conf.d/xdebug.ini"))
 }
 
-/*
-type testXdebugProjectConfig struct{}
+func TestXDebugCommandXdebugFpmEnableCase1(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{}
+	dlg := &testXDebugCommandDialog{}
+	opt := &testXDebugOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, errors.New("getContainerList error")
+		},
+	}
+	app := XDebugCommand("xdebug:fpm:enable", cfg, dlg, opt)
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
 
-func (c *testXdebugProjectConfig) GetXDebugFpmIniPath() string {
-	return ""
+	assert.EqualError(t, app.Action(ctx), "getContainerList error")
 }
 
-func (c *testXdebugProjectConfig) GetXDebugCliIniPath() string {
-	return ""
+func TestXDebugCommandXdebugFpmEnableCase2(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{}
+	dlg := &testXDebugCommandDialog{
+		setMainContaner: func(list []string) (int, string, error) {
+			return 0, "", errors.New("defineProjectMainContainer error")
+		},
+	}
+	opt := &testXDebugOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+	}
+	app := XDebugCommand("xdebug:fpm:enable", cfg, dlg, opt)
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	assert.EqualError(t, app.Action(ctx), "defineProjectMainContainer error")
 }
 
-func (c *testXdebugProjectConfig) GetXDebugConfigLocaton() string {
-	return ""
+func TestXDebugCommandXdebugFpmEnableCase3(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		xDebugFpmIniPath:               "",
+		saveDockerCliXdebugIniFilePath: errors.New("defineCliXdebugIniFilePath - SaveDockerCliXdebugIniFilePath error"),
+		saveDockerFpmXdebugIniFilePath: errors.New("defineFpmXdebugIniFilePath - SaveDockerFpmXdebugIniFilePath error"),
+	}
+	dlg := &testXDebugCommandDialog{
+		setMainContaner: func(list []string) (int, string, error) {
+			return 1, "container_name", nil
+		},
+		dockerCliXdebugIniFilePath: func(path string) (string, error) {
+			return "/path/to/cli", nil
+		},
+		dockerFpmXdebugIniFilePath: func(path string) (string, error) {
+			return "/path/to/fpm", nil
+		},
+	}
+	opt := &testXDebugOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+	}
+	app := XDebugCommand("xdebug:fpm:enable", cfg, dlg, opt)
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	assert.EqualError(t, app.Action(ctx), "defineFpmXdebugIniFilePath - SaveDockerFpmXdebugIniFilePath error")
 }
 
-func (c *testXdebugProjectConfig) GetProjectMainContainer() string {
-	return ""
+func TestXDebugCommandXdebugCliEnableCase4(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		xDebugFpmIniPath:               "",
+		saveDockerCliXdebugIniFilePath: errors.New("defineCliXdebugIniFilePath - SaveDockerCliXdebugIniFilePath error"),
+		saveDockerFpmXdebugIniFilePath: errors.New("defineFpmXdebugIniFilePath - SaveDockerFpmXdebugIniFilePath error"),
+	}
+	dlg := &testXDebugCommandDialog{
+		setMainContaner: func(list []string) (int, string, error) {
+			return 1, "container_name", nil
+		},
+		dockerCliXdebugIniFilePath: func(path string) (string, error) {
+			return "/path/to/cli", nil
+		},
+		dockerFpmXdebugIniFilePath: func(path string) (string, error) {
+			return "/path/to/fpm", nil
+		},
+	}
+	opt := &testXDebugOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+	}
+	app := XDebugCommand("xdebug:cli:enable", cfg, dlg, opt)
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	assert.EqualError(t, app.Action(ctx), "defineCliXdebugIniFilePath - SaveDockerCliXdebugIniFilePath error")
 }
 
-func (c *testXdebugProjectConfig) SaveContainerNameToProjectConfig(s string) error {
-	return nil
+func TestXDebugCommandXdebugCliEnableCase5(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		xDebugFpmIniPath:               "",
+		saveDockerCliXdebugIniFilePath: nil,
+		saveDockerFpmXdebugIniFilePath: nil,
+	}
+	dlg := &testXDebugCommandDialog{
+		setMainContaner: func(list []string) (int, string, error) {
+			return 1, "container_name", nil
+		},
+		dockerCliXdebugIniFilePath: func(path string) (string, error) {
+			return "/path/to/cli", nil
+		},
+		dockerFpmXdebugIniFilePath: func(path string) (string, error) {
+			return "/path/to/fpm", nil
+		},
+		xDebugConfigLocation: func() (int, string, error) {
+			return 0, "", errors.New("defineXdebugIniFileLocation error")
+		},
+	}
+	opt := &testXDebugOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+	}
+	app := XDebugCommand("xdebug:cli:enable", cfg, dlg, opt)
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	assert.EqualError(t, app.Action(ctx), "defineXdebugIniFileLocation error")
 }
 
-func (c *testXdebugProjectConfig) SaveDockerCliXdebugIniFilePath(s string) error {
-	return nil
+func TestXDebugCommandXdebugCliEnableCase6(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		xDebugFpmIniPath:               "",
+		saveDockerCliXdebugIniFilePath: nil,
+		saveDockerFpmXdebugIniFilePath: nil,
+	}
+	dlg := &testXDebugCommandDialog{
+		setMainContaner: func(list []string) (int, string, error) {
+			return 1, "container_name", nil
+		},
+		dockerCliXdebugIniFilePath: func(path string) (string, error) {
+			return "/path/to/cli", nil
+		},
+		dockerFpmXdebugIniFilePath: func(path string) (string, error) {
+			return "/path/to/fpm", nil
+		},
+		xDebugConfigLocation: func() (int, string, error) {
+			return 0, "local", nil
+		},
+	}
+	opt := &testXDebugOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return errors.New("exec command error")
+		},
+	}
+	app := XDebugCommand("xdebug:cli:enable", cfg, dlg, opt)
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	assert.EqualError(t, app.Action(ctx), "exec command error")
 }
 
-func (c *testXdebugProjectConfig) SaveDockerFpmXdebugIniFilePath(s string) error {
-	return nil
-}
+func TestXDebugCommandXdebug7(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		xDebugFpmIniPath:               "",
+		saveDockerCliXdebugIniFilePath: nil,
+		saveDockerFpmXdebugIniFilePath: nil,
+	}
+	dlg := &testXDebugCommandDialog{
+		setMainContaner: func(list []string) (int, string, error) {
+			return 1, "container_name", nil
+		},
+		dockerCliXdebugIniFilePath: func(path string) (string, error) {
+			return "/path/to/cli", nil
+		},
+		dockerFpmXdebugIniFilePath: func(path string) (string, error) {
+			return "/path/to/fpm", nil
+		},
+		xDebugConfigLocation: func() (int, string, error) {
+			return 0, "local", nil
+		},
+	}
+	opt := &testXDebugOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+	}
 
-func (c *testXdebugProjectConfig) SaveXDebugConifgLocaton(s string) error {
-	return nil
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	app := XDebugCommand("xdebug:cli:enable", cfg, dlg, opt)
+	assert.Nil(t, app.Action(ctx))
+
+	app = XDebugCommand("xdebug:cli:disable", cfg, dlg, opt)
+	assert.Nil(t, app.Action(ctx))
+
+	app = XDebugCommand("xdebug:fpm:enable", cfg, dlg, opt)
+	assert.Nil(t, app.Action(ctx))
+
+	app = XDebugCommand("xdebug:fpm:disable", cfg, dlg, opt)
+	assert.Nil(t, app.Action(ctx))
 }
-*/

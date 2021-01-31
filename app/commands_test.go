@@ -4,10 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
+	"testing"
 
+	"github.com/asannikov/jumper/app/command"
 	"github.com/asannikov/jumper/app/config"
 	"github.com/asannikov/jumper/app/lib"
 	"github.com/docker/docker/client"
+	"github.com/stretchr/testify/assert"
 	"github.com/urfave/cli/v2"
 )
 
@@ -147,6 +151,16 @@ func jumperMainAppTest() (*cli.App, *jumperAppTest, *commandOptions) {
 	opt.setDockerDialog(dockerDialog)
 
 	cliApp.Copyright = lib.GetCopyrightText(jcfg.cfg)
-	
+
 	return cliApp, jcfg, opt
+}
+
+func TestAppCall(t *testing.T) {
+	cliApp, jcfg, opt := jumperMainAppTest()
+	opt.execCommand = func(eo command.ExecOptions, c *cli.App) error {
+		fmt.Printf("\ncommand: %s\n\n", eo.GetCommand()+" "+strings.Join(eo.GetArgs(), " "))
+		return nil
+	}
+	cliApp.Commands = commandList(jcfg.cfg, jcfg.dlg, opt)
+	assert.Nil(t, cliApp.Run([]string{"jumper", "xdebug:fpm:enable"}))
 }
