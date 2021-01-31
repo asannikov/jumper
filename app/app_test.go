@@ -53,6 +53,90 @@ const testUserFileContent = `{
 	]
 }`
 
+type testDialog struct {
+	setMainContaner               func([]string) (int, string, error)
+	setStartCommand               func() (string, error)
+	setStartDocker                func() (string, error)
+	setDockerService              func() (string, error)
+	setDockerProjectPath          func(string) (string, error)
+	setDockerCliXdebugIniFilePath func(string) (string, error)
+	setDockerFmpXdebugIniFilePath func(string) (string, error)
+	setXdebugFileConfigLocation   func() (int, string, error)
+	setDockerShell                func() (int, string, error)
+
+	// Project management
+	setSelectProject  func([]string) (int, string, error)
+	setAddProjectPath func(string) (string, error)
+	setAddProjectName func() (string, error)
+}
+
+func (d *testDialog) DockerService() (string, error) {
+	return d.setDockerService()
+}
+
+func (d *testDialog) StartDocker() (string, error) {
+	return d.setStartDocker()
+}
+
+func (d *testDialog) StartCommand() (string, error) {
+	return d.setStartCommand()
+}
+
+func (d *testDialog) SetMainContaner(cl []string) (int, string, error) {
+	return d.setMainContaner(cl)
+}
+
+func (d *testDialog) DockerProjectPath(defaulPath string) (string, error) {
+	return d.setDockerProjectPath(defaulPath)
+}
+
+func (d *testDialog) CallAddProjectDialog(pc dialog.ProjectConfig) error {
+	if pc.GetProjectName() == "" {
+		pn, err := d.AddProjectName() // add project name
+		if err != nil {
+			return err
+		}
+		pc.SetProjectName(pn)
+	}
+
+	pp, err := d.AddProjectPath(pc.GetProjectPath()) // add project path
+	if err != nil {
+		return err
+	}
+
+	pc.SetProjectPath(pp)
+
+	return nil
+}
+
+func (d *testDialog) AddProjectPath(path string) (string, error) {
+	return d.setAddProjectPath(path)
+}
+
+func (d *testDialog) AddProjectName() (string, error) {
+	return d.setAddProjectName()
+}
+
+func (d *testDialog) SelectProject(list []string) (int, string, error) {
+	return d.setSelectProject(list)
+}
+
+func (d *testDialog) DockerShell() (int, string, error) {
+	return d.setDockerShell()
+}
+
+func (d *testDialog) DockerCliXdebugIniFilePath(defaulPath string) (string, error) {
+	return d.setDockerCliXdebugIniFilePath(defaulPath)
+}
+
+func (d *testDialog) DockerFpmXdebugIniFilePath(defaulPath string) (string, error) {
+	return d.setDockerFmpXdebugIniFilePath(defaulPath)
+}
+
+func (d *testDialog) XDebugConfigLocation() (int, string, error) {
+	return d.setXdebugFileConfigLocation()
+}
+
 type testFileSystem struct {
 	fileExists       func(string) (bool, error)
 	dirExists        func(string) (bool, error)
@@ -105,7 +189,7 @@ func TestDefinePaths(t *testing.T) {
 	err := definePaths(cfg, tfs)
 
 	assert.Equal(t, nil, err)
-	assert.Equal(t, "/user/path/"+string(os.PathSeparator)+".jumper.json", cfg.UserFile)
+	assert.Equal(t, "/user/path/"+string(os.PathSeparator)+".jumper.json", cfg.GetUserFile())
 
 	tfs = &testFileSystem{
 		getUserDirectory: func() (string, error) {
@@ -129,9 +213,7 @@ func TestSeekPathDefinePaths(t *testing.T) {
 		},
 	}
 
-	dialog := &dialog.Dialog{}
-
-	err := seekPath(cfg, dialog, tfs, true)
+	err := seekPath(cfg, &testDialog{}, tfs, true)
 	assert.EqualError(t, err, "Cannot read directory")
 }
 
@@ -152,9 +234,7 @@ func TestSeekPathLoadConfig(t *testing.T) {
 
 	cfg.SetFileSystem(tfs)
 
-	dialog := &dialog.Dialog{}
-
-	err := seekPath(cfg, dialog, tfs, true)
+	err := seekPath(cfg, &testDialog{}, tfs, true)
 	assert.EqualError(t, err, "Cannot read config file")
 }
 
@@ -178,9 +258,7 @@ func TestSeekPathGetWd(t *testing.T) {
 
 	cfg.SetFileSystem(tfs)
 
-	dialog := &dialog.Dialog{}
-
-	err := seekPath(cfg, dialog, tfs, true)
+	err := seekPath(cfg, &testDialog{}, tfs, true)
 	assert.EqualError(t, err, "Cannot get current directory")
 }
 
@@ -203,7 +281,7 @@ func TestSeekPathGetProjectNameList(t *testing.T) {
 			return "/current/path/", errors.New("stop execution")
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte(testUserFileContent), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return json.Unmarshal([]byte(testProjectFileContent), &configuration)
@@ -213,9 +291,8 @@ func TestSeekPathGetProjectNameList(t *testing.T) {
 	}
 
 	cfg.SetFileSystem(tfs)
-	dialog := &dialog.Dialog{}
 
-	err := seekPath(cfg, dialog, tfs, true)
+	err := seekPath(cfg, &testDialog{}, tfs, true)
 	assert.EqualError(t, err, "stop execution")
 
 	pl := cfg.GetProjectNameList()
@@ -241,7 +318,7 @@ func TestSeekPathrunDialogCase1(t *testing.T) {
 			return "/current/path/", nil
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte(testUserFileContent), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
@@ -251,8 +328,8 @@ func TestSeekPathrunDialogCase1(t *testing.T) {
 	}
 
 	cfg.SetFileSystem(tfs)
-	dialog := &dialog.Dialog{
-		SelectProject: func(projects []string) (int, string, error) {
+	dialog := &testDialog{
+		setSelectProject: func(projects []string) (int, string, error) {
 			return 0, "", errors.New("Error SelectProject dialog")
 		},
 	}
@@ -280,7 +357,7 @@ func TestSeekPathrunDialogCase2(t *testing.T) {
 			return "/current/path/", nil
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte(testUserFileContent), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
@@ -293,14 +370,14 @@ func TestSeekPathrunDialogCase2(t *testing.T) {
 	}
 
 	cfg.SetFileSystem(tfs)
-	dialog := &dialog.Dialog{
-		SelectProject: func(projects []string) (int, string, error) {
+	dialog := &testDialog{
+		setSelectProject: func(projects []string) (int, string, error) {
 			return -1, "New Project Name", nil
 		},
-		AddProjectName: func() (string, error) {
+		setAddProjectName: func() (string, error) {
 			return "", errors.New("Should not be called as the project name has been typed")
 		},
-		AddProjectPath: func(path string) (string, error) {
+		setAddProjectPath: func(path string) (string, error) {
 			if path == "/current/path/" {
 				return path, errors.New("Is ok")
 			}
@@ -331,7 +408,7 @@ func TestSeekPathrunDialogCase3(t *testing.T) {
 			return "/current/path/", nil
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte(testUserFileContent), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
@@ -350,14 +427,14 @@ func TestSeekPathrunDialogCase3(t *testing.T) {
 	}
 
 	cfg.SetFileSystem(tfs)
-	dialog := &dialog.Dialog{
-		SelectProject: func(projects []string) (int, string, error) {
+	dialog := &testDialog{
+		setSelectProject: func(projects []string) (int, string, error) {
 			return 0, "project2", nil
 		},
-		AddProjectName: func() (string, error) {
+		setAddProjectName: func() (string, error) {
 			return "", errors.New("Should not be called as the project name has been typed")
 		},
-		AddProjectPath: func(path string) (string, error) {
+		setAddProjectPath: func(path string) (string, error) {
 			return path, errors.New("Should not be called as the project has been selected")
 		},
 	}
@@ -385,7 +462,7 @@ func TestSeekPathrunDialogCase4(t *testing.T) {
 			return "", nil
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte("{}"), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
@@ -404,14 +481,14 @@ func TestSeekPathrunDialogCase4(t *testing.T) {
 	}
 
 	cfg.SetFileSystem(tfs)
-	dialog := &dialog.Dialog{
-		SelectProject: func(projects []string) (int, string, error) {
+	dialog := &testDialog{
+		setSelectProject: func(projects []string) (int, string, error) {
 			return -1, "", nil
 		},
-		AddProjectName: func() (string, error) {
+		setAddProjectName: func() (string, error) {
 			return "", errors.New("Add project name dialog error")
 		},
-		AddProjectPath: func(path string) (string, error) {
+		setAddProjectPath: func(path string) (string, error) {
 			return path, errors.New("Should not be called as the project has been selected")
 		},
 	}
@@ -458,7 +535,7 @@ func TestSeekPathrunDialogCase5(t *testing.T) {
 			return "", nil
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte("{}"), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
@@ -477,14 +554,14 @@ func TestSeekPathrunDialogCase5(t *testing.T) {
 	}
 
 	cfg.SetFileSystem(tfs)
-	dialog := &dialog.Dialog{
-		SelectProject: func(projects []string) (int, string, error) {
+	dialog := &testDialog{
+		setSelectProject: func(projects []string) (int, string, error) {
 			return -1, "", nil
 		},
-		AddProjectName: func() (string, error) {
+		setAddProjectName: func() (string, error) {
 			return "added project name", nil
 		},
-		AddProjectPath: func(path string) (string, error) {
+		setAddProjectPath: func(path string) (string, error) {
 			return "/added/path/to/project", nil
 		},
 	}
@@ -534,7 +611,7 @@ func TestSeekPathrunDialogCase6(t *testing.T) {
 			return "", nil
 		},
 		readConfigFile: func(filename string, configuration interface{}) error {
-			if filename == cfg.UserFile {
+			if filename == cfg.GetUserFile() {
 				return json.Unmarshal([]byte("{}"), &configuration)
 			} else if filename == cfg.ProjectFile {
 				return errors.New("Error: no such file or directory")
@@ -553,14 +630,15 @@ func TestSeekPathrunDialogCase6(t *testing.T) {
 	}
 
 	cfg.SetFileSystem(tfs)
-	dialog := &dialog.Dialog{
-		SelectProject: func(projects []string) (int, string, error) {
+
+	dialog := &testDialog{
+		setSelectProject: func(projects []string) (int, string, error) {
 			return -1, "", nil
 		},
-		AddProjectName: func() (string, error) {
+		setAddProjectName: func() (string, error) {
 			return "added project name", nil
 		},
-		AddProjectPath: func(path string) (string, error) {
+		setAddProjectPath: func(path string) (string, error) {
 			return "/added/path/to/project", nil
 		},
 	}

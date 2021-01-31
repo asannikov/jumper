@@ -15,8 +15,13 @@ type shellDialog interface {
 	DockerShell() (int, string, error)
 }
 
+type shellOptions interface {
+	GetInitFunction() func(bool) string
+}
+
 // ShellCommand changes shell type
-func ShellCommand(initf func(bool) string, cfg shellConfig, d shellDialog) *cli.Command {
+func ShellCommand(cfg shellConfig, d shellDialog, options shellOptions) *cli.Command {
+	initf := options.GetInitFunction()
 	return &cli.Command{
 		Name:            "shell",
 		Usage:           "Change shell type for a project",

@@ -13,12 +13,12 @@ type callCopyrightCommandDialog interface {
 }
 
 type copyrightOptions interface {
-	GetInitFuntion() func(bool) string
+	GetInitFunction() func(bool) string
 }
 
 // CallCopyrightCommand runs copyright dialog
 func CallCopyrightCommand(cfg copyRightGlobalConfig, options copyrightOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 
 	return &cli.Command{
 		Name: "copyright",

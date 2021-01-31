@@ -39,14 +39,14 @@ type commandHandleProjectConfig interface {
 }
 
 type callCliCommandOptions interface {
-	GetInitFuntion() func(bool) string
+	GetInitFunction() func(bool) string
 	GetContainerList() ([]string, error)
 	GetExecCommand() func(ExecOptions, *cli.App) error
 }
 
 // CallCliCommand calls a range of differnt cli commands
 func CallCliCommand(commandName string, cfg cliCommandHandleProjectConfig, d callCliCommandDialog, options callCliCommandOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 	execCommand := options.GetExecCommand()
 
 	clic := &cliCommand{

@@ -34,17 +34,27 @@ type definePathsFileSystem interface {
 	GetUserDirectory() (string, error)
 }
 
-func definePaths(cfg *config.Config, fs definePathsFileSystem) (err error) {
+type definePathsConfig interface {
+	SetUserFile(string)
+}
+
+func definePaths(cfg loadGlobalCfg, fs definePathsFileSystem) (err error) {
 	userDir, err := fs.GetUserDirectory()
-	cfg.UserFile = userDir + string(os.PathSeparator) + ".jumper.json"
+	cfg.SetUserFile(userDir + string(os.PathSeparator) + ".jumper.json")
 	return err
 }
 
-type runDialogFileSystem interface {
-	GoToProjectPath(string) error
+type runDialogConfig interface {
+	FindProjectPathInJSON(config.ProjectSettings)
+	ProjectConfgFileFound() bool
 }
 
-func runDialog(pc *projectConfig, cfg *config.Config, DLG *dialog.Dialog, fs runDialogFileSystem, pl []string, currentDir string) (err error) {
+type runDialogDialog interface {
+	SelectProject([]string) (int, string, error)
+	CallAddProjectDialog(dialog.ProjectConfig) error
+}
+
+func runDialog(pc *projectConfig, cfg runDialogConfig, DLG runDialogDialog, pl []string, currentDir string) (err error) {
 	if cfg.ProjectConfgFileFound() == false && len(pl) > 0 {
 		var index int
 		var projectName string
@@ -86,7 +96,16 @@ type seekPathFileSystem interface {
 	GetWd() (string, error)
 }
 
-func defineDockerCommand(cfg *config.Config, DLG *dialog.Dialog) (err error) {
+type defineDockerCommandConfig interface {
+	SetDockerCommand(string) error
+	GetDockerCommand() string
+}
+
+type defineDockerCommandDialog interface {
+	DockerService() (string, error)
+}
+
+func defineDockerCommand(cfg defineDockerCommandConfig, DLG defineDockerCommandDialog) (err error) {
 	command := cfg.GetDockerCommand()
 	if command == "" {
 		if command, err = DLG.DockerService(); err != nil {
@@ -98,7 +117,16 @@ func defineDockerCommand(cfg *config.Config, DLG *dialog.Dialog) (err error) {
 	return nil
 }
 
-func loadGlobalConfig(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem) (err error) {
+type loadGlobalCfg interface {
+	LoadConfig(bool) error
+	SetUserFile(string)
+}
+
+type loadGlobalSystem interface {
+	GetUserDirectory() (string, error)
+}
+
+func loadGlobalConfig(cfg loadGlobalCfg, fs loadGlobalSystem) (err error) {
 	if err = definePaths(cfg, fs); err != nil {
 		return err
 	}
@@ -110,7 +138,17 @@ func loadGlobalConfig(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSys
 	return nil
 }
 
-func loadProjectConfig(cfg *config.Config, fs seekPathFileSystem) (err error) {
+type loadProjectCfg interface {
+	LoadProjectConfig() (bool, error)
+	GetProjectName() string
+	SetProjectPath(string)
+}
+
+type loadProjectFs interface {
+	GetWd() (string, error)
+}
+
+func loadProjectConfig(cfg loadProjectCfg, fs loadProjectFs) (err error) {
 	var currentDir string
 	var status bool
 
@@ -127,7 +165,12 @@ func loadProjectConfig(cfg *config.Config, fs seekPathFileSystem) (err error) {
 	return nil
 }
 
-func seekPath(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem, seekProject bool) error {
+type seekPathDialog interface {
+	CallAddProjectDialog(dialog.ProjectConfig) error
+	SelectProject([]string) (int, string, error)
+}
+
+func seekPath(cfg *config.Config, DLG seekPathDialog, fs seekPathFileSystem, seekProject bool) error {
 	var currentDir string
 	var err error
 
@@ -135,7 +178,7 @@ func seekPath(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem, see
 		return nil
 	}
 
-	if err = loadGlobalConfig(cfg, DLG, fs); err != nil {
+	if err = loadGlobalConfig(cfg, fs); err != nil {
 		return err
 	}
 
@@ -150,7 +193,7 @@ func seekPath(cfg *config.Config, DLG *dialog.Dialog, fs seekPathFileSystem, see
 		projectname: cfg.GetProjectName(),
 	}
 
-	if err = runDialog(pc, cfg, DLG, fs, pl, currentDir); err != nil {
+	if err = runDialog(pc, cfg, DLG, pl, currentDir); err != nil {
 		return err
 	}
 

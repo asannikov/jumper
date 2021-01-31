@@ -9,10 +9,11 @@ import (
 )
 
 type testDockerInstance struct {
-	stat             func() (string, error)
 	run              func(string) error
-	initClient       func() error
 	getContainerList func() ([]string, error)
+	stat             func() (string, error)
+	initClient       func() error
+	getClient        func() *client.Client
 }
 
 func (d *testDockerInstance) Run(cmd string) error {
@@ -29,6 +30,10 @@ func (d *testDockerInstance) Stat() (string, error) {
 
 func (d *testDockerInstance) InitClient() error {
 	return d.initClient()
+}
+
+func (d *testDockerInstance) GetClient() *client.Client {
+	return d.getClient()
 }
 
 func TestGetContainerListCase1(t *testing.T) {

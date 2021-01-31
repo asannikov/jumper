@@ -66,7 +66,7 @@ type callComposerCommandDialog interface {
 }
 
 type callComposerCommandOptions interface {
-	GetInitFuntion() func(bool) string
+	GetInitFunction() func(bool) string
 	GetContainerList() ([]string, error)
 	GetExecCommand() func(ExecOptions, *cli.App) error
 	GetCommandLocation() func(string, string) (string, error)
@@ -78,7 +78,7 @@ type callComposerCommandOptions interface {
 func CallComposerCommand(composercommand string, cfg callComposerCommandProjectConfig, d callComposerCommandDialog, options callComposerCommandOptions) *cli.Command {
 	index, calltype, dockercmd := parseCommand(composercommand)
 
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 	execCommand := options.GetExecCommand()
 
 	cmp := &composer{

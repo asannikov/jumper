@@ -1,9 +1,5 @@
 package dialog
 
-import (
-	"github.com/manifoldco/promptui"
-)
-
 // Dialog contains methods for the iteraction with promptui
 type Dialog struct {
 	setMainContaner               func([]string) (int, string, error)
@@ -17,17 +13,17 @@ type Dialog struct {
 	setDockerShell                func() (int, string, error)
 
 	// Project management
-	SelectProject  func([]string) (int, string, error)
-	AddProjectPath func(string) (string, error)
-	AddProjectName func() (string, error)
+	setSelectProject  func([]string) (int, string, error)
+	setAddProjectPath func(string) (string, error)
+	setAddProjectName func() (string, error)
 }
 
 // InitDialogFunctions initiate all methods
 func InitDialogFunctions() Dialog {
 	return Dialog{
-		SelectProject:  selectProject,
-		AddProjectPath: addProjectPath,
-		AddProjectName: addProjectName,
+		setSelectProject:  selectProject,
+		setAddProjectPath: addProjectPath,
+		setAddProjectName: addProjectName,
 
 		setMainContaner:               setMainContaner,
 		setStartCommand:               setStartCommand,
@@ -41,20 +37,25 @@ func InitDialogFunctions() Dialog {
 	}
 }
 
-type projectConfig interface {
+// SetSelectProjectTest is used only for testing
+func (d *Dialog) SetSelectProjectTest(f func([]string) (int, string, error)) {
+	d.setSelectProject = f
+}
+
+// SetAddProjectPathTest is used only for testing
+func (d *Dialog) SetAddProjectPathTest(f func(string) (string, error)) {
+	d.setAddProjectPath = f
+}
+
+// SetAddProjectNameTest is used only for testing
+func (d *Dialog) SetAddProjectNameTest(f func() (string, error)) {
+	d.setAddProjectName = f
+}
+
+// ProjectConfig is for mocking parent functon in main file
+type ProjectConfig interface {
 	GetProjectName() string
 	GetProjectPath() string
 	SetProjectName(string)
 	SetProjectPath(string)
-}
-
-// select project path from the list
-func selectProject(projects []string) (int, string, error) {
-	prompt := promptui.SelectWithAdd{
-		Label:    "Select project from the list",
-		Items:    projects,
-		AddLabel: "Add new project",
-	}
-
-	return prompt.Run()
 }

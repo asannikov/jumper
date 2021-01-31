@@ -7,7 +7,7 @@ import (
 )
 
 type stopContainerOptions interface {
-	GetInitFuntion() func(bool) string
+	GetInitFunction() func(bool) string
 	GetContainerList() ([]string, error)
 	GetDockerStatus() bool
 	GetStopContainers() func([]string) error
@@ -16,7 +16,7 @@ type stopContainerOptions interface {
 
 // CallStopAllContainersCommand stops all docker containers
 func CallStopAllContainersCommand(options stopContainerOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 	dockerStatus := options.GetDockerStatus()
 	stopContainers := options.GetStopContainers()
 
@@ -46,7 +46,7 @@ type callStopMainContainerCommandDialog interface {
 
 // CallStopMainContainerCommand stops main container
 func CallStopMainContainerCommand(cfg callStopMainContainerCommandProjectConfig, d callStopMainContainerCommandDialog, options stopContainerOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 	dockerStatus := options.GetDockerStatus()
 	stopContainers := options.GetStopContainers()
 
@@ -79,7 +79,7 @@ func CallStopMainContainerCommand(cfg callStopMainContainerCommandProjectConfig,
 
 // CallStopSelectedContainersCommand stops selected docker containers
 func CallStopSelectedContainersCommand(options stopContainerOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 	dockerStatus := options.GetDockerStatus()
 	execCommand := options.GetExecCommand()
 
@@ -109,7 +109,7 @@ func CallStopSelectedContainersCommand(options stopContainerOptions) *cli.Comman
 // CallStopOneContainerCommand stops selected docker containers
 // @todo
 func CallStopOneContainerCommand(options stopContainerOptions) *cli.Command {
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 	dockerStatus := options.GetDockerStatus()
 	execCommand := options.GetExecCommand()
 

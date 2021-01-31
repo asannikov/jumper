@@ -57,7 +57,7 @@ func (g *GlobalConfig) GetProjectNameList() []string {
 	return pl
 }
 
-// GetCommandStatus checks command visibility
+// GetCommandInactveStatus checks command visibility
 func (g *GlobalConfig) GetCommandInactveStatus(cmd string) bool {
 	for _, a := range g.InactiveCommandTypes {
 		if a == cmd {

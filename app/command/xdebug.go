@@ -68,14 +68,14 @@ type xDebugCommandDialog interface {
 
 type xDebugOptions interface {
 	GetExecCommand() func(ExecOptions, *cli.App) error
-	GetInitFuntion() func(bool) string
+	GetInitFunction() func(bool) string
 	GetContainerList() ([]string, error)
 }
 
 //XDebugCommand enable/disable xDebug
 func XDebugCommand(xdebugAction string, cfg xdebugProjectConfig, d xDebugCommandDialog, options xDebugOptions) *cli.Command {
 	execCommand := options.GetExecCommand()
-	initf := options.GetInitFuntion()
+	initf := options.GetInitFunction()
 
 	descripton := `Set relative path from project root by asking path in local scope. Set absolute path for docker scope. Use local scope for mounted configs.`
 
@@ -120,11 +120,11 @@ func XDebugCommand(xdebugAction string, cfg xdebugProjectConfig, d xDebugCommand
 				return err
 			}
 
-			if err = defineCliXdebugIniFilePath(cfg, d, "/etc/php/7.0/cli/conf.d/xdebug.ini"); err != nil {
+			if err = defineCliXdebugIniFilePath(cfg, d, "/etc/php/7.0/cli/conf.d/xdebug.ini"); strings.Contains(xdebugAction, "cli") && err != nil {
 				return err
 			}
 
-			if err = defineFpmXdebugIniFilePath(cfg, d, "/etc/php/7.0/fpm/conf.d/xdebug.ini"); err != nil {
+			if err = defineFpmXdebugIniFilePath(cfg, d, "/etc/php/7.0/fpm/conf.d/xdebug.ini"); strings.Contains(xdebugAction, "fpm") && err != nil {
 				return err
 			}
 

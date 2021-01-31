@@ -5,6 +5,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+type commandOptionsDockerDialog interface {
+	GetContainerList() ([]string, error)
+}
+
 type commandOptions struct {
 	initf           func(bool) string
 	commandLocation func(string, string) (string, error)
@@ -12,7 +16,7 @@ type commandOptions struct {
 	execCommand     func(command.ExecOptions, *cli.App) error
 	copyTo          func(string, string, string) error
 	dockerStatus    bool
-	dockerDialog    *dockerStartDialog
+	dockerDialog    commandOptionsDockerDialog
 	nativeExec      func(command.ExecOptions, *cli.App) (err error)
 }
 
@@ -36,7 +40,7 @@ func (co *commandOptions) setDockerStatus(status bool) {
 	co.dockerStatus = status
 }
 
-func (co *commandOptions) setDockerDialog(dd *dockerStartDialog) {
+func (co *commandOptions) setDockerDialog(dd commandOptionsDockerDialog) {
 	co.dockerDialog = dd
 }
 
@@ -48,7 +52,7 @@ func (co *commandOptions) setNativeExec(ne func(command.ExecOptions, *cli.App) (
 	co.nativeExec = ne
 }
 
-func (co *commandOptions) GetInitFuntion() func(bool) string {
+func (co *commandOptions) GetInitFunction() func(bool) string {
 	return co.initf
 }
 

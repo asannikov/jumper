@@ -1,93 +1,42 @@
 package app
 
 import (
-	"errors"
-	"fmt"
-	"os/exec"
-	"strings"
-
-	"github.com/asannikov/jumper/app/bash"
 	"github.com/asannikov/jumper/app/config"
 	"github.com/asannikov/jumper/app/dialog"
-	"github.com/asannikov/jumper/app/docker"
-	"github.com/docker/docker/api/types"
 
 	"github.com/asannikov/jumper/app/command"
 
 	"github.com/urfave/cli/v2"
 )
 
-func commandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []*cli.Command {
+type commandListDialog interface {
+	DockerService() (string, error)
+	StartDocker() (string, error)
+	StartCommand() (string, error)
+	SetMainContaner([]string) (int, string, error)
+	DockerProjectPath(string) (string, error)
+	CallAddProjectDialog(dialog.ProjectConfig) error
+	AddProjectPath(string) (string, error)
+	AddProjectName() (string, error)
+	SelectProject([]string) (int, string, error)
+	DockerShell() (int, string, error)
+	DockerCliXdebugIniFilePath(string) (string, error)
+	DockerFpmXdebugIniFilePath(string) (string, error)
+	XDebugConfigLocation() (int, string, error)
+}
 
-	b := bash.Bash{}
+type commandListOptions interface {
+	GetInitFunction() func(bool) string
+	GetCommandLocation() func(string, string) (string, error)
+	GetStopContainers() func([]string) error
+	GetExecCommand() func(command.ExecOptions, *cli.App) error
+	GetDockerStatus() bool
+	GetContainerList() ([]string, error)
+	GetCopyTo(container string, sourcePath string, dstPath string) error
+	RunNativeExec(eo command.ExecOptions, ca *cli.App) error
+}
 
-	getCommandLocationF := b.GetCommandLocation()
-
-	dck := docker.GetDockerInstance()
-
-	dockerDialog := getDockerStartDialog()
-	dockerDialog.setDialog(d)
-	dockerDialog.setDocker(dck)
-	dockerDialog.setDockerService(c.GetDockerCommand())
-
-	dockerStatus := false
-
-	if dockerAPIVersiongo, _ := dck.Stat(); dockerAPIVersiongo != "" {
-		dockerStatus = true
-		dck.InitClient()
-	}
-
-	opt := &commandOptions{}
-	opt.setInitFuntion(initf)
-	opt.setCommandLocation(getCommandLocationF)
-	opt.setDockerStatus(dockerStatus)
-	opt.setStopContainers(dck.StopContainers())
-	opt.setExecCommand(func(eo command.ExecOptions, app *cli.App) error {
-
-		cmd := exec.Command(eo.GetCommand(), eo.GetArgs()...)
-
-		cmd.Stdin = app.Reader
-		cmd.Stdout = app.Writer
-		cmd.Stderr = app.ErrWriter
-
-		fmt.Printf("\ncommand: %s\n\n", eo.GetCommand()+" "+strings.Join(eo.GetArgs(), " "))
-
-		return cmd.Run()
-	})
-	opt.setDockerDialog(dockerDialog)
-	opt.setCopyTo(func(container string, sourcePath string, dstPath string) error {
-		return dck.CopyTo(container, sourcePath, dstPath)
-	})
-	opt.setNativeExec(func(eo command.ExecOptions, app *cli.App) (err error) {
-		ic := &ioCli{
-			reader:    app.Reader,
-			writer:    app.Writer,
-			errWriter: app.ErrWriter,
-		}
-
-		cnf := types.ExecConfig{
-			AttachStderr: true,
-			AttachStdin:  true,
-			AttachStdout: true,
-			User:         eo.GetUser(),
-			Tty:          eo.GetTty(),
-			Cmd:          append([]string{eo.GetCommand()}, eo.GetArgs()...),
-			WorkingDir:   eo.GetWorkingDir(),
-		}
-
-		status, err := dck.Exec(c.GetProjectMainContainer(), &cnf, ic)
-
-		if err != nil {
-			return err
-		}
-
-		if status > 0 {
-			return errors.New("Error is occurred on exec function")
-		}
-
-		return nil
-	})
-
+func commandList(c *config.Config, d commandListDialog, opt commandListOptions) []*cli.Command {
 	return []*cli.Command{
 		// cli commands
 		command.CallCliCommand("cli", c, d, opt),
@@ -139,7 +88,7 @@ func commandList(c *config.Config, d *dialog.Dialog, initf func(bool) string) []
 		command.XDebugCommand("xdebug:cli:disable", c, d, opt),
 
 		// Shell
-		command.ShellCommand(initf, c, d),
+		command.ShellCommand(c, d, opt),
 
 		// docker pull https://docs.docker.com/engine/api/sdk/examples/
 		command.CallMagentoCommand(c, d, opt),
