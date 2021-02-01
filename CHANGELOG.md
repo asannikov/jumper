@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.8.3 (01.02.2021)
+- improvment
+    - cli test covered
+
 ## 1.8.2 (31.01.2021)
 - improvment
     - xdebug test covered
