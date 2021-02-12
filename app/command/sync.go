@@ -62,7 +62,6 @@ type syncOptions interface {
 }
 
 // SyncCommand does the syncronization between container and project
-// @todo alternative way to copy options.GetCopyTo(cfg.GetProjectMainContainer(), "/local/path/", "/var/www/docker/")
 func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, options syncOptions) *cli.Command {
 	execCommand := options.GetExecCommand()
 	initf := options.GetInitFunction()

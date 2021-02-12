@@ -1,10 +1,13 @@
 package command
 
 import (
+	"errors"
+	"flag"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/urfave/cli/v2"
 )
 
 type syncConfig struct {
@@ -15,21 +18,53 @@ type syncConfig struct {
 func (sc *syncConfig) GetProjectMainContainer() string {
 	return sc.projectMainContainer
 }
-
 func (sc *syncConfig) GetProjectDockerPath() string {
 	return sc.projectDockerPath
 }
-
 func (sc *syncConfig) SaveContainerNameToProjectConfig(s string) error {
 	return nil
 }
-
 func (sc *syncConfig) SaveStartCommandToProjectConfig(s string) error {
 	return nil
 }
-
 func (sc *syncConfig) SaveDockerProjectPath(s string) error {
 	return nil
+}
+
+type syncDlg struct {
+	setMainContaner   func() (int, string, error)
+	dockerProjectPath func() (string, error)
+}
+
+func (dlg *syncDlg) SetMainContaner([]string) (int, string, error) {
+	return dlg.setMainContaner()
+}
+func (dlg *syncDlg) DockerProjectPath(string) (string, error) {
+	return dlg.dockerProjectPath()
+}
+
+type testSyncOptions struct {
+	getExecCommand   func(ExecOptions, *cli.App) error
+	getInitFunction  func(bool) string
+	getContainerList func() ([]string, error)
+	getCopyTo        func(container string, sourcePath string, dstPath string) error
+	runNativeExec    func(ExecOptions, *cli.App) error
+}
+
+func (x *testSyncOptions) GetExecCommand() func(ExecOptions, *cli.App) error {
+	return x.getExecCommand
+}
+func (x *testSyncOptions) GetInitFunction() func(bool) string {
+	return x.getInitFunction
+}
+func (x *testSyncOptions) GetContainerList() ([]string, error) {
+	return x.getContainerList()
+}
+func (x *testSyncOptions) GetCopyTo(container string, sourcePath string, dstPath string) error {
+	return x.getCopyTo(container, sourcePath, dstPath)
+}
+func (x *testSyncOptions) RunNativeExec(o ExecOptions, app *cli.App) error {
+	return x.runNativeExec(o, app)
 }
 
 func TestGetSyncPath(t *testing.T) {
@@ -85,4 +120,209 @@ func TestGetSyncArgs(t *testing.T) {
 
 	args = getSyncArgs(cfg, "copyto", getSyncPath("/vendor/path"), "/path/to/local/project")
 	assert.Equal(t, "cp /path/to/local/project/vendor/path phpfmp:/var/www/html/vendor", strings.Join(args, " "))
+}
+
+func TestSyncCommandCase1(t *testing.T) {
+	cfg := &syncConfig{}
+	dlg := &syncDlg{}
+	opt := &testSyncOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := SyncCommand("copyto", cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "Please, specify the path you want to sync")
+}
+
+func TestSyncCommandCase2(t *testing.T) {
+	cfg := &syncConfig{}
+	dlg := &syncDlg{}
+	opt := &testSyncOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, errors.New("get container list error")
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{
+		"path/to/sync",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := SyncCommand("copyto", cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "get container list error")
+}
+
+func TestSyncCommandCase3(t *testing.T) {
+	cfg := &syncConfig{}
+	dlg := &syncDlg{
+		setMainContaner: func() (int, string, error) {
+			return 0, "", errors.New("defineProjectMainContainer error")
+		},
+	}
+	opt := &testSyncOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{
+		"path/to/sync",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := SyncCommand("copyto", cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "defineProjectMainContainer error")
+}
+
+func TestSyncCommandCase4(t *testing.T) {
+	cfg := &syncConfig{}
+	dlg := &syncDlg{
+		setMainContaner: func() (int, string, error) {
+			return 0, "main_container", nil
+		},
+		dockerProjectPath: func() (string, error) {
+			return "", errors.New("DockerProjectPath error")
+		},
+	}
+	opt := &testSyncOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{
+		"path/to/sync",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := SyncCommand("copyto", cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "DockerProjectPath error")
+}
+
+func TestSyncCommandCase5(t *testing.T) {
+	cfg := &syncConfig{}
+	dlg := &syncDlg{
+		setMainContaner: func() (int, string, error) {
+			return 0, "main_container", nil
+		},
+		dockerProjectPath: func() (string, error) {
+			return "/var/www/html/", nil
+		},
+	}
+	opt := &testSyncOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return errors.New("getExecCommand error")
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Bool("f", false, "")
+	set.Parse([]string{
+		"path/to/sync",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := SyncCommand("copyfrom", cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "getExecCommand error")
+}
+
+func TestSyncCommandCase6(t *testing.T) {
+	cfg := &syncConfig{}
+	dlg := &syncDlg{
+		setMainContaner: func() (int, string, error) {
+			return 0, "main_container", nil
+		},
+		dockerProjectPath: func() (string, error) {
+			return "/var/www/html/", nil
+		},
+	}
+	opt := &testSyncOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Bool("f", false, "")
+	set.Parse([]string{
+		"path/to/sync",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := SyncCommand("copyfrom", cfg, dlg, opt)
+
+	assert.Nil(t, app.Action(ctx))
 }
