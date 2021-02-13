@@ -3,6 +3,7 @@ package command
 import (
 	"errors"
 	"flag"
+	"os"
 	"strings"
 	"testing"
 
@@ -49,6 +50,8 @@ type testSyncOptions struct {
 	getContainerList func() ([]string, error)
 	getCopyTo        func(container string, sourcePath string, dstPath string) error
 	runNativeExec    func(ExecOptions, *cli.App) error
+	dirExists        func(string) (bool, error)
+	mkdirAll         func(string, os.FileMode) error
 }
 
 func (x *testSyncOptions) GetExecCommand() func(ExecOptions, *cli.App) error {
@@ -65,6 +68,12 @@ func (x *testSyncOptions) GetCopyTo(container string, sourcePath string, dstPath
 }
 func (x *testSyncOptions) RunNativeExec(o ExecOptions, app *cli.App) error {
 	return x.runNativeExec(o, app)
+}
+func (x *testSyncOptions) DirExists(path string) (bool, error) {
+	return x.dirExists(path)
+}
+func (x *testSyncOptions) MkdirAll(path string, fileMode os.FileMode) error {
+	return x.mkdirAll(path, fileMode)
 }
 
 func TestGetSyncPath(t *testing.T) {
