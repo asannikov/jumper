@@ -335,3 +335,255 @@ func TestSyncCommandCase6(t *testing.T) {
 
 	assert.Nil(t, app.Action(ctx))
 }
+
+func TestSyncCommandCase7(t *testing.T) {
+	cfg := &syncConfig{}
+	dlg := &syncDlg{
+		setMainContaner: func() (int, string, error) {
+			return 0, "main_container", nil
+		},
+		dockerProjectPath: func() (string, error) {
+			return "/var/www/html/", nil
+		},
+	}
+	opt := &testSyncOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		mkdirAll: func(path string, filePerm os.FileMode) error {
+			return errors.New("Path cannot be created")
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Bool("f", true, "")
+	set.Parse([]string{
+		"path/to/sync",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := SyncCommand("copyfrom", cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "Path cannot be created")
+}
+
+func TestSyncCommandCase8(t *testing.T) {
+	cfg := &syncConfig{}
+	dlg := &syncDlg{
+		setMainContaner: func() (int, string, error) {
+			return 0, "main_container", nil
+		},
+		dockerProjectPath: func() (string, error) {
+			return "/var/www/html/", nil
+		},
+	}
+	opt := &testSyncOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return errors.New("ExecCommand error")
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		mkdirAll: func(path string, filePerm os.FileMode) error {
+			return nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Bool("f", true, "")
+	set.Parse([]string{
+		"path/to/sync",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := SyncCommand("copyfrom", cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "ExecCommand error")
+}
+
+func TestSyncCommandCase9(t *testing.T) {
+	cfg := &syncConfig{}
+	dlg := &syncDlg{
+		setMainContaner: func() (int, string, error) {
+			return 0, "main_container", nil
+		},
+		dockerProjectPath: func() (string, error) {
+			return "/var/www/html/", nil
+		},
+	}
+	opt := &testSyncOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return errors.New("ExecCommand error")
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		dirExists: func(path string) (bool, error) {
+			return false, nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Bool("f", true, "")
+	set.Parse([]string{
+		"path/to/sync",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := SyncCommand("copyto", cfg, dlg, opt)
+
+	assert.Nil(t, app.Action(ctx))
+}
+
+func TestSyncCommandCase10(t *testing.T) {
+	cfg := &syncConfig{}
+	dlg := &syncDlg{
+		setMainContaner: func() (int, string, error) {
+			return 0, "main_container", nil
+		},
+		dockerProjectPath: func() (string, error) {
+			return "/var/www/html/", nil
+		},
+	}
+	opt := &testSyncOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return errors.New("ExecCommand error")
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		dirExists: func(path string) (bool, error) {
+			return false, errors.New("Dir exists error")
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Bool("f", true, "")
+	set.Parse([]string{
+		"path/to/sync",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := SyncCommand("copyto", cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "Dir exists error")
+}
+
+func TestSyncCommandCase11(t *testing.T) {
+	cfg := &syncConfig{}
+	dlg := &syncDlg{
+		setMainContaner: func() (int, string, error) {
+			return 0, "main_container", nil
+		},
+		dockerProjectPath: func() (string, error) {
+			return "/var/www/html/", nil
+		},
+	}
+	opt := &testSyncOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return errors.New("ExecCommand error")
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		dirExists: func(path string) (bool, error) {
+			return true, nil
+		},
+		runNativeExec: func(o ExecOptions, ap *cli.App) error {
+			return errors.New("path cannot be created")
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Bool("f", true, "")
+	set.Parse([]string{
+		"path/to/sync",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := SyncCommand("copyto", cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "path cannot be created")
+}
+
+func TestSyncCommandCase12(t *testing.T) {
+	cfg := &syncConfig{}
+	dlg := &syncDlg{
+		setMainContaner: func() (int, string, error) {
+			return 0, "main_container", nil
+		},
+		dockerProjectPath: func() (string, error) {
+			return "/var/www/html/", nil
+		},
+	}
+	opt := &testSyncOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		dirExists: func(path string) (bool, error) {
+			return true, nil
+		},
+		runNativeExec: func(o ExecOptions, ap *cli.App) error {
+			return nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Bool("f", true, "")
+	set.Parse([]string{
+		"path/to/sync",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := SyncCommand("copyto", cfg, dlg, opt)
+
+	assert.Nil(t, app.Action(ctx))
+}
