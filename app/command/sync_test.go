@@ -556,7 +556,7 @@ func TestSyncCommandCase12(t *testing.T) {
 	}
 	opt := &testSyncOptions{
 		getExecCommand: func(o ExecOptions, a *cli.App) error {
-			return nil
+			return errors.New("ExecCommand error")
 		},
 		getInitFunction: func(s bool) string {
 			return "/current/path"
