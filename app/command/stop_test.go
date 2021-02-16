@@ -32,7 +32,7 @@ func (x *testStopOptions) GetStopContainers() func([]string) error {
 	return x.getStopContainers
 }
 
-func TestCallStopAllContainersCommand(t *testing.T) {
+func TestCallStopAllContainersCommandCase1(t *testing.T) {
 	opt := &testStopOptions{
 		getDockerStatus: false,
 		getInitFunction: func(s bool) string {
@@ -51,4 +51,28 @@ func TestCallStopAllContainersCommand(t *testing.T) {
 	app := CallStopAllContainersCommand(opt)
 
 	assert.EqualError(t, app.Action(ctx), "Docker is not running")
+}
+
+func TestCallStopAllContainersCommandCase2(t *testing.T) {
+	opt := &testStopOptions{
+		getDockerStatus: true,
+		getInitFunction: func(s bool) string {
+			return ""
+		},
+		getStopContainers: func(list []string) error {
+			return nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStopAllContainersCommand(opt)
+
+	assert.Nil(t, app.Action(ctx))
 }
