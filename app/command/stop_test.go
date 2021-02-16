@@ -212,3 +212,93 @@ func TestCallStopMainContainerCommandCase4(t *testing.T) {
 
 	assert.EqualError(t, app.Action(ctx), "stopContainers error")
 }
+
+func TestCallStopSelectedContainersCommandCase1(t *testing.T) {
+	opt := &testStopOptions{
+		getDockerStatus: false,
+		getInitFunction: func(s bool) string {
+			return ""
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStopSelectedContainersCommand(opt)
+
+	assert.EqualError(t, app.Action(ctx), "Docker is not running")
+}
+
+func TestCallStopSelectedContainersCommandCase2(t *testing.T) {
+	opt := &testStopOptions{
+		getDockerStatus: true,
+		getInitFunction: func(s bool) string {
+			return ""
+		},
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStopSelectedContainersCommand(opt)
+
+	assert.Nil(t, app.Action(ctx))
+}
+
+func TestCallStopOneContainerCommandCase1(t *testing.T) {
+	opt := &testStopOptions{
+		getDockerStatus: false,
+		getInitFunction: func(s bool) string {
+			return ""
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStopOneContainerCommand(opt)
+
+	assert.EqualError(t, app.Action(ctx), "Docker is not running")
+}
+
+func TestCallStopOneContainerCommandCase2(t *testing.T) {
+	opt := &testStopOptions{
+		getDockerStatus: true,
+		getInitFunction: func(s bool) string {
+			return ""
+		},
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStopOneContainerCommand(opt)
+
+	assert.Nil(t, app.Action(ctx))
+}
