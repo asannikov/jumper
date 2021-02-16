@@ -1,6 +1,7 @@
 package command
 
 import (
+	"errors"
 	"flag"
 	"testing"
 
@@ -30,6 +31,26 @@ func (x *testStopOptions) GetDockerStatus() bool {
 }
 func (x *testStopOptions) GetStopContainers() func([]string) error {
 	return x.getStopContainers
+}
+
+type testStopConfig struct {
+	getProjectMainContainer          string
+	saveContainerNameToProjectConfig error
+}
+
+func (tsc *testStopConfig) GetProjectMainContainer() string {
+	return tsc.getProjectMainContainer
+}
+func (tsc *testStopConfig) SaveContainerNameToProjectConfig(name string) error {
+	return tsc.saveContainerNameToProjectConfig
+}
+
+type testStopDialog struct {
+	setMainContaner func([]string) (int, string, error)
+}
+
+func (tsd *testStopDialog) SetMainContaner(list []string) (int, string, error) {
+	return tsd.setMainContaner(list)
 }
 
 func TestCallStopAllContainersCommandCase1(t *testing.T) {
@@ -75,4 +96,119 @@ func TestCallStopAllContainersCommandCase2(t *testing.T) {
 	app := CallStopAllContainersCommand(opt)
 
 	assert.Nil(t, app.Action(ctx))
+}
+
+func TestCallStopMainContainerCommandCase1(t *testing.T) {
+	opt := &testStopOptions{
+		getDockerStatus: false,
+	}
+
+	cfg := &testStopConfig{}
+	dlg := &testStopDialog{}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStopMainContainerCommand(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "Docker is not running")
+}
+
+func TestCallStopMainContainerCommandCase2(t *testing.T) {
+	opt := &testStopOptions{
+		getDockerStatus: true,
+		getContainerList: func() ([]string, error) {
+			return []string{}, errors.New("get container error")
+		},
+		getInitFunction: func(s bool) string {
+			return ""
+		},
+	}
+
+	cfg := &testStopConfig{}
+	dlg := &testStopDialog{}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStopMainContainerCommand(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "get container error")
+}
+
+func TestCallStopMainContainerCommandCase3(t *testing.T) {
+	opt := &testStopOptions{
+		getDockerStatus: true,
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		getInitFunction: func(s bool) string {
+			return ""
+		},
+	}
+
+	cfg := &testStopConfig{
+		getProjectMainContainer: "",
+	}
+
+	dlg := &testStopDialog{
+		setMainContaner: func(list []string) (int, string, error) {
+			return 0, "", errors.New("defineProjectMainContainer error")
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStopMainContainerCommand(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "defineProjectMainContainer error")
+}
+
+func TestCallStopMainContainerCommandCase4(t *testing.T) {
+	opt := &testStopOptions{
+		getDockerStatus: true,
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		getInitFunction: func(s bool) string {
+			return ""
+		},
+		getStopContainers: func(list []string) error {
+			return errors.New("stopContainers error")
+		},
+	}
+
+	cfg := &testStopConfig{
+		getProjectMainContainer: "container_name",
+	}
+
+	dlg := &testStopDialog{}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStopMainContainerCommand(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "stopContainers error")
 }
