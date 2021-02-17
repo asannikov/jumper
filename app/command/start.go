@@ -86,7 +86,7 @@ type startProjectOptions interface {
 func CallStartProjectBasic(cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, options startProjectOptions) *cli.Command {
 	initf := options.GetInitFunction()
 
-	cmd := cli.Command{
+	return &cli.Command{
 		Name:            "start",
 		Aliases:         []string{"st"},
 		Usage:           `Runs defined command: {docker-compose -f docker-compose.yml up} [custom parameters]`,
@@ -112,8 +112,6 @@ func CallStartProjectBasic(cfg callStartProjectBasicProjectConfig, d callStartPr
 			return runStartProject(c, cfg, []string{}, options)
 		},
 	}
-
-	return &cmd
 }
 
 // CallStartProjectForceRecreate runs docker project
