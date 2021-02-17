@@ -599,3 +599,147 @@ func TestCallStartProjectOrphansCase4(t *testing.T) {
 
 	assert.Nil(t, app.Action(ctx))
 }
+
+func TestCallStartProjectForceOrphansCase1(t *testing.T) {
+	cfg := &testStartConfig{
+		getStartCommand: "start_command up",
+	}
+
+	dlg := &testStartDialog{}
+
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, errors.New("GetContainerList error")
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStartProjectForceOrphans(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "GetContainerList error")
+}
+
+func TestCallStartProjectForceOrphansCase2(t *testing.T) {
+	cfg := &testStartConfig{
+		getStartCommand: "start_command up",
+	}
+
+	dlg := &testStartDialog{
+		setMainContaner: func() (int, string, error) {
+			return 0, "", nil
+		},
+	}
+
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStartProjectForceOrphans(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "Container name is empty. Set the container name")
+}
+
+func TestCallStartProjectForceOrphansCase3(t *testing.T) {
+	cfg := &testStartConfig{
+		getStartCommand: "",
+	}
+
+	dlg := &testStartDialog{
+		setMainContaner: func() (int, string, error) {
+			return 0, "container_name", nil
+		},
+		startCommand: func() (string, error) {
+			return "start_command", errors.New("Start command error")
+		},
+	}
+
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		getExecCommand: func(ExecOptions, *cli.App) error {
+			return nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStartProjectForceOrphans(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "Start command error")
+}
+
+func TestCallStartProjectForceOrphansCase4(t *testing.T) {
+	cfg := &testStartConfig{
+		getStartCommand: "start_command up",
+	}
+
+	dlg := &testStartDialog{
+		setMainContaner: func() (int, string, error) {
+			return 0, "container_name", nil
+		},
+		startCommand: func() (string, error) {
+			return "start_command", errors.New("Start command error")
+		},
+	}
+
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		getExecCommand: func(e ExecOptions, c *cli.App) error {
+			assert.Equal(t, e.GetCommand(), "start_command")
+			assert.Equal(t, e.GetArgs(), []string{"up", "--force-recreate", "--remove-orphans", "container_name"})
+			return nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{
+		"container_name",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStartProjectForceOrphans(cfg, dlg, opt)
+
+	assert.Nil(t, app.Action(ctx))
+}
