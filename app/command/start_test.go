@@ -743,3 +743,103 @@ func TestCallStartProjectForceOrphansCase4(t *testing.T) {
 
 	assert.Nil(t, app.Action(ctx))
 }
+
+func TestCallStartMainContainerCase1(t *testing.T) {
+	cfg := &testStartConfig{
+		getStartCommand: "start_command up",
+	}
+
+	dlg := &testStartDialog{}
+
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, errors.New("GetContainerList error")
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStartMainContainer(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "GetContainerList error")
+}
+
+func TestCallStartMainContainerCase2(t *testing.T) {
+	cfg := &testStartConfig{
+		getStartCommand: "start_command up",
+	}
+
+	dlg := &testStartDialog{
+		setMainContaner: func() (int, string, error) {
+			return 0, "", nil
+		},
+	}
+
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStartMainContainer(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "Container name is empty. Set the container name")
+}
+
+func TestCallStartMainContainerCase3(t *testing.T) {
+	cfg := &testStartConfig{
+		projectMainContainer: "container_name",
+	}
+
+	dlg := &testStartDialog{
+		setMainContaner: func() (int, string, error) {
+			return 0, "container_name", nil
+		},
+	}
+
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		getExecCommand: func(e ExecOptions, c *cli.App) error {
+			assert.Equal(t, e.GetCommand(), "docker")
+			assert.Equal(t, e.GetArgs(), []string{"start", "container_name"})
+			return nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStartMainContainer(cfg, dlg, opt)
+
+	assert.Nil(t, app.Action(ctx))
+}
