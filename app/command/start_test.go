@@ -152,7 +152,6 @@ func TestRunStartProjectCase2(t *testing.T) {
 
 	opt := &testStartOptions{
 		getExecCommand: func(e ExecOptions, c *cli.App) error {
-
 			assert.Equal(t, e.GetCommand(), "start_command")
 			assert.Equal(t, e.GetArgs(), []string{"up", "--force-recreate", "container_name"})
 			return nil
@@ -313,38 +312,138 @@ func TestCallStartProjectBasicCase4(t *testing.T) {
 	assert.Nil(t, app.Action(ctx))
 }
 
-/* func TestSyncCommandCase12(t *testing.T) {
-	cfg := &syncConfig{}
-	dlg := &syncDlg{
-		setMainContaner: func() (int, string, error) {
-			return 0, "main_container", nil
+func TestCallStartProjectForceRecreateCase1(t *testing.T) {
+	cfg := &testStartConfig{
+		getStartCommand: "start_command up",
+	}
+
+	dlg := &testStartDialog{}
+
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
 		},
-		dockerProjectPath: func() (string, error) {
-			return "/var/www/html/", nil
+		getContainerList: func() ([]string, error) {
+			return []string{}, errors.New("GetContainerList error")
 		},
 	}
-	opt := &testSyncOptions{
-		getExecCommand: func(o ExecOptions, a *cli.App) error {
-			return nil
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStartProjectForceRecreate(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "GetContainerList error")
+}
+
+func TestCallStartProjectForceRecreateCase2(t *testing.T) {
+	cfg := &testStartConfig{
+		getStartCommand: "start_command up",
+	}
+
+	dlg := &testStartDialog{
+		setMainContaner: func() (int, string, error) {
+			return 0, "", nil
 		},
+	}
+
+	opt := &testStartOptions{
 		getInitFunction: func(s bool) string {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
 			return []string{}, nil
 		},
-		dirExists: func(path string) (bool, error) {
-			return true, nil
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStartProjectForceRecreate(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "Container name is empty. Set the container name")
+}
+
+func TestCallStartProjectForceRecreateCase3(t *testing.T) {
+	cfg := &testStartConfig{
+		getStartCommand: "",
+	}
+
+	dlg := &testStartDialog{
+		setMainContaner: func() (int, string, error) {
+			return 0, "container_name", nil
 		},
-		runNativeExec: func(o ExecOptions, ap *cli.App) error {
+		startCommand: func() (string, error) {
+			return "start_command", errors.New("Start command error")
+		},
+	}
+
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		getExecCommand: func(ExecOptions, *cli.App) error {
 			return nil
 		},
 	}
 
 	set := &flag.FlagSet{}
-	set.Bool("f", true, "")
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStartProjectForceRecreate(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "Start command error")
+}
+
+func TestCallStartProjectForceRecreateCase4(t *testing.T) {
+	cfg := &testStartConfig{
+		getStartCommand: "start_command up",
+	}
+
+	dlg := &testStartDialog{
+		setMainContaner: func() (int, string, error) {
+			return 0, "container_name", nil
+		},
+		startCommand: func() (string, error) {
+			return "start_command", errors.New("Start command error")
+		},
+	}
+
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		getExecCommand: func(e ExecOptions, c *cli.App) error {
+			assert.Equal(t, e.GetCommand(), "start_command")
+			assert.Equal(t, e.GetArgs(), []string{"up", "--force-recreate", "container_name"})
+			return nil
+		},
+	}
+
+	set := &flag.FlagSet{}
 	set.Parse([]string{
-		"path/to/sync",
+		"container_name",
 	})
 
 	ctx := &cli.Context{
@@ -352,8 +451,7 @@ func TestCallStartProjectBasicCase4(t *testing.T) {
 	}
 
 	ctx = cli.NewContext(&cli.App{}, set, ctx)
-	app := SyncCommand("copyto", cfg, dlg, opt)
+	app := CallStartProjectForceRecreate(cfg, dlg, opt)
 
 	assert.Nil(t, app.Action(ctx))
 }
-*/

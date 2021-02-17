@@ -118,7 +118,7 @@ func CallStartProjectBasic(cfg callStartProjectBasicProjectConfig, d callStartPr
 func CallStartProjectForceRecreate(cfg callStartProjectBasicProjectConfig, d callStartProjectBasicDialog, options startProjectOptions) *cli.Command {
 	initf := options.GetInitFunction()
 
-	cmd := cli.Command{
+	return &cli.Command{
 		Name:    "start:force",
 		Aliases: []string{"s:f"},
 		Usage:   `Runs defined command: {docker-compose -f docker-compose.yml up --force-recreat} [custom parameters]`,
@@ -146,8 +146,6 @@ func CallStartProjectForceRecreate(cfg callStartProjectBasicProjectConfig, d cal
 			return runStartProject(c, cfg, []string{"--force-recreate"}, options)
 		},
 	}
-
-	return &cmd
 }
 
 // CallStartProjectOrphans runs docker project
