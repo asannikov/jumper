@@ -1021,3 +1021,140 @@ func TestCallRestartMainContainerCase5(t *testing.T) {
 
 	assert.EqualError(t, app.Action(ctx), "restartMainContainer error")
 }
+
+func TestCallRestartContainersCase1(t *testing.T) {
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getDockerStatus: false,
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallRestartContainers(opt)
+
+	assert.EqualError(t, app.Action(ctx), "Docker is not running")
+}
+
+func TestCallRestartContainersCase2(t *testing.T) {
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getDockerStatus: true,
+		getExecCommand: func(e ExecOptions, c *cli.App) error {
+			return errors.New("restartMainContainer error")
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallRestartContainers(opt)
+
+	assert.EqualError(t, app.Action(ctx), "restartMainContainer error")
+}
+
+func TestCallRestartContainersCase3(t *testing.T) {
+	first := true
+
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		getDockerStatus: true,
+		getExecCommand: func(e ExecOptions, c *cli.App) error {
+			assert.Equal(t, e.GetCommand(), "docker")
+			if first == true {
+				assert.Equal(t, e.GetArgs(), []string{"stop", "container_name1", "container_name2"})
+				first = false
+			} else {
+				assert.Equal(t, e.GetArgs(), []string{"start", "container_name1", "container_name2"})
+			}
+
+			return nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{
+		"container_name1",
+		"container_name2",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallRestartContainers(opt)
+
+	assert.Nil(t, app.Action(ctx))
+}
+
+func TestCallStartContainersCase1(t *testing.T) {
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getExecCommand: func(e ExecOptions, c *cli.App) error {
+			return errors.New("restartMainContainer error")
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStartContainers(opt)
+
+	assert.EqualError(t, app.Action(ctx), "restartMainContainer error")
+}
+
+func TestCallStartContainersCase2(t *testing.T) {
+	opt := &testStartOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getExecCommand: func(e ExecOptions, c *cli.App) error {
+			assert.Equal(t, e.GetCommand(), "docker")
+			assert.Equal(t, e.GetArgs(), []string{"start", "container_name1", "container_name2"})
+
+			return nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{
+		"container_name1",
+		"container_name2",
+	})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := CallStartContainers(opt)
+
+	assert.Nil(t, app.Action(ctx))
+}
