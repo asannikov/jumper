@@ -8,14 +8,23 @@ import (
 )
 
 type testComposerHandleBaseProjectConfig struct {
-	mainContainer string
+	mainContainer     string
+	mainContainerUser string
 }
 
 func (tc *testComposerHandleBaseProjectConfig) GetProjectMainContainer() string {
 	return tc.mainContainer
 }
 
+func (tc *testComposerHandleBaseProjectConfig) GetMainContainerUser() string {
+	return tc.mainContainerUser
+}
+
 func (tc *testComposerHandleBaseProjectConfig) SaveContainerNameToProjectConfig(container string) error {
+	return nil
+}
+
+func (tc *testComposerHandleBaseProjectConfig) SaveContainerUserToProjectConfig(user string) error {
 	return nil
 }
 
@@ -24,6 +33,10 @@ type testComposerHandleBaseComposerDialog struct {
 
 func (d *testComposerHandleBaseComposerDialog) SetMainContaner([]string) (int, string, error) {
 	return 0, "", nil
+}
+
+func (d *testComposerHandleBaseComposerDialog) SetMainContanerUser() (string, error) {
+	return "", nil
 }
 
 type testComposer struct {

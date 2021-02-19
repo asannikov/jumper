@@ -14,6 +14,7 @@ type commandListDialog interface {
 	StartDocker() (string, error)
 	StartCommand() (string, error)
 	SetMainContaner([]string) (int, string, error)
+	SetMainContanerUser() (string, error)
 	DockerProjectPath(string) (string, error)
 	CallAddProjectDialog(dialog.ProjectConfig) error
 	AddProjectPath(string) (string, error)

@@ -15,6 +15,7 @@ type ProjectConfig struct {
 	XDebugCliIniPath  string `json:"xdebug_path_cli"`
 	XDebugFpmIniPath  string `json:"xdebug_path_fpm"`
 	Shell             string `json:"shell"`
+	ContainerUser     string `json:"main_container_user"`
 }
 
 // GetShell gets path to project
@@ -60,4 +61,9 @@ func (p *ProjectConfig) GetMainContainer() string {
 // GetStartCommand gets php container name
 func (p *ProjectConfig) GetStartCommand() string {
 	return p.StartCommand
+}
+
+// GetMainContainerUser gets php container main user
+func (p *ProjectConfig) GetMainContainerUser() string {
+	return p.ContainerUser
 }
