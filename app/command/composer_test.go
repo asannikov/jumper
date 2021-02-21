@@ -109,7 +109,8 @@ func TestComposerHandleCase1(t *testing.T) {
 
 func TestComposerHandleCase2(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "userName",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
@@ -133,7 +134,8 @@ func TestComposerHandleCase2(t *testing.T) {
 
 func TestComposerHandleCase3(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "root",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
@@ -164,7 +166,8 @@ func TestComposerHandleCase3(t *testing.T) {
 
 func TestComposerHandleCase4(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "root",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
@@ -197,7 +200,8 @@ func TestComposerHandleCase4(t *testing.T) {
 
 func TestComposerHandleCase5(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "userName",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
@@ -234,7 +238,8 @@ func TestComposerHandleCase5(t *testing.T) {
 
 func TestComposerHandleCase6(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "userName",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
@@ -267,7 +272,8 @@ func TestComposerHandleCase6(t *testing.T) {
 
 func TestComposerHandleCase7(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "userName",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
@@ -302,7 +308,8 @@ func TestComposerHandleCase7(t *testing.T) {
 
 func TestComposerHandleCase8(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "userName",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
