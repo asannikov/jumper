@@ -341,3 +341,65 @@ func TestComposerHandleCase8(t *testing.T) {
 
 	assert.EqualError(t, err, "Error on getting composer path")
 }
+
+func TestComposerHandleCase9(t *testing.T) {
+	cfg := &testComposerHandleBaseProjectConfig{
+		mainContainer:     "containerName",
+		mainContainerUser: "username",
+	}
+
+	dlg := &testComposerHandleBaseComposerDialog{}
+
+	cmp := &testComposer{
+		locaton: func(container string, service string) (string, error) {
+			return "/path/to/" + service, nil
+		},
+		ctype:   "",
+		command: "",
+	}
+
+	a := &args{
+		get:   "",
+		slice: []string{},
+	}
+
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	args, err := composerHandle(cfg, dlg, cmp, cl, a)
+
+	assert.Nil(t, err)
+	assert.Equal(t, []string{"exec", "-it", "-u", "username", "containerName", "composer"}, args)
+}
+
+func TestComposerHandleCase10(t *testing.T) {
+	cfg := &testComposerHandleBaseProjectConfig{
+		mainContainer: "containerName",
+	}
+
+	dlg := &testComposerHandleBaseComposerDialog{}
+
+	cmp := &testComposer{
+		locaton: func(container string, service string) (string, error) {
+			return "/path/to/" + service, nil
+		},
+		ctype:   "",
+		command: "",
+	}
+
+	a := &args{
+		get:   "",
+		slice: []string{},
+	}
+
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	_, err := composerHandle(cfg, dlg, cmp, cl, a)
+
+	assert.EqualError(t, err, "Container user name is empty. Set the user name")
+}
