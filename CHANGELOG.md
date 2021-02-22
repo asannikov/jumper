@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.8.3 (22.02.2021)
+- improvement
+    - add default docker user definition
+    - add unittests for general command lib
+
 ## 1.8.2 (31.01.2021)
 - improvment
     - xdebug test covered
