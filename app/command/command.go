@@ -75,6 +75,33 @@ func defineProjectMainContainer(cfg projectMainContainerProjectConfig, d defineP
 	return nil
 }
 
+type projectMainContainerProjectUserConfig interface {
+	SaveContainerUserToProjectConfig(string) error
+	GetMainContainerUser() string
+}
+
+type defineProjectMainContainerUserDialog interface {
+	SetMainContanerUser() (string, error)
+}
+
+func defineProjectMainContainerUser(cfg projectMainContainerProjectUserConfig, d defineProjectMainContainerUserDialog) (err error) {
+	if cfg.GetMainContainerUser() == "" {
+		user, err := d.SetMainContanerUser()
+
+		if err != nil {
+			return err
+		}
+
+		if user == "" {
+			return errors.New("Container user name is empty. Set the user name")
+		}
+
+		return cfg.SaveContainerUserToProjectConfig(user)
+	}
+
+	return nil
+}
+
 type dockerPathProjectConfig interface {
 	SaveDockerProjectPath(string) error
 	GetProjectDockerPath() string

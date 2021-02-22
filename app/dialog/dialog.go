@@ -11,6 +11,7 @@ type Dialog struct {
 	setDockerFmpXdebugIniFilePath func(string) (string, error)
 	setXdebugFileConfigLocation   func() (int, string, error)
 	setDockerShell                func() (int, string, error)
+	setMainContanerUser           func() (string, error)
 
 	// Project management
 	setSelectProject  func([]string) (int, string, error)
@@ -25,6 +26,7 @@ func InitDialogFunctions() Dialog {
 		setAddProjectPath: addProjectPath,
 		setAddProjectName: addProjectName,
 
+		setMainContanerUser:           setMainContanerUser,
 		setMainContaner:               setMainContaner,
 		setStartCommand:               setStartCommand,
 		setStartDocker:                startDocker,

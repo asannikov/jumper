@@ -102,7 +102,7 @@ Every stable release has attached sources for "linux/amd64", "linux/386", "darwi
 
 For example:
 ```
-https://github.com/asannikov/jumper/releases/tag/v1.8.2
+https://github.com/asannikov/jumper/releases/tag/v1.8.3
 ```
 Find related source there and download it. Now you can place use source at any place you want on your machine or make it global in a standard way.
 

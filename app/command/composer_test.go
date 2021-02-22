@@ -8,14 +8,23 @@ import (
 )
 
 type testComposerHandleBaseProjectConfig struct {
-	mainContainer string
+	mainContainer     string
+	mainContainerUser string
 }
 
 func (tc *testComposerHandleBaseProjectConfig) GetProjectMainContainer() string {
 	return tc.mainContainer
 }
 
+func (tc *testComposerHandleBaseProjectConfig) GetMainContainerUser() string {
+	return tc.mainContainerUser
+}
+
 func (tc *testComposerHandleBaseProjectConfig) SaveContainerNameToProjectConfig(container string) error {
+	return nil
+}
+
+func (tc *testComposerHandleBaseProjectConfig) SaveContainerUserToProjectConfig(user string) error {
 	return nil
 }
 
@@ -24,6 +33,10 @@ type testComposerHandleBaseComposerDialog struct {
 
 func (d *testComposerHandleBaseComposerDialog) SetMainContaner([]string) (int, string, error) {
 	return 0, "", nil
+}
+
+func (d *testComposerHandleBaseComposerDialog) SetMainContanerUser() (string, error) {
+	return "", nil
 }
 
 type testComposer struct {
@@ -96,7 +109,8 @@ func TestComposerHandleCase1(t *testing.T) {
 
 func TestComposerHandleCase2(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "userName",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
@@ -120,7 +134,8 @@ func TestComposerHandleCase2(t *testing.T) {
 
 func TestComposerHandleCase3(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "root",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
@@ -151,7 +166,8 @@ func TestComposerHandleCase3(t *testing.T) {
 
 func TestComposerHandleCase4(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "root",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
@@ -184,7 +200,8 @@ func TestComposerHandleCase4(t *testing.T) {
 
 func TestComposerHandleCase5(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "userName",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
@@ -221,7 +238,8 @@ func TestComposerHandleCase5(t *testing.T) {
 
 func TestComposerHandleCase6(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "userName",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
@@ -254,7 +272,8 @@ func TestComposerHandleCase6(t *testing.T) {
 
 func TestComposerHandleCase7(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "userName",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
@@ -289,7 +308,8 @@ func TestComposerHandleCase7(t *testing.T) {
 
 func TestComposerHandleCase8(t *testing.T) {
 	cfg := &testComposerHandleBaseProjectConfig{
-		mainContainer: "containerName",
+		mainContainer:     "containerName",
+		mainContainerUser: "userName",
 	}
 
 	dlg := &testComposerHandleBaseComposerDialog{}
@@ -320,4 +340,66 @@ func TestComposerHandleCase8(t *testing.T) {
 	_, err := composerHandle(cfg, dlg, cmp, cl, a)
 
 	assert.EqualError(t, err, "Error on getting composer path")
+}
+
+func TestComposerHandleCase9(t *testing.T) {
+	cfg := &testComposerHandleBaseProjectConfig{
+		mainContainer:     "containerName",
+		mainContainerUser: "username",
+	}
+
+	dlg := &testComposerHandleBaseComposerDialog{}
+
+	cmp := &testComposer{
+		locaton: func(container string, service string) (string, error) {
+			return "/path/to/" + service, nil
+		},
+		ctype:   "",
+		command: "",
+	}
+
+	a := &args{
+		get:   "",
+		slice: []string{},
+	}
+
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	args, err := composerHandle(cfg, dlg, cmp, cl, a)
+
+	assert.Nil(t, err)
+	assert.Equal(t, []string{"exec", "-it", "-u", "username", "containerName", "composer"}, args)
+}
+
+func TestComposerHandleCase10(t *testing.T) {
+	cfg := &testComposerHandleBaseProjectConfig{
+		mainContainer: "containerName",
+	}
+
+	dlg := &testComposerHandleBaseComposerDialog{}
+
+	cmp := &testComposer{
+		locaton: func(container string, service string) (string, error) {
+			return "/path/to/" + service, nil
+		},
+		ctype:   "",
+		command: "",
+	}
+
+	a := &args{
+		get:   "",
+		slice: []string{},
+	}
+
+	cl := &testContainerlist{
+		err:           nil,
+		containerList: []string{},
+	}
+
+	_, err := composerHandle(cfg, dlg, cmp, cl, a)
+
+	assert.EqualError(t, err, "Container user name is empty. Set the user name")
 }
