@@ -59,10 +59,13 @@ type callComposerCommandProjectConfig interface {
 	GetProjectMainContainer() string
 	SaveContainerNameToProjectConfig(string) error
 	GetCommandInactveStatus(string) bool
+	SaveContainerUserToProjectConfig(string) error
+	GetMainContainerUser() string
 }
 
 type callComposerCommandDialog interface {
 	SetMainContaner([]string) (int, string, error)
+	SetMainContanerUser() (string, error)
 }
 
 type callComposerCommandOptions interface {
@@ -148,10 +151,13 @@ type composerInterface interface {
 type composerHandleProjectConfig interface {
 	GetProjectMainContainer() string
 	SaveContainerNameToProjectConfig(string) error
+	GetMainContainerUser() string
+	SaveContainerUserToProjectConfig(string) error
 }
 
 type composerHandleDialog interface {
 	SetMainContaner([]string) (int, string, error)
+	SetMainContanerUser() (string, error)
 }
 
 func composerHandle(cfg composerHandleProjectConfig, d composerHandleDialog, c composerInterface, options containerlist, a cli.Args) ([]string, error) {
@@ -166,9 +172,17 @@ func composerHandle(cfg composerHandleProjectConfig, d composerHandleDialog, c c
 		return []string{}, err
 	}
 
+	if err = defineProjectMainContainerUser(cfg, d); err != nil {
+		return []string{}, err
+	}
+
 	var initArgs = []string{"exec"}
 
 	composerArgs := []string{"-it", cfg.GetProjectMainContainer(), "composer"}
+
+	if cfg.GetMainContainerUser() != "root" && cfg.GetMainContainerUser() != "" {
+		composerArgs = []string{"-it", "-u", cfg.GetMainContainerUser(), cfg.GetProjectMainContainer(), "composer"}
+	}
 
 	if c.GetCallType() == "memory" || a.Get(0) == "m" {
 		var phpLocation, composerLocation string

@@ -55,6 +55,7 @@ const testUserFileContent = `{
 
 type testDialog struct {
 	setMainContaner               func([]string) (int, string, error)
+	setMainContanerUser           func() (string, error)
 	setStartCommand               func() (string, error)
 	setStartDocker                func() (string, error)
 	setDockerService              func() (string, error)
@@ -88,6 +89,10 @@ func (d *testDialog) SetMainContaner(cl []string) (int, string, error) {
 
 func (d *testDialog) DockerProjectPath(defaulPath string) (string, error) {
 	return d.setDockerProjectPath(defaulPath)
+}
+
+func (d *testDialog) SetMainContanerUser() (string, error) {
+	return d.setMainContanerUser()
 }
 
 func (d *testDialog) CallAddProjectDialog(pc dialog.ProjectConfig) error {
