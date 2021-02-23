@@ -198,6 +198,10 @@ func composerHandle(cfg composerHandleProjectConfig, d composerHandleDialog, c c
 		}
 
 		composerArgs = []string{"-i", cfg.GetProjectMainContainer(), phpLocation, "-d", "memory_limit=-1", composerLocation}
+
+		if cfg.GetMainContainerUser() != "root" && cfg.GetMainContainerUser() != "" {
+			composerArgs = []string{"-i", "-u", cfg.GetMainContainerUser(), cfg.GetProjectMainContainer(), phpLocation, "-d", "memory_limit=-1", composerLocation}
+		}
 	}
 
 	if len(c.GetComposerCommand()) > 0 {
