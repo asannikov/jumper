@@ -57,12 +57,13 @@ type syncOptions interface {
 	GetExecCommand() func(ExecOptions, *cli.App) error
 	GetInitFunction() func(bool) string
 	GetContainerList() ([]string, error)
-	GetCopyTo(container string, sourcePath string, dstPath string) error
+	GetCopyTo(string, string, string) error
 	RunNativeExec(ExecOptions, *cli.App) error
+	DirExists(string) (bool, error)
+	MkdirAll(string, os.FileMode) error
 }
 
 // SyncCommand does the syncronization between container and project
-// @todo alternative way to copy options.GetCopyTo(cfg.GetProjectMainContainer(), "/local/path/", "/var/www/docker/")
 func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, options syncOptions) *cli.Command {
 	execCommand := options.GetExecCommand()
 	initf := options.GetInitFunction()
@@ -124,7 +125,7 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 			args := getSyncArgs(cfg, direction, syncPath, currentPath)
 
 			if direction == syncCopyFrom && c.Bool("f") == true {
-				if err = os.MkdirAll(args[2]+filepath.Base(syncPath), os.ModePerm); err == nil {
+				if err = options.MkdirAll(args[2]+filepath.Base(syncPath), os.ModePerm); err == nil {
 					fmt.Printf("Path %s was created", args[2]+filepath.Base(syncPath))
 				}
 			}
@@ -140,7 +141,7 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 
 				status := false
 
-				status, err = dirExists(args[1])
+				status, err = options.DirExists(args[1])
 				if err != nil || status == false {
 					fmt.Printf("Source directory %s does not exist\n", args[1])
 					return err

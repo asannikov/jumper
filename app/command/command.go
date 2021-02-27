@@ -2,8 +2,6 @@ package command
 
 import (
 	"errors"
-	"fmt"
-	"os"
 )
 
 // ExecOptions defines exec options
@@ -128,21 +126,4 @@ func defineProjectDockerPath(cfg dockerPathProjectConfig, d defineProjectDockerP
 	}
 
 	return nil
-}
-
-// dirExists checks if directory exists
-func dirExists(path string) (bool, error) {
-	if info, err := os.Stat(path); err == nil {
-		if info.IsDir() {
-			return true, nil
-		}
-		return false, fmt.Errorf("Path %s is a file ", path)
-	} else if os.IsNotExist(err) {
-		// path does *not* exist
-		return false, err
-	} else {
-		// Schrodinger: file may or may not exist. See err for details.
-		// Therefore, do *NOT* use !os.IsNotExist(err) to test for file existence
-		return false, err
-	}
 }

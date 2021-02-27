@@ -1,6 +1,8 @@
 package app
 
 import (
+	"os"
+
 	"github.com/asannikov/jumper/app/command"
 	"github.com/urfave/cli/v2"
 )
@@ -18,6 +20,9 @@ type commandOptions struct {
 	dockerStatus    bool
 	dockerDialog    commandOptionsDockerDialog
 	nativeExec      func(command.ExecOptions, *cli.App) (err error)
+	dirExists       func(string) (bool, error)
+	mkdirAll        func(string, os.FileMode) error
+	magentoBin      func(string, string) (bool, error)
 }
 
 func (co *commandOptions) setInitFuntion(f func(bool) string) {
@@ -52,6 +57,18 @@ func (co *commandOptions) setNativeExec(ne func(command.ExecOptions, *cli.App) (
 	co.nativeExec = ne
 }
 
+func (co *commandOptions) setDirExists(de func(string) (bool, error)) {
+	co.dirExists = de
+}
+
+func (co *commandOptions) setMkdirAll(mka func(string, os.FileMode) error) {
+	co.mkdirAll = mka
+}
+
+func (co *commandOptions) setMagentoBin(smb func(string, string) (bool, error)) {
+	co.magentoBin = smb
+}
+
 func (co *commandOptions) GetInitFunction() func(bool) string {
 	return co.initf
 }
@@ -82,4 +99,16 @@ func (co *commandOptions) GetCopyTo(container string, sourcePath string, dstPath
 
 func (co *commandOptions) RunNativeExec(eo command.ExecOptions, ca *cli.App) error {
 	return co.nativeExec(eo, ca)
+}
+
+func (co *commandOptions) DirExists(path string) (bool, error) {
+	return co.dirExists(path)
+}
+
+func (co *commandOptions) MkdirAll(path string, fileMode os.FileMode) error {
+	return co.mkdirAll(path, fileMode)
+}
+
+func (co *commandOptions) CheckMagentoBin(containerName string, magentoBin string) (bool, error) {
+	return co.magentoBin(containerName, magentoBin)
 }

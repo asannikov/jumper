@@ -1,6 +1,8 @@
 package app
 
 import (
+	"os"
+
 	"github.com/asannikov/jumper/app/config"
 	"github.com/asannikov/jumper/app/dialog"
 
@@ -35,6 +37,9 @@ type commandListOptions interface {
 	GetContainerList() ([]string, error)
 	GetCopyTo(container string, sourcePath string, dstPath string) error
 	RunNativeExec(eo command.ExecOptions, ca *cli.App) error
+	DirExists(string) (bool, error)
+	MkdirAll(string, os.FileMode) error
+	CheckMagentoBin(containerName string, magentoBin string) (bool, error)
 }
 
 func commandList(c *config.Config, d commandListDialog, opt commandListOptions) []*cli.Command {
