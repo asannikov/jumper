@@ -22,6 +22,7 @@ type commandOptions struct {
 	nativeExec      func(command.ExecOptions, *cli.App) (err error)
 	dirExists       func(string) (bool, error)
 	mkdirAll        func(string, os.FileMode) error
+	magentoBin      func(string, string) (bool, error)
 }
 
 func (co *commandOptions) setInitFuntion(f func(bool) string) {
@@ -64,6 +65,10 @@ func (co *commandOptions) setMkdirAll(mka func(string, os.FileMode) error) {
 	co.mkdirAll = mka
 }
 
+func (co *commandOptions) setMagentoBin(smb func(string, string) (bool, error)) {
+	co.magentoBin = smb
+}
+
 func (co *commandOptions) GetInitFunction() func(bool) string {
 	return co.initf
 }
@@ -102,4 +107,8 @@ func (co *commandOptions) DirExists(path string) (bool, error) {
 
 func (co *commandOptions) MkdirAll(path string, fileMode os.FileMode) error {
 	return co.mkdirAll(path, fileMode)
+}
+
+func (co *commandOptions) CheckMagentoBin(containerName string, magentoBin string) (bool, error) {
+	return co.setMagentoBin(containerName, magentoBin)
 }

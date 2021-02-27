@@ -29,126 +29,140 @@ type magentoOptions interface {
 	GetCommandLocation() func(string, string) (string, error)
 	GetInitFunction() func(bool) string
 	GetContainerList() ([]string, error)
+	CheckMagentoBin(containerName string, magentoBin string) (bool, error)
+}
+
+func callMagentoCommanBin(cfg magentoGlobalConfig, d magentoDialog, options magentoOptions) *cli.Command {
+	execCommand := options.GetExecCommand()
+	initf := options.GetInitFunction()
+
+	return &cli.Command{
+		Name:    "bin/magento",
+		Aliases: []string{"bm"},
+		Usage:   "It looks for bin/magento command and call it",
+		Action: func(c *cli.Context) error {
+			initf(true)
+
+			var err error
+			var cl []string
+
+			if cl, err = options.GetContainerList(); err != nil {
+				return err
+			}
+
+			if err = defineProjectMainContainer(cfg, d, cl); err != nil {
+				return err
+			}
+
+			if err = defineProjectDockerPath(cfg, d, "/var/www/html/"); err != nil {
+				return err
+			}
+
+			paths := []string{
+				"bin/magento",
+				"html/bin/magento",
+				"source/bin/magento",
+				"src/bin/magento",
+			}
+
+			var magentoBinSource string
+			var status bool
+			for _, path := range paths {
+				p := strings.TrimRight(cfg.GetProjectDockerPath(), string(os.PathSeparator)) + string(os.PathSeparator) + path
+
+				if status, err = options.CheckMagentoBin(cfg.GetProjectMainContainer(), p); err != nil {
+					return err
+				}
+
+				if status {
+					magentoBinSource = p
+					break
+				}
+			}
+
+			if magentoBinSource == "" {
+				return fmt.Errorf("Cannot find magento root folder. Searched for: %s", paths)
+			}
+
+			var args []string
+
+			args = append(args, []string{"exec", "-it", cfg.GetProjectMainContainer(), magentoBinSource}...)
+			args = append(args, c.Args().Slice()...)
+
+			eo := ExecOptions{
+				command: "docker",
+				args:    args,
+				tty:     true,
+				detach:  true,
+			}
+
+			return execCommand(eo, c.App)
+		},
+	}
+}
+
+func callMagentoCommandMageRun(cfg magentoGlobalConfig, d magentoDialog, options magentoOptions) *cli.Command {
+	execCommand := options.GetExecCommand()
+	commandLocation := options.GetCommandLocation()
+	initf := options.GetInitFunction()
+
+	return &cli.Command{
+		Name:    "magerun",
+		Aliases: []string{"mr"},
+		Usage:   "It looks for magerun2 command and call it",
+		Action: func(c *cli.Context) error {
+			initf(true)
+
+			var err error
+			var cl []string
+
+			if cl, err = options.GetContainerList(); err != nil {
+				return err
+			}
+
+			if err = defineProjectMainContainer(cfg, d, cl); err != nil {
+				return err
+			}
+
+			var mrPath string
+
+			if mrPath, err = commandLocation(cfg.GetProjectMainContainer(), "n98-magerun2.phar"); err != nil {
+				return err
+			}
+
+			var args []string
+
+			args = append(args, []string{"exec", "-it", cfg.GetProjectMainContainer(), mrPath}...)
+			args = append(args, c.Args().Slice()...)
+
+			eo := ExecOptions{
+				command: "docker",
+				args:    args,
+				tty:     true,
+				detach:  true,
+			}
+
+			return execCommand(eo, c.App)
+		},
+	}
 }
 
 // CallMagentoCommand runs copyright dialog
 func CallMagentoCommand(cfg magentoGlobalConfig, d magentoDialog, options magentoOptions) *cli.Command {
-	execCommand := options.GetExecCommand()
-	commandLocation := options.GetCommandLocation()
-	initf := options.GetInitFunction()
 
 	return &cli.Command{
 		Name:    "magento",
 		Aliases: []string{"m"},
 		Usage:   "Call magento command bin/magento or magerun. This command has subcommands. Call jumper magento for more details.",
 		Subcommands: []*cli.Command{
-			{
-				Name:    "bin/magento",
-				Aliases: []string{"bm"},
-				Usage:   "It looks for bin/magento command and call it",
-				Action: func(c *cli.Context) error {
-					initf(true)
-
-					var err error
-					var cl []string
-
-					if cl, err = options.GetContainerList(); err != nil {
-						return err
-					}
-
-					if err = defineProjectMainContainer(cfg, d, cl); err != nil {
-						return err
-					}
-
-					if err = defineProjectDockerPath(cfg, d, "/var/www/html/"); err != nil {
-						return err
-					}
-
-					paths := []string{
-						"bin/magento",
-						"html/bin/magento",
-						"source/bin/magento",
-						"src/bin/magento",
-					}
-
-					var magentoBinSource string
-					var status bool
-					for _, path := range paths {
-						p := strings.TrimRight(cfg.GetProjectDockerPath(), string(os.PathSeparator)) + string(os.PathSeparator) + path
-
-						if status, err = checkMagentoBin(cfg.GetProjectMainContainer(), p); err != nil {
-							return err
-						}
-
-						if status {
-							magentoBinSource = p
-							break
-						}
-					}
-
-					if magentoBinSource == "" {
-						return fmt.Errorf("Cannot find magento root folder. Searched for: %s", paths)
-					}
-
-					var args []string
-
-					args = append(args, []string{"exec", "-it", cfg.GetProjectMainContainer(), magentoBinSource}...)
-					args = append(args, c.Args().Slice()...)
-
-					eo := ExecOptions{
-						command: "docker",
-						args:    args,
-						tty:     true,
-						detach:  true,
-					}
-
-					return execCommand(eo, c.App)
-				},
-			},
-			{
-				Name:    "magerun",
-				Aliases: []string{"mr"},
-				Usage:   "It looks for magerun2 command and call it",
-				Action: func(c *cli.Context) error {
-					initf(true)
-
-					var err error
-					var cl []string
-
-					if cl, err = options.GetContainerList(); err != nil {
-						return err
-					}
-
-					if err = defineProjectMainContainer(cfg, d, cl); err != nil {
-						return err
-					}
-
-					var mrPath string
-
-					if mrPath, err = commandLocation(cfg.GetProjectMainContainer(), "n98-magerun2.phar"); err != nil {
-						return err
-					}
-
-					var args []string
-
-					args = append(args, []string{"exec", "-it", cfg.GetProjectMainContainer(), mrPath}...)
-					args = append(args, c.Args().Slice()...)
-
-					eo := ExecOptions{
-						command: "docker",
-						args:    args,
-						tty:     true,
-						detach:  true,
-					}
-
-					return execCommand(eo, c.App)
-				},
-			},
+			callMagentoCommanBin(cfg, d, options),
+			callMagentoCommandMageRun(cfg, d, options),
 		},
 	}
 }
 
-func checkMagentoBin(containerName string, magentoBin string) (bool, error) {
+//CheckMagentoBin checks magento bin path
+func CheckMagentoBin(containerName string, magentoBin string) (bool, error) {
 	if len(containerName) == 0 {
 		return false, errors.New("Container is not defined")
 	}

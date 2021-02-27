@@ -174,6 +174,7 @@ func getOptions(c getOptionsConfig, d commandListDialog) *commandOptions {
 
 		return nil
 	})
+	opt.setMagentoBin(command.CheckMagentoBin)
 
 	return opt
 }
