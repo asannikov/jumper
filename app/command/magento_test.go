@@ -3,6 +3,7 @@ package command
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -89,4 +90,240 @@ func TestCallMagentoCommandCase1(t *testing.T) {
 	app := callMagentoCommanBin(cfg, dlg, opt)
 
 	assert.EqualError(t, app.Action(ctx), "getContainerList list error")
+}
+
+func TestCallMagentoCommandCase2(t *testing.T) {
+	cfg := &testMagentoGlobalConfig{}
+	dlg := &testMagentoDialog{
+		setMainContaner: func([]string) (int, string, error) {
+			return 0, "", errors.New("setMainContaner error")
+		},
+	}
+	opt := &testMagentoOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := callMagentoCommanBin(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "setMainContaner error")
+}
+
+func TestCallMagentoCommandCase3(t *testing.T) {
+	cfg := &testMagentoGlobalConfig{
+		//saveDockerProjectPath: errors.New("saveDockerProjectPath error"),
+	}
+	dlg := &testMagentoDialog{
+		setMainContaner: func([]string) (int, string, error) {
+			return 0, "container_name", nil
+		},
+		dockerProjectPath: func(string) (string, error) {
+			return "", errors.New("dockerProjectPath error")
+		},
+	}
+	opt := &testMagentoOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := callMagentoCommanBin(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "dockerProjectPath error")
+}
+
+func TestCallMagentoCommandCase4(t *testing.T) {
+	cfg := &testMagentoGlobalConfig{
+		getProjectDockerPath:    "/var/www",
+		getProjectMainContainer: "container_name",
+	}
+	dlg := &testMagentoDialog{
+		setMainContaner: func([]string) (int, string, error) {
+			return 0, "container_name", nil
+		},
+		dockerProjectPath: func(string) (string, error) {
+			return "/var/www", nil
+		},
+	}
+	opt := &testMagentoOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		checkMagentoBin: func(mainContiner string, path string) (bool, error) {
+			assert.Equal(t, mainContiner, "container_name")
+			assert.Equal(t, path, "/var/www/bin/magento")
+			return false, errors.New("path check error")
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := callMagentoCommanBin(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "path check error")
+}
+
+func TestCallMagentoCommandCase5(t *testing.T) {
+	cfg := &testMagentoGlobalConfig{
+		getProjectDockerPath:    "/var/www/",
+		getProjectMainContainer: "container_name",
+	}
+	dlg := &testMagentoDialog{
+		setMainContaner: func([]string) (int, string, error) {
+			return 0, "container_name", nil
+		},
+		dockerProjectPath: func(string) (string, error) {
+			return "/var/www/", nil
+		},
+	}
+	opt := &testMagentoOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		checkMagentoBin: func(mainContiner string, path string) (bool, error) {
+			assert.Equal(t, mainContiner, "container_name")
+			assert.Equal(t, path, "/var/www/bin/magento")
+			return false, errors.New("path check error")
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := callMagentoCommanBin(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "path check error")
+}
+
+func TestCallMagentoCommandCase6(t *testing.T) {
+	cfg := &testMagentoGlobalConfig{
+		getProjectDockerPath:    "/var/www/",
+		getProjectMainContainer: "container_name",
+	}
+	dlg := &testMagentoDialog{
+		setMainContaner: func([]string) (int, string, error) {
+			return 0, "container_name", nil
+		},
+		dockerProjectPath: func(string) (string, error) {
+			return "/var/www/", nil
+		},
+	}
+	opt := &testMagentoOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		checkMagentoBin: func(mainContiner string, path string) (bool, error) {
+			return false, nil
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := callMagentoCommanBin(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), fmt.Sprintf("Cannot find magento root folder. Searched for: %s", []string{
+		"bin/magento",
+		"html/bin/magento",
+		"source/bin/magento",
+		"src/bin/magento",
+	}))
+}
+
+func TestCallMagentoCommandCase7(t *testing.T) {
+	cfg := &testMagentoGlobalConfig{
+		getProjectDockerPath:    "/var/www/",
+		getProjectMainContainer: "container_name",
+	}
+	dlg := &testMagentoDialog{
+		setMainContaner: func([]string) (int, string, error) {
+			return 0, "container_name", nil
+		},
+		dockerProjectPath: func(string) (string, error) {
+			return "/var/www/", nil
+		},
+	}
+	opt := &testMagentoOptions{
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{}, nil
+		},
+		checkMagentoBin: func(mainContiner string, path string) (bool, error) {
+			if path == "/var/www/source/bin/magento" {
+				return true, nil
+			}
+			return false, nil
+		},
+		getExecCommand: func(ex ExecOptions, a *cli.App) error {
+			assert.Equal(t, ex.GetArgs(), []string{
+				"exec",
+				"-it",
+				"container_name",
+				"/var/www/source/bin/magento",
+			})
+			return errors.New("Exec command error")
+		},
+	}
+
+	set := &flag.FlagSet{}
+	set.Parse([]string{})
+
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	ctx = cli.NewContext(&cli.App{}, set, ctx)
+	app := callMagentoCommanBin(cfg, dlg, opt)
+
+	assert.EqualError(t, app.Action(ctx), "Exec command error")
 }
