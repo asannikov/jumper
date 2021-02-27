@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 1.8.5 (27.02.2021)
+- improvment
+    - command package test coverage
+    - magento command refactored
+- bugfix
+    - composer bugfix (custom user did not work for composer with memory limit option) 
+
 ## 1.8.4 (22.02.2021)
 - improvment
     - cli test covered
