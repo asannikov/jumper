@@ -110,5 +110,5 @@ func (co *commandOptions) MkdirAll(path string, fileMode os.FileMode) error {
 }
 
 func (co *commandOptions) CheckMagentoBin(containerName string, magentoBin string) (bool, error) {
-	return co.setMagentoBin(containerName, magentoBin)
+	return co.magentoBin(containerName, magentoBin)
 }
