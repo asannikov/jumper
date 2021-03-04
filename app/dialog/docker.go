@@ -32,7 +32,7 @@ func setStartCommand() (string, error) {
 	prompt := promptui.Prompt{
 		Label:    "Set start command",
 		Validate: validate,
-		Default:  "docker-compose -f docker-compose.yml up --force-recreate -d --remove-orphans $1",
+		Default:  "docker-compose -f docker-compose.yml up --force-recreate -d --remove-orphans",
 	}
 
 	return prompt.Run()

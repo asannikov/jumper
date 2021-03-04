@@ -6,7 +6,7 @@ I was inspired by [Mark's Shust](https://github.com/markshust/docker-magento) so
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/asannikov/jumper/blob/master/LICENSE)
 [![Build Status](https://travis-ci.com/asannikov/jumper.svg?branch=master)](https://travis-ci.com/asannikov/jumper)
-[![Release](https://img.shields.io/badge/release-1.8.5-brightgreen.svg)](https://github.com/asannikov/jumper/releases/tag/v1.8.5)
+[![Release](https://img.shields.io/badge/release-1.8.6-brightgreen.svg)](https://github.com/asannikov/jumper/releases/tag/v1.8.6)
 
 It was not tested on Windows.
 
@@ -102,7 +102,7 @@ Every stable release has attached sources for "linux/amd64", "linux/386", "darwi
 
 For example:
 ```
-https://github.com/asannikov/jumper/releases/tag/v1.8.5
+https://github.com/asannikov/jumper/releases/tag/v1.8.6
 ```
 Find related source there and download it. Now you can place use source at any place you want on your machine or make it global in a standard way.
 
@@ -145,7 +145,7 @@ implemented commands:
    xdebug:cli:disable, xcd         Disable cli xdebug
    shell                           Change shell type for a project
    magento, m                      Call magento command bin/magento or magerun. This command has subcommands. Call jumper magento for more details.
-   ```
+```
 
 # Project config example - jumper.json
 ```
@@ -202,6 +202,10 @@ here is a list of avalable values:
 * `xdebug`   - hides xdebug commands
 
 # FAQ
+## Where to start?
+An example for Mac OS:
+[![asciicast](https://asciinema.org/a/MUuwCpGh3Ty0zMChVL8K50BK9.svg)](https://asciinema.org/a/MUuwCpGh3Ty0zMChVL8K50BK9)
+
 ## How to force create path on sync:
 `jumper copyto -f src/vendor/module/name`
 assume that src/vendor does not exist in container. By this command it will be created recursively. 

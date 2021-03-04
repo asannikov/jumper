@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.8.6 (04.03.2021)
+- improvment
+    - added example to readme "how to start"
+- bugfix
+    - remove $1 parameter by default in docker start command
+
 ## 1.8.5 (27.02.2021)
 - improvment
     - command package test coverage
