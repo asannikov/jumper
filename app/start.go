@@ -80,6 +80,7 @@ func runDialog(pc *projectConfig, cfg runDialogConfig, DLG runDialogDialog, pl [
 
 	if pc.GetProjectPath() == "" {
 		pc.selectProjectIsNew = true
+		pc.SetProjectPath(currentDir)
 		err = DLG.CallAddProjectDialog(pc)
 	}
 
