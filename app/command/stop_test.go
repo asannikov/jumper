@@ -123,7 +123,7 @@ func TestCallStopMainContainerCommandCase2(t *testing.T) {
 	opt := &testStopOptions{
 		getDockerStatus: true,
 		getContainerList: func() ([]string, error) {
-			return []string{}, errors.New("get container error")
+			return []string{"container"}, errors.New("get container error")
 		},
 		getInitFunction: func(s bool) string {
 			return ""
@@ -150,7 +150,7 @@ func TestCallStopMainContainerCommandCase3(t *testing.T) {
 	opt := &testStopOptions{
 		getDockerStatus: true,
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getInitFunction: func(s bool) string {
 			return ""
@@ -184,7 +184,7 @@ func TestCallStopMainContainerCommandCase4(t *testing.T) {
 	opt := &testStopOptions{
 		getDockerStatus: true,
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getInitFunction: func(s bool) string {
 			return ""

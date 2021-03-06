@@ -427,7 +427,7 @@ func TestXDebugCommandXdebugFpmEnableCase1(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, errors.New("getContainerList error")
+			return []string{"container"}, errors.New("getContainerList error")
 		},
 	}
 	app := XDebugCommand("xdebug:fpm:enable", cfg, dlg, opt)
@@ -453,7 +453,7 @@ func TestXDebugCommandXdebugFpmEnableCase2(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 	app := XDebugCommand("xdebug:fpm:enable", cfg, dlg, opt)
@@ -489,7 +489,7 @@ func TestXDebugCommandXdebugFpmEnableCase3(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 	app := XDebugCommand("xdebug:fpm:enable", cfg, dlg, opt)
@@ -525,7 +525,7 @@ func TestXDebugCommandXdebugCliEnableCase4(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 	app := XDebugCommand("xdebug:cli:enable", cfg, dlg, opt)
@@ -564,7 +564,7 @@ func TestXDebugCommandXdebugCliEnableCase5(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 	app := XDebugCommand("xdebug:cli:enable", cfg, dlg, opt)
@@ -600,7 +600,7 @@ func TestXDebugCommandXdebugCliEnableCase6(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(o ExecOptions, a *cli.App) error {
 			return errors.New("exec command error")
@@ -639,7 +639,7 @@ func TestXDebugCommandXdebug7(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(o ExecOptions, a *cli.App) error {
 			return nil

@@ -75,7 +75,7 @@ func TestCallMagentoCommandCase1(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, errors.New("getContainerList list error")
+			return []string{"container"}, errors.New("getContainerList list error")
 		},
 	}
 
@@ -104,7 +104,7 @@ func TestCallMagentoCommandCase2(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -136,7 +136,7 @@ func TestCallMagentoCommandCase3(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -171,7 +171,7 @@ func TestCallMagentoCommandCase4(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		checkMagentoBin: func(mainContiner string, path string) (bool, error) {
 			assert.Equal(t, mainContiner, "container_name")
@@ -211,7 +211,7 @@ func TestCallMagentoCommandCase5(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		checkMagentoBin: func(mainContiner string, path string) (bool, error) {
 			assert.Equal(t, mainContiner, "container_name")
@@ -251,7 +251,7 @@ func TestCallMagentoCommandCase6(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		checkMagentoBin: func(mainContiner string, path string) (bool, error) {
 			return false, nil
@@ -294,7 +294,7 @@ func TestCallMagentoCommandCase7(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		checkMagentoBin: func(mainContiner string, path string) (bool, error) {
 			if path == "/var/www/source/bin/magento" {
@@ -334,7 +334,7 @@ func TestCallMagentoCommandMageRunCase1(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, errors.New("getContainerList list error")
+			return []string{"container"}, errors.New("getContainerList list error")
 		},
 	}
 
@@ -363,7 +363,7 @@ func TestCallMagentoCommandMageRunCase2(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -395,7 +395,7 @@ func TestCallMagentoCommandMageRunCase3(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getCommandLocation: func(string, string) (string, error) {
 			return "", errors.New("commandLocation error")
@@ -433,7 +433,7 @@ func TestCallMagentoCommandMageRunCase4(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getCommandLocation: func(containerName string, mr string) (string, error) {
 			return "/var/usr/bin/" + mr, nil

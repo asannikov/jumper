@@ -142,7 +142,7 @@ func TestSyncCommandCase1(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -170,7 +170,7 @@ func TestSyncCommandCase2(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, errors.New("get container list error")
+			return []string{"container"}, errors.New("get container list error")
 		},
 	}
 
@@ -204,7 +204,7 @@ func TestSyncCommandCase3(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -241,7 +241,7 @@ func TestSyncCommandCase4(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -278,7 +278,7 @@ func TestSyncCommandCase5(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -316,7 +316,7 @@ func TestSyncCommandCase6(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -354,7 +354,7 @@ func TestSyncCommandCase7(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		mkdirAll: func(path string, filePerm os.FileMode) error {
 			return errors.New("Path cannot be created")
@@ -395,7 +395,7 @@ func TestSyncCommandCase8(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		mkdirAll: func(path string, filePerm os.FileMode) error {
 			return nil
@@ -436,7 +436,7 @@ func TestSyncCommandCase9(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		dirExists: func(path string) (bool, error) {
 			return false, nil
@@ -477,7 +477,7 @@ func TestSyncCommandCase10(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		dirExists: func(path string) (bool, error) {
 			return false, errors.New("Dir exists error")
@@ -518,7 +518,7 @@ func TestSyncCommandCase11(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		dirExists: func(path string) (bool, error) {
 			return true, nil
@@ -562,7 +562,7 @@ func TestSyncCommandCase12(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		dirExists: func(path string) (bool, error) {
 			return true, nil

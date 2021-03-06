@@ -71,7 +71,7 @@ func TestDefineProjectMainContainerCase2(t *testing.T) {
 		},
 	}
 
-	assert.EqualError(t, defineProjectMainContainer(cfg, dlg, []string{}), "dialog container error")
+	assert.EqualError(t, defineProjectMainContainer(cfg, dlg, []string{"container"}), "dialog container error")
 }
 
 func TestDefineProjectMainContainerCase3(t *testing.T) {
@@ -84,7 +84,7 @@ func TestDefineProjectMainContainerCase3(t *testing.T) {
 		},
 	}
 
-	assert.EqualError(t, defineProjectMainContainer(cfg, dlg, []string{}), "Container name is empty. Set the container name")
+	assert.EqualError(t, defineProjectMainContainer(cfg, dlg, []string{"container"}), "Container name is empty. Set the container name")
 }
 
 func TestDefineProjectMainContainerCase4(t *testing.T) {
@@ -98,7 +98,7 @@ func TestDefineProjectMainContainerCase4(t *testing.T) {
 		},
 	}
 
-	assert.EqualError(t, defineProjectMainContainer(cfg, dlg, []string{}), "saveContainerNameToProjectConfig error")
+	assert.EqualError(t, defineProjectMainContainer(cfg, dlg, []string{"container"}), "saveContainerNameToProjectConfig error")
 }
 
 func TestDefineProjectMainContainerCase5(t *testing.T) {
@@ -112,7 +112,7 @@ func TestDefineProjectMainContainerCase5(t *testing.T) {
 		},
 	}
 
-	assert.Nil(t, defineProjectMainContainer(cfg, dlg, []string{}))
+	assert.Nil(t, defineProjectMainContainer(cfg, dlg, []string{"container"}))
 }
 
 func TestDefineProjectMainContainerUserCase1(t *testing.T) {
