@@ -59,6 +59,11 @@ type defineProjectMainContainerDialog interface {
 
 func defineProjectMainContainer(cfg projectMainContainerProjectConfig, d defineProjectMainContainerDialog, containerlist []string) (err error) {
 	if cfg.GetProjectMainContainer() == "" {
+
+		if len(containerlist) == 0 {
+			return errors.New("No running projects. Start project using docker-compose up and then run again `jumper start`. You have to do it once for defining main container")
+		}
+
 		_, container, err := d.SetMainContaner(containerlist)
 
 		if err != nil {

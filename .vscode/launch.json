@@ -11,7 +11,9 @@
             "mode": "auto",
             "program": "${fileDirname}",
             "env": {},
-            "args": []
+            "args": [
+                "start"
+            ]
         }
     ]
 }

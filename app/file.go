@@ -89,6 +89,12 @@ func (fs *FileSystem) GoToProjectPath(projectPath string) error {
 		return err
 	}
 
+	currentDir, err = filepath.EvalSymlinks(currentDir)
+
+	if err != nil {
+		return err
+	}
+
 	if currentDir != projectPath {
 		return fmt.Errorf("Expected path '%s', the current one '%s'", projectPath, currentDir)
 	}
