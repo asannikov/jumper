@@ -2,6 +2,7 @@ package dialog
 
 import (
 	"fmt"
+	"runtime"
 
 	"github.com/manifoldco/promptui"
 )
@@ -46,10 +47,20 @@ func dockerService() (string, error) {
 		return nil
 	}
 
+	var defaultCommand string
+
+	if runtime.GOOS == "linux" {
+		defaultCommand = "service docker start"
+	} else if runtime.GOOS == "darwin" {
+		defaultCommand = "open --hide -a Docker"
+	} else if runtime.GOOS == "windows" {
+		defaultCommand = `C:\Program Files\docker\dockerd.exe`
+	}
+
 	prompt := promptui.Prompt{
 		Label:    "Set docker service command",
 		Validate: validate,
-		Default:  "service docker start",
+		Default:  defaultCommand,
 	}
 
 	return prompt.Run()
