@@ -17,6 +17,7 @@ type magentoGlobalConfig interface {
 	GetProjectMainContainer() string
 	SaveDockerProjectPath(string) error
 	GetProjectDockerPath() string
+	GetCommandInactveStatus(string) bool
 }
 
 type magentoDialog interface {
@@ -40,6 +41,7 @@ func callMagentoCommanBin(cfg magentoGlobalConfig, d magentoDialog, options mage
 		Name:    "bin/magento",
 		Aliases: []string{"bm"},
 		Usage:   "It looks for bin/magento command and call it",
+		Hidden:  cfg.GetCommandInactveStatus("composer"),
 		Action: func(c *cli.Context) error {
 			initf(true)
 
@@ -110,6 +112,7 @@ func callMagentoCommandMageRun(cfg magentoGlobalConfig, d magentoDialog, options
 		Name:    "magerun",
 		Aliases: []string{"mr"},
 		Usage:   "It looks for magerun2 command and call it",
+		Hidden:  cfg.GetCommandInactveStatus("composer"),
 		Action: func(c *cli.Context) error {
 			initf(true)
 
@@ -154,6 +157,7 @@ func CallMagentoCommand(cfg magentoGlobalConfig, d magentoDialog, options magent
 		Name:    "magento",
 		Aliases: []string{"m"},
 		Usage:   "Call magento command bin/magento or magerun. This command has subcommands. Call jumper magento for more details.",
+		Hidden:  cfg.GetCommandInactveStatus("composer"),
 		Subcommands: []*cli.Command{
 			callMagentoCommanBin(cfg, d, options),
 			callMagentoCommandMageRun(cfg, d, options),

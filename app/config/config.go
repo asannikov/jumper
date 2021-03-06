@@ -168,7 +168,7 @@ func (c *Config) AddProjectConfigFile() (err error) {
 	}
 
 	c.globalConfig.Projects = append(c.globalConfig.Projects, fpc)
-	c.globalConfig.InactiveCommandTypes = []string{"composer", "php"}
+	c.globalConfig.InactiveCommandTypes = []string{"composer", "php", "magento"}
 	return c.fileSystem.SaveConfigFile(c.globalConfig, c.GetUserFile())
 }
 

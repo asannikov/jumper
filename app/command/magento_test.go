@@ -29,6 +29,9 @@ func (c *testMagentoGlobalConfig) SaveDockerProjectPath(string) error {
 func (c *testMagentoGlobalConfig) GetProjectDockerPath() string {
 	return c.getProjectDockerPath
 }
+func (c *testMagentoGlobalConfig) GetCommandInactveStatus(string) bool {
+	return true
+}
 
 type testMagentoDialog struct {
 	setMainContaner   func([]string) (int, string, error)

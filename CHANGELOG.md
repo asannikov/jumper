@@ -5,6 +5,7 @@
     - add todo info on start on project creating
     - add default docker command start for macos/linux/windows
     - it's possible now to add relative project path or the path containing symlinks
+    - add magento commands to the inactive_command_types list by default 
 - bugfix
     - the error occurred if the project was created from the path with symlink.
 
