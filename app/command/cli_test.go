@@ -122,7 +122,7 @@ func TestCliHandleCase1(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           nil,
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	_, err := cliCommandHandle("cli", cfg, dlg, cli, cl, a)
@@ -152,7 +152,7 @@ func TestCliHandleCase2(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           nil,
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	_, err := cliCommandHandle("cli", cfg, dlg, cli, cl, a)
@@ -189,7 +189,7 @@ func TestCliHandleCase3(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           errors.New("GetContainerList error"),
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	args, err := cliCommandHandle("cli", cfg, dlg, cli, cl, a)
@@ -227,7 +227,7 @@ func TestCliHandleCase4(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           nil,
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	args, err := cliCommandHandle("cli", cfg, dlg, cli, cl, a)
@@ -254,7 +254,7 @@ func TestCallCliCommandCase1(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(o ExecOptions, a *cli.App) error {
 			return nil
@@ -292,7 +292,7 @@ func TestCallCliCommandCase2(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(o ExecOptions, a *cli.App) error {
 			return nil
@@ -330,7 +330,7 @@ func TestCallCliCommandCase3(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(o ExecOptions, a *cli.App) error {
 			return nil

@@ -110,7 +110,7 @@ func TestComposerHandleCase1(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           nil,
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	_, err := composerHandle(cfg, dlg, cmp, cl, a)
@@ -135,7 +135,7 @@ func TestComposerHandleCase2(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           nil,
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	_, err := composerHandle(cfg, dlg, cmp, cl, a)
@@ -166,7 +166,7 @@ func TestComposerHandleCase3(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           nil,
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	args, err := composerHandle(cfg, dlg, cmp, cl, a)
@@ -200,7 +200,7 @@ func TestComposerHandleCase4(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           nil,
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	args, err := composerHandle(cfg, dlg, cmp, cl, a)
@@ -238,7 +238,7 @@ func TestComposerHandleCase5(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           nil,
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	args, err := composerHandle(cfg, dlg, cmp, cl, a)
@@ -272,7 +272,7 @@ func TestComposerHandleCase6(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           nil,
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	args, err := composerHandle(cfg, dlg, cmp, cl, a)
@@ -309,7 +309,7 @@ func TestComposerHandleCase7(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           nil,
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	_, err := composerHandle(cfg, dlg, cmp, cl, a)
@@ -345,7 +345,7 @@ func TestComposerHandleCase8(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           nil,
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	_, err := composerHandle(cfg, dlg, cmp, cl, a)
@@ -376,7 +376,7 @@ func TestComposerHandleCase9(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           nil,
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	args, err := composerHandle(cfg, dlg, cmp, cl, a)
@@ -407,7 +407,7 @@ func TestComposerHandleCase10(t *testing.T) {
 
 	cl := &testContainerlist{
 		err:           nil,
-		containerList: []string{},
+		containerList: []string{"container"},
 	}
 
 	_, err := composerHandle(cfg, dlg, cmp, cl, a)
@@ -447,7 +447,7 @@ func TestCallComposerCommandCase1(t *testing.T) {
 			return "local", nil
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, errors.New("composerHandle function error check")
+			return []string{"container"}, errors.New("composerHandle function error check")
 		},
 	}
 
@@ -485,7 +485,7 @@ func TestCallComposerCommandCase2(t *testing.T) {
 			return "local", nil
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -527,7 +527,7 @@ func TestCallComposerCommandCase3(t *testing.T) {
 			return "/usr/bin/composer", nil
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -569,7 +569,7 @@ func TestCallComposerCommandCase4(t *testing.T) {
 			return "/usr/bin/composer", nil
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -611,7 +611,7 @@ func TestCallComposerCommandCase5(t *testing.T) {
 			return "/usr/bin/composer", nil
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -653,7 +653,7 @@ func TestCallComposerCommandCase6(t *testing.T) {
 			return "/usr/bin/composer", nil
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 

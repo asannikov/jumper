@@ -184,7 +184,7 @@ func TestCallStartProjectBasicCase1(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, errors.New("GetContainerList error")
+			return []string{"container"}, errors.New("GetContainerList error")
 		},
 	}
 
@@ -217,7 +217,7 @@ func TestCallStartProjectBasicCase2(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -253,7 +253,7 @@ func TestCallStartProjectBasicCase3(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(ExecOptions, *cli.App) error {
 			return nil
@@ -292,7 +292,7 @@ func TestCallStartProjectBasicCase4(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(ExecOptions, *cli.App) error {
 			return nil
@@ -324,7 +324,7 @@ func TestCallStartProjectForceRecreateCase1(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, errors.New("GetContainerList error")
+			return []string{"container"}, errors.New("GetContainerList error")
 		},
 	}
 
@@ -357,7 +357,7 @@ func TestCallStartProjectForceRecreateCase2(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -393,7 +393,7 @@ func TestCallStartProjectForceRecreateCase3(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(ExecOptions, *cli.App) error {
 			return nil
@@ -432,7 +432,7 @@ func TestCallStartProjectForceRecreateCase4(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(e ExecOptions, c *cli.App) error {
 			assert.Equal(t, e.GetCommand(), "start_command")
@@ -468,7 +468,7 @@ func TestCallStartProjectOrphansCase1(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, errors.New("GetContainerList error")
+			return []string{"container"}, errors.New("GetContainerList error")
 		},
 	}
 
@@ -501,7 +501,7 @@ func TestCallStartProjectOrphansCase2(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -537,7 +537,7 @@ func TestCallStartProjectOrphansCase3(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(ExecOptions, *cli.App) error {
 			return nil
@@ -576,7 +576,7 @@ func TestCallStartProjectOrphansCase4(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(e ExecOptions, c *cli.App) error {
 			assert.Equal(t, e.GetCommand(), "start_command")
@@ -612,7 +612,7 @@ func TestCallStartProjectForceOrphansCase1(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, errors.New("GetContainerList error")
+			return []string{"container"}, errors.New("GetContainerList error")
 		},
 	}
 
@@ -645,7 +645,7 @@ func TestCallStartProjectForceOrphansCase2(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -681,7 +681,7 @@ func TestCallStartProjectForceOrphansCase3(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(ExecOptions, *cli.App) error {
 			return nil
@@ -720,7 +720,7 @@ func TestCallStartProjectForceOrphansCase4(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(e ExecOptions, c *cli.App) error {
 			assert.Equal(t, e.GetCommand(), "start_command")
@@ -756,7 +756,7 @@ func TestCallStartMainContainerCase1(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, errors.New("GetContainerList error")
+			return []string{"container"}, errors.New("GetContainerList error")
 		},
 	}
 
@@ -789,7 +789,7 @@ func TestCallStartMainContainerCase2(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 	}
 
@@ -822,7 +822,7 @@ func TestCallStartMainContainerCase3(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getExecCommand: func(e ExecOptions, c *cli.App) error {
 			assert.Equal(t, e.GetCommand(), "docker")
@@ -856,7 +856,7 @@ func TestCallRestartMainContainerCase1(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, errors.New("GetContainerList error")
+			return []string{"container"}, errors.New("GetContainerList error")
 		},
 		getDockerStatus: false,
 	}
@@ -886,7 +886,7 @@ func TestCallRestartMainContainerCase2(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, errors.New("GetContainerList error")
+			return []string{"container"}, errors.New("GetContainerList error")
 		},
 		getDockerStatus: true,
 	}
@@ -920,7 +920,7 @@ func TestCallRestartMainContainerCase3(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getDockerStatus: true,
 	}
@@ -956,7 +956,7 @@ func TestCallRestartMainContainerCase4(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getDockerStatus: true,
 		getExecCommand: func(e ExecOptions, c *cli.App) error {
@@ -1001,7 +1001,7 @@ func TestCallRestartMainContainerCase5(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getDockerStatus: true,
 		getExecCommand: func(e ExecOptions, c *cli.App) error {
@@ -1075,7 +1075,7 @@ func TestCallRestartContainersCase3(t *testing.T) {
 			return "/current/path"
 		},
 		getContainerList: func() ([]string, error) {
-			return []string{}, nil
+			return []string{"container"}, nil
 		},
 		getDockerStatus: true,
 		getExecCommand: func(e ExecOptions, c *cli.App) error {

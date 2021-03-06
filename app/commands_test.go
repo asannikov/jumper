@@ -86,7 +86,7 @@ func getTestDockerInstance() *testDockerInstance {
 		return nil
 	}
 	dck.getContainerList = func() ([]string, error) {
-		return []string{}, nil
+		return []string{"container"}, nil
 	}
 	dck.getClient = func() *client.Client {
 		return &client.Client{}
@@ -146,7 +146,7 @@ func jumperMainAppTest() (*cli.App, *jumperAppTest, *commandOptions) {
 		return "", nil
 	}
 	dockerDialog.containerList = func(cl *dockerStartDialog) ([]string, error) {
-		return []string{}, nil
+		return []string{"container"}, nil
 	}
 	opt.setDockerDialog(dockerDialog)
 
@@ -161,6 +161,7 @@ func TestAppCall(t *testing.T) {
 		fmt.Printf("\ncommand: %s\n\n", eo.GetCommand()+" "+strings.Join(eo.GetArgs(), " "))
 		return nil
 	}
+
 	cliApp.Commands = commandList(jcfg.cfg, jcfg.dlg, opt)
 	assert.Nil(t, cliApp.Run([]string{"jumper", "xdebug:fpm:enable"}))
 }
