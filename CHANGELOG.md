@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 1.8.7 (06.03.2021)
+- improvment
+    - add todo info on start on project creating
+    - add default docker command start for macos/linux/windows
+    - it's possible now to add relative project path or the path containing symlinks
+- bugfix
+    - the error occurred if the project was created from the path with symlink.
+
 ## 1.8.6 (04.03.2021)
 - improvment
     - added example to readme "how to start"
