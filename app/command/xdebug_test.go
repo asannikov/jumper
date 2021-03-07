@@ -70,9 +70,10 @@ func (x *testXDebugCommandDialog) XDebugConfigLocation() (int, string, error) {
 }
 
 type testXDebugOptions struct {
-	getExecCommand   func(ExecOptions, *cli.App) error
-	getInitFunction  func(bool) string
-	getContainerList func() ([]string, error)
+	getExecCommand    func(ExecOptions, *cli.App) error
+	getInitFunction   func(bool) string
+	getContainerList  func() ([]string, error)
+	checkXdebugStatus func(*cli.App, []string) (bool, error)
 }
 
 func (x *testXDebugOptions) GetExecCommand() func(ExecOptions, *cli.App) error {
@@ -84,6 +85,9 @@ func (x *testXDebugOptions) GetInitFunction() func(bool) string {
 func (x *testXDebugOptions) GetContainerList() ([]string, error) {
 	return x.getContainerList()
 }
+func (x *testXDebugOptions) CheckXdebugStatus(app *cli.App, args []string) (bool, error) {
+	return x.checkXdebugStatus(app, args)
+}
 
 func TestGetXdebugArgsCase1(t *testing.T) {
 	cfg := &testXdebugArgsProjectConfig{
@@ -92,7 +96,7 @@ func TestGetXdebugArgsCase1(t *testing.T) {
 		xDebugConfigLocation: "container",
 	}
 
-	assert.EqualValues(t, []string{"docker", "exec", "main_container", "sed", "-i", "-e", `s/^\;zend_extension/zend_extension/g`, "/path/to/xdebug/cli.ini"}, getXdebugArgs(cfg, "xdebug:cli:enable", "/project/path/"))
+	assert.EqualValues(t, []string{"docker", "exec", "-u", "root", "main_container", "sed", "-i", "-e", `s/^\;zend_extension/zend_extension/g`, "/path/to/xdebug/cli.ini"}, getXdebugArgs(cfg, "xdebug:cli:enable", "/project/path/"))
 }
 
 func TestGetXdebugArgsCase2(t *testing.T) {
@@ -102,7 +106,7 @@ func TestGetXdebugArgsCase2(t *testing.T) {
 		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
 	}
 
-	assert.EqualValues(t, []string{"docker", "exec", "main_container", "sed", "-i", "-e", `s/^\;zend_extension/zend_extension/g`, "/path/to/xdebug/fpm.ini"}, getXdebugArgs(cfg, "xdebug:fpm:enable", "/project/path/"))
+	assert.EqualValues(t, []string{"docker", "exec", "-u", "root", "main_container", "sed", "-i", "-e", `s/^\;zend_extension/zend_extension/g`, "/path/to/xdebug/fpm.ini"}, getXdebugArgs(cfg, "xdebug:fpm:enable", "/project/path/"))
 }
 
 func TestGetXdebugArgsCase3(t *testing.T) {
@@ -112,7 +116,7 @@ func TestGetXdebugArgsCase3(t *testing.T) {
 		xDebugConfigLocation: "container",
 	}
 
-	assert.EqualValues(t, []string{"docker", "exec", "main_container", "sed", "-i", "-e", `s/^zend_extension/\;zend_extension/g`, "/path/to/xdebug/cli.ini"}, getXdebugArgs(cfg, "xdebug:cli:disable", "/project/path/"))
+	assert.EqualValues(t, []string{"docker", "exec", "-u", "root", "main_container", "sed", "-i", "-e", `s/^zend_extension/\;zend_extension/g`, "/path/to/xdebug/cli.ini"}, getXdebugArgs(cfg, "xdebug:cli:disable", "/project/path/"))
 }
 
 func TestGetXdebugArgsCase4(t *testing.T) {
@@ -122,7 +126,7 @@ func TestGetXdebugArgsCase4(t *testing.T) {
 		xDebugConfigLocation: "container",
 	}
 
-	assert.EqualValues(t, []string{"docker", "exec", "main_container", "sed", "-i", "-e", `s/^zend_extension/\;zend_extension/g`, "/path/to/xdebug/fpm.ini"}, getXdebugArgs(cfg, "xdebug:fpm:disable", "/project/path/"))
+	assert.EqualValues(t, []string{"docker", "exec", "-u", "root", "main_container", "sed", "-i", "-e", `s/^zend_extension/\;zend_extension/g`, "/path/to/xdebug/fpm.ini"}, getXdebugArgs(cfg, "xdebug:fpm:disable", "/project/path/"))
 }
 
 func TestGetXdebugArgsCase5(t *testing.T) {

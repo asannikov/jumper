@@ -35,11 +35,12 @@ type commandListOptions interface {
 	GetExecCommand() func(command.ExecOptions, *cli.App) error
 	GetDockerStatus() bool
 	GetContainerList() ([]string, error)
-	GetCopyTo(container string, sourcePath string, dstPath string) error
-	RunNativeExec(eo command.ExecOptions, ca *cli.App) error
+	GetCopyTo(string, string, string) error
+	RunNativeExec(command.ExecOptions, *cli.App) error
 	DirExists(string) (bool, error)
 	MkdirAll(string, os.FileMode) error
-	CheckMagentoBin(containerName string, magentoBin string) (bool, error)
+	CheckMagentoBin(string, string) (bool, error)
+	CheckXdebugStatus(*cli.App, []string) (bool, error)
 }
 
 func commandList(c *config.Config, d commandListDialog, opt commandListOptions) []*cli.Command {
@@ -90,8 +91,10 @@ func commandList(c *config.Config, d commandListDialog, opt commandListOptions) 
 		// Xdebug
 		command.XDebugCommand("xdebug:fpm:enable", c, d, opt),
 		command.XDebugCommand("xdebug:fpm:disable", c, d, opt),
+		command.XDebugCommand("xdebug:fpm:toggle", c, d, opt),
 		command.XDebugCommand("xdebug:cli:enable", c, d, opt),
 		command.XDebugCommand("xdebug:cli:disable", c, d, opt),
+		command.XDebugCommand("xdebug:cli:toggle", c, d, opt),
 
 		// Shell
 		command.ShellCommand(c, d, opt),
