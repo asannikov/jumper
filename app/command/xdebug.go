@@ -3,7 +3,6 @@ package command
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -169,17 +168,15 @@ func XDebugCommand(xdebugAction string, cfg xdebugProjectConfig, d xDebugCommand
 
 				var status bool
 
-				if status, err = CheckXdebugStatus(c.App, args); err != nil {
+				if status, err = options.CheckXdebugStatus(c.App, args); err != nil {
 					return err
 				}
 
-				xdebugAction = xdebugAction + "disable"
-
-				if status == true {
+				if status == false {
 					xdebugAction = xdebugAction + "enable"
+				} else {
+					xdebugAction = xdebugAction + "disable"
 				}
-
-				log.Println(xdebugAction, status)
 			}
 
 			args := getXdebugArgs(cfg, xdebugAction, currentPath)
@@ -222,11 +219,11 @@ func CheckXdebugStatus(app *cli.App, args []string) (bool, error) {
 
 	out, err := exec.Command(eo.GetCommand(), eo.GetArgs()...).Output()
 
-	if strings.Contains(string(out), "xdebug.mode = on") {
-		return true, err
+	if strings.Contains(string(out), ";zend_extension=xdebug") {
+		return false, err
 	}
 
-	return false, err
+	return true, err
 }
 
 type defineCliXdebugIniFilePathProjectConfig interface {
