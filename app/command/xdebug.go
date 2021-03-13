@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/urfave/cli/v2"
@@ -53,9 +54,26 @@ func getXdebugArgs(cfg xdebugArgsProjectConfig, command string, currentPath stri
 	if cfg.GetXDebugConfigLocaton() == "local" {
 		args = []string{"sed", "-i", "-e", action, strings.TrimRight(currentPath, string(os.PathSeparator)) + string(os.PathSeparator) + strings.Trim(xdebugFileConfigPath, string(os.PathSeparator))}
 	} else {
-		args = []string{"docker", "exec", cfg.GetProjectMainContainer(), "sed", "-i", "-e", action, xdebugFileConfigPath}
+		args = []string{"docker", "exec", "-u", "root", cfg.GetProjectMainContainer(), "sed", "-i", "-e", action, xdebugFileConfigPath}
 	}
 
+	return args
+}
+
+func toggleXdebugArgs(cfg xdebugArgsProjectConfig, currentPath string, xdebugAction string) []string {
+
+	xdebugFileConfigPath := cfg.GetXDebugFpmIniPath()
+
+	if strings.Contains(xdebugAction, "cli") {
+		xdebugFileConfigPath = cfg.GetXDebugCliIniPath()
+	}
+
+	args := []string{}
+	if cfg.GetXDebugConfigLocaton() == "local" {
+		args = []string{"cat", strings.TrimRight(currentPath, string(os.PathSeparator)) + string(os.PathSeparator) + strings.Trim(xdebugFileConfigPath, string(os.PathSeparator))}
+	} else {
+		args = []string{"docker", "exec", "-u", "root", cfg.GetProjectMainContainer(), "cat", xdebugFileConfigPath}
+	}
 	return args
 }
 
@@ -70,6 +88,7 @@ type xDebugOptions interface {
 	GetExecCommand() func(ExecOptions, *cli.App) error
 	GetInitFunction() func(bool) string
 	GetContainerList() ([]string, error)
+	CheckXdebugStatus(*cli.App, []string) (bool, error)
 }
 
 //XDebugCommand enable/disable xDebug
@@ -83,20 +102,26 @@ func XDebugCommand(xdebugAction string, cfg xdebugProjectConfig, d xDebugCommand
 		usage: map[string]string{
 			"xdebug:fpm:enable":  "Enable fpm xdebug",
 			"xdebug:fpm:disable": "Disable fpm xdebug",
+			"xdebug:fpm:toggle":  "Toggle fpm xdebug",
 			"xdebug:cli:enable":  "Enable cli xdebug",
 			"xdebug:cli:disable": "Disable cli xdebug",
+			"xdebug:cli:toggle":  "Toggle cli xdebug",
 		},
 		aliases: map[string]string{
 			"xdebug:fpm:enable":  "xe",
 			"xdebug:fpm:disable": "xd",
+			"xdebug:fpm:toggle":  "x",
 			"xdebug:cli:enable":  "xce",
 			"xdebug:cli:disable": "xcd",
+			"xdebug:cli:toggle":  "xc",
 		},
 		description: map[string]string{
 			"xdebug:fpm:enable":  descripton,
 			"xdebug:fpm:disable": descripton,
+			"xdebug:fpm:toggle":  descripton,
 			"xdebug:cli:enable":  descripton,
 			"xdebug:cli:disable": descripton,
+			"xdebug:cli:toggle":  descripton,
 		},
 	}
 
@@ -132,6 +157,28 @@ func XDebugCommand(xdebugAction string, cfg xdebugProjectConfig, d xDebugCommand
 				return err
 			}
 
+			if strings.Contains(xdebugAction, "toggle") {
+				args := toggleXdebugArgs(cfg, currentPath, xdebugAction)
+
+				if strings.Contains(xdebugAction, "cli") {
+					xdebugAction = "xdebug:cli:"
+				} else {
+					xdebugAction = "xdebug:fpm:"
+				}
+
+				var status bool
+
+				if status, err = options.CheckXdebugStatus(c.App, args); err != nil {
+					return err
+				}
+
+				if status == false {
+					xdebugAction = xdebugAction + "enable"
+				} else {
+					xdebugAction = xdebugAction + "disable"
+				}
+			}
+
 			args := getXdebugArgs(cfg, xdebugAction, currentPath)
 
 			eo := ExecOptions{
@@ -158,6 +205,25 @@ func XDebugCommand(xdebugAction string, cfg xdebugProjectConfig, d xDebugCommand
 			return restartMainContainer(cfg, options, c.App)
 		},
 	}
+}
+
+// CheckXdebugStatus checks xdebug current state
+func CheckXdebugStatus(app *cli.App, args []string) (bool, error) {
+
+	eo := ExecOptions{
+		command: args[0],
+		args:    args[1:],
+		tty:     true,
+		detach:  true,
+	}
+
+	out, err := exec.Command(eo.GetCommand(), eo.GetArgs()...).Output()
+
+	if strings.Contains(string(out), ";zend_extension=xdebug") {
+		return false, err
+	}
+
+	return true, err
 }
 
 type defineCliXdebugIniFilePathProjectConfig interface {

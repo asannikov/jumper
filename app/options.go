@@ -23,6 +23,7 @@ type commandOptions struct {
 	dirExists       func(string) (bool, error)
 	mkdirAll        func(string, os.FileMode) error
 	magentoBin      func(string, string) (bool, error)
+	xdebugStatus    func(*cli.App, []string) (bool, error)
 }
 
 func (co *commandOptions) setInitFuntion(f func(bool) string) {
@@ -69,6 +70,10 @@ func (co *commandOptions) setMagentoBin(smb func(string, string) (bool, error)) 
 	co.magentoBin = smb
 }
 
+func (co *commandOptions) setXdebugStatus(sxs func(*cli.App, []string) (bool, error)) {
+	co.xdebugStatus = sxs
+}
+
 func (co *commandOptions) GetInitFunction() func(bool) string {
 	return co.initf
 }
@@ -111,4 +116,8 @@ func (co *commandOptions) MkdirAll(path string, fileMode os.FileMode) error {
 
 func (co *commandOptions) CheckMagentoBin(containerName string, magentoBin string) (bool, error) {
 	return co.magentoBin(containerName, magentoBin)
+}
+
+func (co *commandOptions) CheckXdebugStatus(ca *cli.App, args []string) (bool, error) {
+	return co.xdebugStatus(ca, args)
 }

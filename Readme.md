@@ -6,7 +6,7 @@ I was inspired by [Mark's Shust](https://github.com/markshust/docker-magento) so
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/asannikov/jumper/blob/master/LICENSE)
 [![Build Status](https://travis-ci.com/asannikov/jumper.svg?branch=master)](https://travis-ci.com/asannikov/jumper)
-[![Release](https://img.shields.io/badge/release-1.8.7-brightgreen.svg)](https://github.com/asannikov/jumper/releases/tag/v1.8.7)
+[![Release](https://img.shields.io/badge/release-1.8.8-brightgreen.svg)](https://github.com/asannikov/jumper/releases/tag/v1.8.8)
 
 It was not tested on Windows.
 
@@ -141,8 +141,10 @@ implemented commands:
    copyfrom, cpf                   Sync docker container -> local, set related path, ie `vendor/folder/` for syncing as a parameter, or use --all to sync all project
    xdebug:fpm:enable, xe           Enable fpm xdebug
    xdebug:fpm:disable, xd          Disable fpm xdebug
+   xdebug:fpm:toggle, x            Toggle fpm xdebug
    xdebug:cli:enable, xce          Enable cli xdebug
    xdebug:cli:disable, xcd         Disable cli xdebug
+   xdebug:cli:toggle, xc           Toggle cli xdebug
    shell                           Change shell type for a project
    magento, m                      Call magento command bin/magento or magerun. This command has subcommands. Call jumper magento for more details.
 ```
@@ -200,6 +202,7 @@ It can be done only directly in config file.
 here is a list of avalable values:
 * `composer` - hides all composer commands
 * `xdebug`   - hides xdebug commands
+* `magento`  - hides magento commands
 
 # FAQ
 ## Where to start?
@@ -226,6 +229,7 @@ Depending on case, you have to select following option on xdebug:* running:
 
    set absolute path to file in container
 
+The config file must contain `;zend_extension=xdebug` option!
 
 ## How to run bash commands inside container:
 ```jumper clirootnotty bash -c "cd src && ls"```

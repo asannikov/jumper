@@ -70,9 +70,10 @@ func (x *testXDebugCommandDialog) XDebugConfigLocation() (int, string, error) {
 }
 
 type testXDebugOptions struct {
-	getExecCommand   func(ExecOptions, *cli.App) error
-	getInitFunction  func(bool) string
-	getContainerList func() ([]string, error)
+	getExecCommand    func(ExecOptions, *cli.App) error
+	getInitFunction   func(bool) string
+	getContainerList  func() ([]string, error)
+	checkXdebugStatus func(*cli.App, []string) (bool, error)
 }
 
 func (x *testXDebugOptions) GetExecCommand() func(ExecOptions, *cli.App) error {
@@ -84,6 +85,52 @@ func (x *testXDebugOptions) GetInitFunction() func(bool) string {
 func (x *testXDebugOptions) GetContainerList() ([]string, error) {
 	return x.getContainerList()
 }
+func (x *testXDebugOptions) CheckXdebugStatus(app *cli.App, args []string) (bool, error) {
+	return x.checkXdebugStatus(app, args)
+}
+
+func TestToggleXdebugArgsCase1(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		projectMainContainer: "main_container",
+		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
+		xDebugConfigLocation: "container",
+	}
+
+	assert.EqualValues(t, []string{"docker", "exec", "-u", "root", "main_container", "cat", "/path/to/xdebug/fpm.ini"}, toggleXdebugArgs(cfg, "/project/path/", "xdebug:fpm:toggle"))
+}
+
+func TestToggleXdebugArgsCase2(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		projectMainContainer: "main_container",
+		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
+		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
+		xDebugConfigLocation: "container",
+	}
+
+	assert.EqualValues(t, []string{"docker", "exec", "-u", "root", "main_container", "cat", "/path/to/xdebug/cli.ini"}, toggleXdebugArgs(cfg, "/project/path/", "xdebug:cli:toggle"))
+}
+
+func TestToggleXdebugArgsCase3(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		projectMainContainer: "main_container",
+		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
+		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
+		xDebugConfigLocation: "local",
+	}
+
+	assert.EqualValues(t, []string{"cat", "/project/path/path/to/xdebug/cli.ini"}, toggleXdebugArgs(cfg, "/project/path/", "xdebug:cli:toggle"))
+}
+
+func TestToggleXdebugArgsCase4(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		projectMainContainer: "main_container",
+		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
+		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
+		xDebugConfigLocation: "local",
+	}
+
+	assert.EqualValues(t, []string{"cat", "/project/path/path/to/xdebug/cli.ini"}, toggleXdebugArgs(cfg, "/project/path", "xdebug:cli:toggle"))
+}
 
 func TestGetXdebugArgsCase1(t *testing.T) {
 	cfg := &testXdebugArgsProjectConfig{
@@ -92,7 +139,7 @@ func TestGetXdebugArgsCase1(t *testing.T) {
 		xDebugConfigLocation: "container",
 	}
 
-	assert.EqualValues(t, []string{"docker", "exec", "main_container", "sed", "-i", "-e", `s/^\;zend_extension/zend_extension/g`, "/path/to/xdebug/cli.ini"}, getXdebugArgs(cfg, "xdebug:cli:enable", "/project/path/"))
+	assert.EqualValues(t, []string{"docker", "exec", "-u", "root", "main_container", "sed", "-i", "-e", `s/^\;zend_extension/zend_extension/g`, "/path/to/xdebug/cli.ini"}, getXdebugArgs(cfg, "xdebug:cli:enable", "/project/path/"))
 }
 
 func TestGetXdebugArgsCase2(t *testing.T) {
@@ -102,7 +149,7 @@ func TestGetXdebugArgsCase2(t *testing.T) {
 		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
 	}
 
-	assert.EqualValues(t, []string{"docker", "exec", "main_container", "sed", "-i", "-e", `s/^\;zend_extension/zend_extension/g`, "/path/to/xdebug/fpm.ini"}, getXdebugArgs(cfg, "xdebug:fpm:enable", "/project/path/"))
+	assert.EqualValues(t, []string{"docker", "exec", "-u", "root", "main_container", "sed", "-i", "-e", `s/^\;zend_extension/zend_extension/g`, "/path/to/xdebug/fpm.ini"}, getXdebugArgs(cfg, "xdebug:fpm:enable", "/project/path/"))
 }
 
 func TestGetXdebugArgsCase3(t *testing.T) {
@@ -112,7 +159,7 @@ func TestGetXdebugArgsCase3(t *testing.T) {
 		xDebugConfigLocation: "container",
 	}
 
-	assert.EqualValues(t, []string{"docker", "exec", "main_container", "sed", "-i", "-e", `s/^zend_extension/\;zend_extension/g`, "/path/to/xdebug/cli.ini"}, getXdebugArgs(cfg, "xdebug:cli:disable", "/project/path/"))
+	assert.EqualValues(t, []string{"docker", "exec", "-u", "root", "main_container", "sed", "-i", "-e", `s/^zend_extension/\;zend_extension/g`, "/path/to/xdebug/cli.ini"}, getXdebugArgs(cfg, "xdebug:cli:disable", "/project/path/"))
 }
 
 func TestGetXdebugArgsCase4(t *testing.T) {
@@ -122,7 +169,7 @@ func TestGetXdebugArgsCase4(t *testing.T) {
 		xDebugConfigLocation: "container",
 	}
 
-	assert.EqualValues(t, []string{"docker", "exec", "main_container", "sed", "-i", "-e", `s/^zend_extension/\;zend_extension/g`, "/path/to/xdebug/fpm.ini"}, getXdebugArgs(cfg, "xdebug:fpm:disable", "/project/path/"))
+	assert.EqualValues(t, []string{"docker", "exec", "-u", "root", "main_container", "sed", "-i", "-e", `s/^zend_extension/\;zend_extension/g`, "/path/to/xdebug/fpm.ini"}, getXdebugArgs(cfg, "xdebug:fpm:disable", "/project/path/"))
 }
 
 func TestGetXdebugArgsCase5(t *testing.T) {
@@ -414,6 +461,96 @@ func TestDefineFpmXdebugIniFilePathCase5(t *testing.T) {
 	}
 
 	assert.Nil(t, defineFpmXdebugIniFilePath(cfg, d, "/etc/php/7.0/fpm/conf.d/xdebug.ini"))
+}
+
+func TestXDebugCommandXdebugFpmToggleCase1(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		projectMainContainer: "main_container",
+		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
+		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
+		xDebugConfigLocation: "container",
+	}
+	dlg := &testXDebugCommandDialog{}
+	opt := &testXDebugOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			return nil
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{"container"}, nil
+		},
+		checkXdebugStatus: func(a *cli.App, args []string) (bool, error) {
+			return false, errors.New("CheckXdebugStatus error")
+		},
+	}
+	app := XDebugCommand("xdebug:fpm:toggle", cfg, dlg, opt)
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+
+	assert.EqualError(t, app.Action(ctx), "CheckXdebugStatus error")
+}
+
+func TestXDebugCommandXdebugFpmToggleCase2(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		projectMainContainer: "main_container",
+		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
+		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
+		xDebugConfigLocation: "container",
+	}
+	dlg := &testXDebugCommandDialog{}
+	opt := &testXDebugOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			assert.EqualValues(t, []string{"exec", "-u", "root", "main_container", "sed", "-i", "-e", "s/^\\;zend_extension/zend_extension/g", "/path/to/xdebug/fpm.ini"}, o.GetArgs())
+			return errors.New("Stop exec command")
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{"container"}, nil
+		},
+		checkXdebugStatus: func(a *cli.App, args []string) (bool, error) {
+			return false, nil
+		},
+	}
+	app := XDebugCommand("xdebug:fpm:toggle", cfg, dlg, opt)
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+	app.Action(ctx)
+}
+
+func TestXDebugCommandXdebugFpmToggleCase3(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		projectMainContainer: "main_container",
+		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
+		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
+		xDebugConfigLocation: "container",
+	}
+	dlg := &testXDebugCommandDialog{}
+	opt := &testXDebugOptions{
+		getExecCommand: func(o ExecOptions, a *cli.App) error {
+			assert.EqualValues(t, []string{"exec", "-u", "root", "main_container", "sed", "-i", "-e", "s/^zend_extension/\\;zend_extension/g", "/path/to/xdebug/fpm.ini"}, o.GetArgs())
+			return errors.New("Stop exec command")
+		},
+		getInitFunction: func(s bool) string {
+			return "/current/path"
+		},
+		getContainerList: func() ([]string, error) {
+			return []string{"container"}, nil
+		},
+		checkXdebugStatus: func(a *cli.App, args []string) (bool, error) {
+			return true, nil
+		},
+	}
+	app := XDebugCommand("xdebug:fpm:toggle", cfg, dlg, opt)
+	ctx := &cli.Context{
+		App: &cli.App{},
+	}
+	app.Action(ctx)
 }
 
 func TestXDebugCommandXdebugFpmEnableCase1(t *testing.T) {
