@@ -89,6 +89,49 @@ func (x *testXDebugOptions) CheckXdebugStatus(app *cli.App, args []string) (bool
 	return x.checkXdebugStatus(app, args)
 }
 
+func TestToggleXdebugArgsCase1(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		projectMainContainer: "main_container",
+		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
+		xDebugConfigLocation: "container",
+	}
+
+	assert.EqualValues(t, []string{"docker", "exec", "-u", "root", "main_container", "cat", "/path/to/xdebug/fpm.ini"}, toggleXdebugArgs(cfg, "/project/path/", "xdebug:fpm:toggle"))
+}
+
+func TestToggleXdebugArgsCase2(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		projectMainContainer: "main_container",
+		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
+		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
+		xDebugConfigLocation: "container",
+	}
+
+	assert.EqualValues(t, []string{"docker", "exec", "-u", "root", "main_container", "cat", "/path/to/xdebug/cli.ini"}, toggleXdebugArgs(cfg, "/project/path/", "xdebug:cli:toggle"))
+}
+
+func TestToggleXdebugArgsCase3(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		projectMainContainer: "main_container",
+		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
+		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
+		xDebugConfigLocation: "local",
+	}
+
+	assert.EqualValues(t, []string{"cat", "/project/path/path/to/xdebug/cli.ini"}, toggleXdebugArgs(cfg, "/project/path/", "xdebug:cli:toggle"))
+}
+
+func TestToggleXdebugArgsCase4(t *testing.T) {
+	cfg := &testXdebugArgsProjectConfig{
+		projectMainContainer: "main_container",
+		xDebugFpmIniPath:     "/path/to/xdebug/fpm.ini",
+		xDebugCliIniPath:     "/path/to/xdebug/cli.ini",
+		xDebugConfigLocation: "local",
+	}
+
+	assert.EqualValues(t, []string{"cat", "/project/path/path/to/xdebug/cli.ini"}, toggleXdebugArgs(cfg, "/project/path", "xdebug:cli:toggle"))
+}
+
 func TestGetXdebugArgsCase1(t *testing.T) {
 	cfg := &testXdebugArgsProjectConfig{
 		projectMainContainer: "main_container",
