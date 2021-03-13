@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.8.8 (13.03.2021)
+- improvment
+    - add unittest for xdebug-toggle
+
 ## 1.8.7 (06.03.2021)
 - improvment
     - add todo info on start on project creating
