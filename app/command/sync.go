@@ -137,7 +137,7 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 					args:    []string{"-p", cfg.GetProjectDockerPath() + strings.TrimLeft(syncPath, string(os.PathSeparator))},
 					tty:     true,
 					detach:  true,
-					user:    "limesoda",
+					user:    "root",
 				}
 
 				status := false

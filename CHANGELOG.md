@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.8.9 (18.03.2021)
+- bugfix
+    - fix file owner for copied files to container
+
 ## 1.8.8 (13.03.2021)
 - improvment
     - add unittest for xdebug-toggle
