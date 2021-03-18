@@ -31,6 +31,9 @@ func (sc *syncConfig) SaveStartCommandToProjectConfig(s string) error {
 func (sc *syncConfig) SaveDockerProjectPath(s string) error {
 	return nil
 }
+func (sc *syncConfig) GetMainContainerUser() string {
+	return "root"
+}
 
 type syncDlg struct {
 	setMainContaner   func() (int, string, error)
