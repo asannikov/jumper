@@ -32,6 +32,7 @@ type syncProjectConfig interface {
 	GetProjectDockerPath() string
 	SaveContainerNameToProjectConfig(string) error
 	SaveDockerProjectPath(string) error
+	GetMainContainerUser() string
 }
 
 func getSyncArgs(cfg syncProjectConfig, direction string, syncPath string, projectRoot string) []string {
@@ -136,7 +137,7 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 					args:    []string{"-p", cfg.GetProjectDockerPath() + strings.TrimLeft(syncPath, string(os.PathSeparator))},
 					tty:     true,
 					detach:  true,
-					user:    "root",
+					user:    "limesoda",
 				}
 
 				status := false
@@ -171,6 +172,27 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 				fmt.Printf("Completed copying %s files from host to container %s \n", syncPath, cfg.GetProjectMainContainer())
 			} else {
 				fmt.Printf("Completed copying %s from container %s to host\n", syncPath, cfg.GetProjectMainContainer())
+			}
+
+			if direction == syncCopyTo {
+
+				user := "root"
+
+				if cfg.GetMainContainerUser() != "" {
+					user = cfg.GetMainContainerUser()
+				}
+
+				p := strings.TrimRight(cfg.GetProjectDockerPath(), string(os.PathSeparator)) + syncPath
+				args = []string{"exec", "-it", cfg.GetProjectMainContainer(), "chown", "-R", user + ":" + user, p}
+
+				eo := ExecOptions{
+					command: "docker",
+					args:    args,
+					tty:     true,
+					detach:  true,
+				}
+
+				return execCommand(eo, c.App)
 			}
 
 			return nil
