@@ -197,9 +197,9 @@ func XDebugCommand(xdebugAction string, cfg xdebugProjectConfig, d xDebugCommand
 			} else if xdebugAction == "xdebug:fpm:disable" {
 				fmt.Printf("Fpm Xdebug disabled \n")
 			} else if xdebugAction == "xdebug:cli:enable" {
-				fmt.Printf("Fpm Xdebug enabled \n")
+				fmt.Printf("Cli Xdebug enabled \n")
 			} else if xdebugAction == "xdebug:cli:disable" {
-				fmt.Printf("Fpm Xdebug disabled \n")
+				fmt.Printf("Cli Xdebug disabled \n")
 			}
 
 			return restartMainContainer(cfg, options, c.App)
