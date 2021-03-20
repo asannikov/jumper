@@ -32,6 +32,9 @@ func (c *testMagentoGlobalConfig) GetProjectDockerPath() string {
 func (c *testMagentoGlobalConfig) GetCommandInactveStatus(string) bool {
 	return true
 }
+func (c *testMagentoGlobalConfig) GetMainContainerUser() string {
+	return ""
+}
 
 type testMagentoDialog struct {
 	setMainContaner   func([]string) (int, string, error)
@@ -276,6 +279,8 @@ func TestCallMagentoCommandCase6(t *testing.T) {
 		"html/bin/magento",
 		"source/bin/magento",
 		"src/bin/magento",
+		"htdocs/bin/magento",
+		"www/bin/magento",
 	}))
 }
 

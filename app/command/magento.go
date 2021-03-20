@@ -18,6 +18,7 @@ type magentoGlobalConfig interface {
 	SaveDockerProjectPath(string) error
 	GetProjectDockerPath() string
 	GetCommandInactveStatus(string) bool
+	GetMainContainerUser() string
 }
 
 type magentoDialog interface {
@@ -65,6 +66,8 @@ func callMagentoCommanBin(cfg magentoGlobalConfig, d magentoDialog, options mage
 				"html/bin/magento",
 				"source/bin/magento",
 				"src/bin/magento",
+				"htdocs/bin/magento",
+				"www/bin/magento",
 			}
 
 			var magentoBinSource string
@@ -88,7 +91,12 @@ func callMagentoCommanBin(cfg magentoGlobalConfig, d magentoDialog, options mage
 
 			var args []string
 
-			args = append(args, []string{"exec", "-it", cfg.GetProjectMainContainer(), magentoBinSource}...)
+			if cfg.GetMainContainerUser() != "" {
+				args = append(args, []string{"exec", "-it", "-u", cfg.GetMainContainerUser(), cfg.GetProjectMainContainer(), magentoBinSource}...)
+			} else {
+				args = append(args, []string{"exec", "-it", cfg.GetProjectMainContainer(), magentoBinSource}...)
+			}
+
 			args = append(args, c.Args().Slice()...)
 
 			eo := ExecOptions{
@@ -135,7 +143,12 @@ func callMagentoCommandMageRun(cfg magentoGlobalConfig, d magentoDialog, options
 
 			var args []string
 
-			args = append(args, []string{"exec", "-it", cfg.GetProjectMainContainer(), mrPath}...)
+			if cfg.GetMainContainerUser() != "" {
+				args = append(args, []string{"exec", "-it", "-u", cfg.GetMainContainerUser(), cfg.GetProjectMainContainer(), mrPath}...)
+			} else {
+				args = append(args, []string{"exec", "-it", cfg.GetProjectMainContainer(), mrPath}...)
+			}
+
 			args = append(args, c.Args().Slice()...)
 
 			eo := ExecOptions{
