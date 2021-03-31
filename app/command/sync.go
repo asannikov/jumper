@@ -126,8 +126,8 @@ func SyncCommand(direction string, cfg syncProjectConfig, d syncCommandDialog, o
 			args := getSyncArgs(cfg, direction, syncPath, currentPath)
 
 			if direction == syncCopyFrom && c.Bool("f") == true {
-				if err = options.MkdirAll(args[2]+filepath.Base(syncPath), os.ModePerm); err == nil {
-					fmt.Printf("Path %s was created", args[2]+filepath.Base(syncPath))
+				if err = options.MkdirAll(args[2]+string(os.PathSeparator)+filepath.Base(syncPath), os.ModePerm); err == nil {
+					fmt.Printf("Path %s was created", args[2]+string(os.PathSeparator)+filepath.Base(syncPath))
 				}
 			}
 
