@@ -1,6 +1,9 @@
 # CHANGELOG
 
-## 1.8.10 (31.03.2021)
+## 1.9.0 (30.04.2021)
+- release, combined features und bugfixes in 1.8.x.
+
+## 1.8.11 (31.03.2021)
 - bugfix
     - fix "copy from". The path had missed separator
 
